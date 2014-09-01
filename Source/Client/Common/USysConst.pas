@@ -15,15 +15,141 @@ const
   cSBar_User            = 2;                         //用户面板索引
   cRecMenuMax           = 5;                         //最近使用导航区最大条目数
 
+  cPrecision            = 100;                       //计算精度
+  {-----------------------------------------------------------------------------
+   描述:
+   *.重量为吨的计算中,小数值比较或者相减运算时会有误差,所以会先放大,去掉
+     小数位后按照整数计算.放大倍数由精度值确定.
+  -----------------------------------------------------------------------------}
+
+  cShouJuIDLength       = 7;                         //财务收据标识长度
+  cItemIconIndex        = 11;                        //默认的提货单列表图标
+
 const
   {*Frame ID*}
   cFI_FrameSysLog       = $0001;                     //系统日志
   cFI_FrameViewLog      = $0002;                     //本地日志
+  cFI_FrameAuthorize    = $0003;                     //系统授权
 
+  cFI_FrameCustomer     = $0004;                     //客户管理
+  cFI_FrameSalesMan     = $0005;                     //业务员
+  cFI_FrameSaleContract = $0006;                     //销售合同
+  cFI_FrameZhiKa        = $0007;                     //办理纸卡
+  cFI_FrameMakeCard     = $0012;                     //办理磁卡
+  cFI_FrameBill         = $0013;                     //开提货单
+  cFI_FrameBillQuery    = $0014;                     //开单查询
+  cFI_FrameTruckQuery   = $0015;                     //车辆查询
+  cFI_FrameLadingDai    = $0016;                     //袋装提货
+  cFI_FramePoundQuery   = $0017;                     //磅房查询
+  cFI_FrameFangHuiQuery = $0019;                     //放灰查询
+  cFI_FrameZhanTaiQuery = $0020;                     //栈台查询
+  cFI_FrameZTDispatch   = $0021;                     //栈台调度
+
+  cFI_FrameStock        = $0022;                     //品种管理
+  cFI_FrameStockRecord  = $0023;                     //检验记录
+  cFI_FrameStockHuaYan  = $0025;                     //开化验单
+  cFI_FrameStockHY_Each = $0026;                     //随车开单
+  cFI_FrameShouJu       = $0027;                     //收据查询
+
+  cFI_FrameZhiKaVerify  = $0051;                     //纸卡审核
+  cFI_FramePayment      = $0052;                     //销售回款
+  cFI_FramePaymentC     = $0053;                     //补缴差价
+
+  cFI_FrameTruckQuery2  = $0055;                     //车辆查询
+  cFI_FrameCusAccountQuery = $0056;                  //客户账户
+  cFI_FrameCusInOutMoney   = $0057;                  //出入金明细
+
+  cFI_FrameSaleTotalQuery  = $0058;                  //累计发货
+  cFI_FrameSaleDetailQuery = $0059;                  //发货明细
+  cFI_FrameSaleZhiKaQuery  = $0060;                  //用户业务
+
+  cFI_FrameJSWeek       = $0063;                     //结算周期
+  cFI_FrameSaleZZ       = $0065;                     //销售扎账
+  cFI_FrameCusCredit    = $0067;                     //信用管理
+  cFI_FrameZhiKaDetail  = $0068;                     //纸卡明细
+  cFI_FrameSaleJS       = $0069;                     //销售结算
+
+  cFI_FrameProvider     = $0102;                     //供应
+  cFI_FrameProvideLog   = $0105;                     //供应日志
+  cFI_FrameMaterails    = $0106;                     //原材料
+
+  cFI_FormMemo          = $1000;                     //备注窗口
   cFI_FormBackup        = $1001;                     //数据备份
   cFI_FormRestore       = $1002;                     //数据恢复
   cFI_FormIncInfo       = $1003;                     //公司信息
   cFI_FormChangePwd     = $1005;                     //修改密码
+
+  cFI_FormBaseInfo      = $1006;                     //基本信息
+  cFI_FormCustomer      = $1007;                     //客户资料
+  cFI_FormSaleMan       = $1008;                     //业务员
+  cFI_FormSaleContract  = $1009;                     //销售合同
+  cFI_FormZhiKa         = $1010;                     //纸卡办理
+  cFI_FormZhiKaParam    = $1011;                     //纸卡参数
+  cFI_FormZhiKaCard     = $1012;                     //纸卡磁卡
+
+  cFI_FormSetCardPwd    = $1013;                     //磁卡密码
+  cFI_FormSetPassword   = $1014;                     //设置密码
+  cFI_FormVerifyCardPwd = $1015;                     //验证身份
+  cFI_FormBill          = $1016;                     //开提货单
+  cFI_FormShouJu        = $1017;                     //开收据
+  cFI_FormZhiKaVerify   = $1018;                     //纸卡审核
+  cFI_FormCusCredit     = $1019;                     //信用变动
+  cFI_FormPayment       = $1020;                     //销售回款
+  cFI_FormTruckIn       = $1021;                     //车辆进厂
+  cFI_FormTruckOut      = $1022;                     //车辆出厂
+  cFI_FormVerifyCard    = $1023;                     //磁卡验证
+  cFI_FormAutoBFP       = $1024;                     //自动过皮
+  cFI_FormBangFangP     = $1025;                     //称量皮重
+  cFI_FormBangFangM     = $1026;                     //称量毛重
+  cFI_FormLadDai        = $1027;                     //袋装提货
+  cFI_FormLadSan        = $1028;                     //散装提货
+  cFI_FormJiShuQi       = $1029;                     //计数管理
+  cFI_FormBFWuCha       = $1030;                     //净重误差
+  cFI_FormZhiKaQuery    = $1031;                     //卡片信息
+  cFI_FormPayCustom     = $1032;                     //销售退购
+  cFI_FormZhiKaInfoExt1 = $1033;                     //纸卡扩展
+  cFI_FormZhiKaInfoExt2 = $1034;                     //纸卡扩展
+  cFI_FormZhiKaAdjust   = $1035;                     //纸卡调整
+  cFI_FormZhiKaFixMoney = $1036;                     //限提金额
+  cFI_FormSaleAdjust    = $1037;                     //销售调剂
+  cFI_FormDaiHeKa       = $1038;                     //袋装合卡
+  cFI_FormSanHeKa       = $1039;                     //散装合卡
+  cFI_FormEditPrice     = $1040;                     //提货单价
+
+  cFI_FormGetTruck      = $1047;                     //选择车辆
+  cFI_FormGetContract   = $1048;                     //选择合同
+  cFI_FormGetCustom     = $1049;                     //选择客户
+  cFI_FormGetStockNo    = $1050;                     //选择编号
+  cFI_FormProvider      = $1051;                     //供应商
+  cFI_FormMaterails     = $1052;                     //原材料
+  cFI_FormProvideBF     = $1053;                     //过磅
+  cFI_FormProvideBFP    = $1054;                     //过磅过皮
+  cFI_FormProvideYS     = $1055;                     //验收
+  cFI_FormProvideCard   = $1056;                     //供应磁卡
+  cFI_FormProvidePreP   = $1057;                     //预置皮重
+  cFI_FormProvideHS     = $1058;                     //核算运费
+  cFI_FormProvideHS_P   = $1059;                     //批量核算
+  cFI_FormProvideJS_P   = $1060;                     //批量结算
+  cFI_FormProvideInOut  = $1061;                     //供应进出
+
+  cFI_FormStockParam    = $1065;                     //品种管理
+  cFI_FormStockHuaYan   = $1066;                     //开化验单
+  cFI_FormStockHY_Each  = $1067;                     //随车开单
+
+  cFI_FormPaymentZK     = $1068;                     //纸卡回款
+  cFI_FormFreezeZK      = $1069;                     //冻结纸卡
+  cFI_FormAdjustPrice   = $1070;                     //纸卡调价
+
+  cFI_FormInvoiceWeek   = $1075;                     //结算周期
+  cFI_FormSaleInvoice   = $1076;                     //发票管理
+  cFI_FormMakeInvoice   = $1077;                     //开具发票
+  cFI_FormViewInvoices  = $1078;                     //开票列表
+  cFI_FormSaleZZALL     = $1079;                     //扎账(全部)
+  cFI_FormSaleZZCus     = $1080;                     //扎账(客户)
+  cFI_FormInvGetWeek    = $1081;                     //选择周期
+  cFI_FormInvAdjust     = $1082;                     //修改申请量
+
+  cFI_FormAuthorize     = $1090;                     //安全验证
 
   {*Command*}
   cCmd_RefreshData      = $0002;                     //刷新数据
@@ -53,6 +179,13 @@ type
     FRecMenuMax : integer;                           //导航栏个数
     FIconFile   : string;                            //图标配置文件
     FUsesBackDB : Boolean;                           //使用备份库
+
+    FLocalIP    : string;                            //本机IP
+    FLocalMAC   : string;                            //本机MAC
+    FLocalName  : string;                            //本机名称
+    FFactNum    : string;                            //工厂编号
+    FSerialID   : string;                            //电脑编号
+    FHardMonURL : string;                            //硬件守护
   end;
   //系统参数
 
@@ -139,6 +272,65 @@ begin
   AddMenuModuleItem('MAIN_A03', cFI_FormBackup, mtForm);
   AddMenuModuleItem('MAIN_A04', cFI_FormRestore, mtForm);
   AddMenuModuleItem('MAIN_A05', cFI_FormChangePwd, mtForm);
+  AddMenuModuleItem('MAIN_A07', cFI_FrameAuthorize);
+
+  AddMenuModuleItem('MAIN_B01', cFI_FormBaseInfo, mtForm);
+  AddMenuModuleItem('MAIN_B02', cFI_FrameCustomer);
+  AddMenuModuleItem('MAIN_B03', cFI_FrameSalesMan);
+  AddMenuModuleItem('MAIN_B04', cFI_FrameSaleContract);
+
+  AddMenuModuleItem('MAIN_C01', cFI_FrameZhiKaVerify);
+  AddMenuModuleItem('MAIN_C02', cFI_FramePayment);
+  AddMenuModuleItem('MAIN_C03', cFI_FrameCusCredit);
+  AddMenuModuleItem('MAIN_C06', cFI_FrameJSWeek);
+  AddMenuModuleItem('MAIN_C07', cFI_FrameShouJu);
+
+  AddMenuModuleItem('MAIN_D01', cFI_FormZhiKa, mtForm);
+  AddMenuModuleItem('MAIN_D02', cFI_FormSetCardPwd, mtForm);
+  AddMenuModuleItem('MAIN_D03', cFI_FormBill, mtForm);
+  AddMenuModuleItem('MAIN_D04', cFI_FormPayCustom, mtForm);
+  AddMenuModuleItem('MAIN_D05', cFI_FrameZhiKa);
+  AddMenuModuleItem('MAIN_D06', cFI_FrameBill);
+  AddMenuModuleItem('MAIN_D08', cFI_FormSaleAdjust, mtForm);
+
+  AddMenuModuleItem('MAIN_E01', cFI_FormBangFangP, mtForm);
+  AddMenuModuleItem('MAIN_E02', cFI_FormBangFangM, mtForm);
+  AddMenuModuleItem('MAIN_E03', cFI_FramePoundQuery);
+
+  AddMenuModuleItem('MAIN_F01', cFI_FormLadDai, mtForm);
+  AddMenuModuleItem('MAIN_F02', cFI_FormJiShuQi, mtForm);
+  AddMenuModuleItem('MAIN_F03', cFI_FrameZhanTaiQuery);
+
+  AddMenuModuleItem('MAIN_G01', cFI_FormLadSan, mtForm);
+  AddMenuModuleItem('MAIN_G02', cFI_FrameFangHuiQuery);
+
+  AddMenuModuleItem('MAIN_K01', cFI_FrameStock);
+  AddMenuModuleItem('MAIN_K02', cFI_FrameStockRecord);
+  AddMenuModuleItem('MAIN_K03', cFI_FrameStockHuaYan);
+  AddMenuModuleItem('MAIN_K04', cFI_FormStockHuaYan, mtForm);
+  AddMenuModuleItem('MAIN_K05', cFI_FormStockHY_Each, mtForm);
+  AddMenuModuleItem('MAIN_K06', cFI_FrameStockHY_Each);
+
+  AddMenuModuleItem('MAIN_L01', cFI_FrameTruckQuery2);
+  AddMenuModuleItem('MAIN_L02', cFI_FrameCusAccountQuery);
+  AddMenuModuleItem('MAIN_L03', cFI_FrameCusInOutMoney);
+  AddMenuModuleItem('MAIN_L04', cFI_FormZhiKaQuery, mtForm);
+  AddMenuModuleItem('MAIN_L05', cFI_FrameBillQuery);
+  AddMenuModuleItem('MAIN_L06', cFI_FrameSaleDetailQuery);
+  AddMenuModuleItem('MAIN_L07', cFI_FrameSaleTotalQuery);
+  AddMenuModuleItem('MAIN_L08', cFI_FrameZhiKaDetail);
+  AddMenuModuleItem('MAIN_L09', cFI_FrameSaleJS);
+
+  AddMenuModuleItem('MAIN_H01', cFI_FormTruckIn, mtForm);
+  AddMenuModuleItem('MAIN_H02', cFI_FormTruckOut, mtForm);
+  AddMenuModuleItem('MAIN_H03', cFI_FrameTruckQuery);
+
+  AddMenuModuleItem('MAIN_M01', cFI_FrameProvider);
+  AddMenuModuleItem('MAIN_M02', cFI_FrameMaterails);
+  AddMenuModuleItem('MAIN_M04', cFI_FrameProvideLog);
+  AddMenuModuleItem('MAIN_M05', cFI_FormProvideBF, mtForm);
+  AddMenuModuleItem('MAIN_M06', cFI_FormProvideYS, mtForm);
+  AddMenuModuleItem('MAIN_M08', cFI_FormProvidePreP, mtForm);
 end;
 
 //Desc: 清理模块列表
