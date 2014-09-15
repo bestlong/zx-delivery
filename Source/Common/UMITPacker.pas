@@ -224,6 +224,6 @@ begin
 end;
 
 initialization
-  gBusinessPackerManager.RegistePacker(TMITQueryField);
-  gBusinessPackerManager.RegistePacker(TMITBusinessCommand);
+  gBusinessPackerManager.RegistePacker(TMITQueryField, sPlug_ModuleBus);
+  gBusinessPackerManager.RegistePacker(TMITBusinessCommand, sPlug_ModuleBus);
 end.

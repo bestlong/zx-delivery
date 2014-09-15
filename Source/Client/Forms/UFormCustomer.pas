@@ -360,13 +360,16 @@ begin
   end;
 
   nList := TStringList.Create;
-  nList.Text := Format('C_PY=''%s''', [GetPinYinOfStr(EditName.Text)]);
+  nList.Text := SF('C_PY', GetPinYinOfStr(EditName.Text));
 
   if FCustomerID = '' then
   begin
-     nSQL := MakeSQLByForm(Self, sTable_Customer, '', True, GetData, nList);
+    nID := GetSerialNo(sFlag_BusGroup, sFlag_Customer, False);
+    nList.Add(SF('C_ID', nID));
+    nSQL := MakeSQLByForm(Self, sTable_Customer, '', True, GetData, nList);
   end else
   begin
+    nID := FCustomerID;
     nStr := 'C_ID=''' + FCustomerID + '''';
     nSQL := MakeSQLByForm(Self, sTable_Customer, nStr, False, GetData, nList);
   end;
@@ -375,17 +378,6 @@ begin
   FDM.ADOConn.BeginTrans;
   try
     FDM.ExecuteSQL(nSQL);
-
-    if FCustomerID = '' then
-    begin
-      i := FDM.GetFieldMax(sTable_Customer, 'R_ID');
-      nID := FDM.GetSerialID2(FPrefixID, sTable_Customer, 'R_ID', 'C_ID', i);
-
-      nSQL := 'Update %s Set C_ID=''%s'' Where R_ID=%d';
-      nSQL := Format(nSQL, [sTable_Customer, nID, i]);
-      FDM.ExecuteSQL(nSQL);
-    end else nID := FCustomerID;
-
     nSQL := 'Select Count(*) From %s Where A_CID=''%s''';
     nSQL := Format(nSQL, [sTable_CusAccount, nID]);
 

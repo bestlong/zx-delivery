@@ -7,14 +7,20 @@ unit USysBusiness;
 interface
 
 uses
-  Windows, Classes, Controls, DB, SysUtils, ULibFun, UAdjustForm, UFormCtrl,
-  UDataModule, UDataReport, cxMCListBox, USysConst, USysDB;
+  Windows, DB, Classes, Controls, SysUtils, UBusinessPacker, UBusinessWorker,
+  UBusinessConst, ULibFun, UAdjustForm, UFormCtrl, UDataModule, UDataReport,
+  cxMCListBox, USysConst, USysDB;
 
 //------------------------------------------------------------------------------
 function AdjustHintToRead(const nHint: string): string;
 //调整提示内容
 function WorkPCHasPopedom: Boolean;
 //验证主机是否已授权
+function GetSysValidDate: Integer;
+//获取系统有效期
+function GetSerialNo(const nGroup,nObject: string; nUseDate: Boolean = True): string;
+//获取串行编号
+
 function LoadSysDictItem(const nItem: string; const nList: TStrings): TDataSet;
 //读取系统字典项
 function LoadSaleMan(const nList: TStrings; const nWhere: string = ''): Boolean;
@@ -34,9 +40,11 @@ function DeleteZhiKa(const nZID: string): Boolean;
 function LoadZhiKaInfo(const nZID: string; const nList: TcxMCListBox;
  var nHint: string): TDataset;
 //载入纸卡
-function GetCustomerValidMoney(const nCID: string;
- const nLimit: Boolean = True): Double;
+function GetZhikaValidMoney(nZhiKa: string; var nFixMoney: Boolean): Double;
+//纸卡可用金
+function GetCustomerValidMoney(nCID: string; const nLimit: Boolean = True): Double;
 //客户可用金额
+
 function SaveXuNiCustomer(const nName,nSaleMan: string): string;
 //存临时客户
 function IsAutoPayCredit: Boolean;
@@ -48,6 +56,11 @@ function SaveCustomerPayment(const nCusID,nCusName,nSaleMan: string;
 function SaveCustomerCredit(const nCusID,nMemo: string; const nCredit: Double;
  const nEndTime: TDateTime): Boolean;
 //保存信用记录
+function IsCustomerCreditValid(const nCusID: string): Boolean;
+//客户信用是否有效
+
+function ShowPriceWhenBill: Boolean;
+//开单时显单价
 
 //------------------------------------------------------------------------------
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -56,6 +69,8 @@ function PrintZhiKaReport(const nZID: string; const nAsk: Boolean): Boolean;
 //打印纸卡
 function PrintShouJuReport(const nSID: string; const nAsk: Boolean): Boolean;
 //打印收据
+function PrintBillReport(const nBill: string; const nAsk: Boolean): Boolean;
+//打印提货单
 
 implementation
 
@@ -86,6 +101,65 @@ begin
   end;
 end;
 
+//Date: 2014-09-05
+//Parm: 命令;数据;参数;输出
+//Desc: 调用中间件上的业务命令对象
+function CallBusinessCommand(const nCmd: Integer; const nData,nExt: string;
+  const nOut: PWorkerBusinessCommand): Boolean;
+var nIn: TWorkerBusinessCommand;
+    nWorker: TBusinessWorkerBase;
+begin
+  nWorker := nil;
+  try
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nExt;
+
+    nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessCommand);
+    //get worker
+    Result := nWorker.WorkActive(@nIn, nOut);
+  finally
+    gBusinessWorkerManager.RelaseWorker(nWorker);
+  end;
+end;
+
+//Date: 2014-09-04
+//Parm: 分组;对象;使用日期编码模式
+//Desc: 依据nGroup.nObject生成串行编号
+function GetSerialNo(const nGroup,nObject: string; nUseDate: Boolean): string;
+var nStr: string;
+    nList: TStrings;
+    nOut: TWorkerBusinessCommand;
+begin
+  Result := '';
+  nList := nil;
+  try
+    nList := TStringList.Create;
+    nList.Values['Group'] := nGroup;
+    nList.Values['Object'] := nObject;
+
+    if nUseDate then
+         nStr := sFlag_Yes
+    else nStr := sFlag_No;
+
+    if CallBusinessCommand(cBC_GetSerialNO, nList.Text, nStr, @nOut) then
+      Result := nOut.FData;
+    //xxxxx
+  finally
+    nList.Free;
+  end;   
+end;
+
+//Desc: 获取系统有效期
+function GetSysValidDate: Integer;
+var nOut: TWorkerBusinessCommand;
+begin
+  if CallBusinessCommand(cBC_IsSystemExpired, '', '', @nOut) then
+       Result := StrToInt(nOut.FData)
+  else Result := 0;
+end;
+
+//------------------------------------------------------------------------------
 //Date: 2010-4-13
 //Parm: 字典项;列表
 //Desc: 从SysDict中读取nItem项的内容,存入nList中
@@ -356,6 +430,17 @@ begin
   end;
 end;
 
+//Date: 2014-09-14
+//Parm: 客户编号
+//Desc: 验证nCusID是否有足够的钱,或信用没有过期
+function IsCustomerCreditValid(const nCusID: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  if CallBusinessCommand(cBC_CustomerHasMoney, nCusID, '', @nOut) then
+       Result := nOut.FData = sFlag_Yes
+  else Result := False;
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 纸卡是否需要审核
 function IsZhiKaNeedVerify: Boolean;
@@ -452,32 +537,48 @@ begin
   end;
 end;
 
-//Desc: 获取nCID用户的可用金额,包含信用额或净额
-function GetCustomerValidMoney(const nCID: string; const nLimit: Boolean): Double;
-var nStr: string;
-    nVal: Double;
+//Date: 2014-09-14
+//Parm: 纸卡号;是否限提
+//Desc: 获取nZhiKa的可用金哦
+function GetZhikaValidMoney(nZhiKa: string; var nFixMoney: Boolean): Double;
+var nOut: TWorkerBusinessCommand;
 begin
-  Result := 0;
-  nStr := 'Select * From %s Where A_CID=''%s''';
-  nStr := Format(nStr, [sTable_CusAccount, nCID]);
-
-  with FDM.QueryTemp(nStr) do
-  if RecordCount = 1 then
+  if CallBusinessCommand(cBC_GetZhiKaMoney, nZhiKa, '', @nOut) then
   begin
-    nVal := FieldByName('A_InMoney').AsFloat -
-            FieldByName('A_OutMoney').AsFloat -
-            FieldByName('A_Compensation').AsFloat -
-            FieldByName('A_FreezeMoney').AsFloat;
-    //xxxxx
-
-    if nLimit then
-      nVal := nVal + FieldByName('A_CreditLimit').AsFloat;
-    Result := Float2PInt(nVal, cPrecision) / cPrecision;
-  end;
+    Result := StrToFloat(nOut.FData);
+    nFixMoney := nOut.FExtParam = sFlag_Yes;
+  end else Result := 0;
 end;
 
-//------------------------------------------------------------------------------
-//  打印单据
+//Desc: 获取nCID用户的可用金额,包含信用额或净额
+function GetCustomerValidMoney(nCID: string; const nLimit: Boolean): Double;
+var nStr: string;
+    nOut: TWorkerBusinessCommand;
+begin
+  if nLimit then
+       nStr := sFlag_Yes
+  else nStr := sFlag_No;
+
+  if CallBusinessCommand(cBC_GetCustomerMoney, nCID, nStr, @nOut) then
+       Result := StrToFloat(nOut.FData)
+  else Result := 0;
+end;
+
+//Desc: 开提货单时显单价
+function ShowPriceWhenBill: Boolean;
+var nStr: string;
+begin
+  nStr := 'Select D_Value From $T Where D_Name=''$N'' and D_Memo=''$M''';
+  nStr := MacroValue(nStr, [MI('$T', sTable_SysDict), MI('$N', sFlag_SysParam),
+                           MI('$M', sFlag_BillPrice)]);
+  //xxxxx
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+       Result := Fields[0].AsString = sFlag_Yes
+  else Result := False;
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 打印标识为nID的销售合同
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -601,6 +702,46 @@ begin
     nStr := '无法正确加载报表文件';
     ShowMsg(nStr, sHint); Exit;
   end;
+
+  FDR.Dataset1.DataSet := FDM.SqlTemp;
+  FDR.ShowReport;
+  Result := FDR.PrintSuccess;
+end;
+
+//Desc: 打印提货单
+function PrintBillReport(const nBill: string; const nAsk: Boolean): Boolean;
+var nStr: string;
+    nParam: TReportParamItem;
+begin
+  Result := False;
+
+  if nAsk then
+  begin
+    nStr := '是否要打印提货单?';
+    if not QueryDlg(nStr, sAsk) then Exit;
+  end;
+
+  nStr := 'Select * From %s b Where R_ID In(%s)';
+  nStr := Format(nStr, [sTable_Bill, nBill]);
+  //xxxxx
+
+  if FDM.QueryTemp(nStr).RecordCount < 1 then
+  begin
+    nStr := '编号为[ %s ] 的记录已无效!!';
+    nStr := Format(nStr, [nBill]);
+    ShowMsg(nStr, sHint); Exit;
+  end;
+
+  nStr := gPath + sReportDir + 'LadingBill.fr3';
+  if not FDR.LoadReportFile(nStr) then
+  begin
+    nStr := '无法正确加载报表文件';
+    ShowMsg(nStr, sHint); Exit;
+  end;
+
+  nParam.FName := 'UserName';
+  nParam.FValue := gSysParam.FUserID;
+  FDR.AddParamItem(nParam);
 
   FDR.Dataset1.DataSet := FDM.SqlTemp;
   FDR.ShowReport;

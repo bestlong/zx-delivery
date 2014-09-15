@@ -40,6 +40,7 @@ type
     procedure cxView1FocusedRecordChanged(Sender: TcxCustomGridTableView;
       APrevFocusedRecord, AFocusedRecord: TcxCustomGridRecord;
       ANewItemRecordFocusingChanged: Boolean);
+    procedure BtnExitClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -218,6 +219,11 @@ begin
             Date2Str(SQLQuery.FieldByName('W_Begin').AsDateTime),
             Date2Str(SQLQuery.FieldByName('W_End').AsDateTime)]);
   end;
+end;
+
+procedure TfFrameJSWeek.BtnExitClick(Sender: TObject);
+begin
+  EditID.Text := GetSerialNo(sFlag_BusGroup, sFlag_BillNo);
 end;
 
 initialization

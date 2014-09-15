@@ -32,7 +32,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditPhone: TcxTextEdit
       Left = 87
-      Top = 95
+      Top = 101
       Hint = 'T.C_Addr'
       ParentFont = False
       Properties.MaxLength = 100
@@ -41,7 +41,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditMemo: TcxMemo
       Left = 87
-      Top = 225
+      Top = 243
       Hint = 'T.C_Memo'
       ParentFont = False
       Properties.MaxLength = 50
@@ -53,7 +53,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object InfoList1: TcxMCListBox
       Left = 29
-      Top = 380
+      Top = 400
       Width = 547
       Height = 164
       HeaderSections = <
@@ -73,7 +73,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object InfoItems: TcxComboBox
       Left = 87
-      Top = 326
+      Top = 344
       ParentFont = False
       Properties.DropDownRows = 15
       Properties.ImmediateDropDown = False
@@ -85,7 +85,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditInfo: TcxTextEdit
       Left = 87
-      Top = 353
+      Top = 372
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 15
@@ -93,7 +93,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object BtnAdd: TButton
       Left = 444
-      Top = 326
+      Top = 344
       Width = 57
       Height = 22
       Caption = #28155#21152
@@ -102,7 +102,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object BtnDel: TButton
       Left = 445
-      Top = 353
+      Top = 372
       Width = 56
       Height = 22
       Caption = #21024#38500
@@ -129,7 +129,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit1: TcxTextEdit
       Left = 320
-      Top = 70
+      Top = 73
       Hint = 'T.C_FaRen'
       ParentFont = False
       Properties.MaxLength = 50
@@ -138,7 +138,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit2: TcxTextEdit
       Left = 87
-      Top = 120
+      Top = 129
       Hint = 'T.C_LiXiRen'
       ParentFont = False
       Properties.MaxLength = 50
@@ -147,7 +147,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit3: TcxTextEdit
       Left = 320
-      Top = 120
+      Top = 129
       Hint = 'T.C_Phone'
       ParentFont = False
       Properties.MaxLength = 15
@@ -156,7 +156,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit4: TcxTextEdit
       Left = 87
-      Top = 145
+      Top = 157
       Hint = 'T.C_Fax'
       ParentFont = False
       Properties.MaxLength = 15
@@ -165,7 +165,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit5: TcxTextEdit
       Left = 320
-      Top = 145
+      Top = 157
       Hint = 'T.C_Tax'
       ParentFont = False
       Properties.MaxLength = 32
@@ -174,7 +174,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditBank: TcxComboBox
       Left = 87
-      Top = 170
+      Top = 185
       Hint = 'T.C_Bank'
       ParentFont = False
       Properties.DropDownRows = 20
@@ -187,7 +187,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxTextEdit6: TcxTextEdit
       Left = 320
-      Top = 170
+      Top = 185
       Hint = 'T.C_Account'
       ParentFont = False
       Properties.MaxLength = 18
@@ -196,7 +196,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditCredit: TcxTextEdit
       Left = 87
-      Top = 195
+      Top = 213
       Hint = 'Tmp.A_CreditLimit'
       HelpType = htKeyword
       ParentFont = False
@@ -207,7 +207,7 @@ inherited fFormCustomer: TfFormCustomer
     end
     object cxLabel1: TcxLabel
       Left = 262
-      Top = 195
+      Top = 213
       AutoSize = False
       Caption = #20803'  '#22791#27880':'#25480#20449#32473#23458#25143#30340#26368#39640#21487#27424#27454#37329#39069'.'
       ParentFont = False
@@ -215,11 +215,11 @@ inherited fFormCustomer: TfFormCustomer
       Transparent = True
       Height = 25
       Width = 340
-      AnchorY = 208
+      AnchorY = 226
     end
     object EditSaleMan: TcxComboBox
       Left = 87
-      Top = 70
+      Top = 73
       Hint = 'T.C_SaleMan'
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
