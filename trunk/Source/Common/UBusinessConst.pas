@@ -20,23 +20,14 @@ const
   cQF_Bill                    = $0001;
 
   {*business command*}
-  cBC_ReadBillInfo            = $0001;
-  cBC_ReadOrderInfo           = $0002;
-  cBC_ReadTruckInfo           = $0003;
+  cBC_GetSerialNO             = $0001;   //获取串行编号
+  cBC_ServerNow               = $0002;   //服务器当前时间
+  cBC_IsSystemExpired         = $0003;   //系统是否已过期
 
-  cBC_LoadMaterails           = $0021;
-  cBC_SavePoundData           = $0022;
-  cBC_GetPostBills            = $0023;
-  cBC_SavePostBills           = $0025;
-  cBC_SaveBillCard            = $0026;
-  cBC_LogoutBillCard          = $0028;
-  cBC_DeletePoundLog          = $0029;
-  cBC_ModifyPoundLog          = $0027;                   //增加称重修改 20131112
+  cBC_GetCustomerMoney        = $0010;   //获取客户可用金
+  cBC_GetZhiKaMoney           = $0011;   //获取纸卡可用金
+  cBC_CustomerHasMoney        = $0012;   //客户是否有余额
 
-  cBC_GetPoundCard            = $0050;
-  cBC_GetQueueData            = $0051;
-  cBC_SaveCountData           = $0052;
-  cBC_RemoteExecSQL           = $0055;
   cBC_PrintCode               = $0056;
   cBC_PrinterEnable           = $0057;
   cBC_PrintFixCode            = $0058;
@@ -66,30 +57,29 @@ type
   end;
 
 resourcestring
+  {*plug module id*}
+  sPlug_ModuleBus             = '{DF261765-48DC-411D-B6F2-0B37B14E014E}';
+                                                        //业务模块
   {*common function*}  
   sSys_BasePacker             = 'Sys_BasePacker';       //基本封包器
 
   {*business mit function name*}
   sBus_ServiceStatus          = 'Bus_ServiceStatus';    //服务状态
+  sBus_GetQueryField          = 'Bus_GetQueryField';    //查询的字段
+
   sBus_CreateSaleBill         = 'Bus_Create_SaleBill';  //创建交货单
   sBus_ModifySaleBill         = 'Bus_Modify_SaleBill';  //修改交货单
   sBus_DeleteSaleBill         = 'Bus_Delete_SaleBill';  //删除交货单
-
-  sBus_GetQueryField          = 'Bus_GetQueryField';    //查询的字段
   sBus_BusinessCommand        = 'Bus_BusinessCommand';  //业务指令
-  sHM_BusinessCommand         = 'HH_BusinessCommand';   //硬件守护
 
   {*client function name*}
   sCLI_ServiceStatus          = 'CLI_ServiceStatus';    //服务状态
+  sCLI_GetQueryField          = 'CLI_GetQueryField';    //查询的字段
+
   sCLI_CreateSaleBill         = 'CLI_Create_SaleBill';  //创建交货单
   sCLI_ModifySaleBill         = 'CLI_Modify_SaleBill';  //修改交货单
   sCLI_DeleteSaleBill         = 'CLI_Delete_SaleBill';  //删除交货单
-  sCLI_ReadSaleBill           = 'CLI_Read_SaleBill';    //读取交货单
-
-  sCLI_GetQueryField          = 'CLI_GetQueryField';    //查询的字段
   sCLI_BusinessCommand        = 'CLI_BusinessCommand';  //业务指令
-  sCLI_HardwareMonitor        = 'CLI_Hardware_Monitor'; //硬件守护
-  sCLI_TruckQueue             = 'CLI_TruckQueue';       //车辆排队
 
 implementation
 

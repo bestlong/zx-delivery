@@ -14,14 +14,7 @@ const
   cSBar_Time            = 1;                         //时间面板索引
   cSBar_User            = 2;                         //用户面板索引
   cRecMenuMax           = 5;                         //最近使用导航区最大条目数
-
-  cPrecision            = 100;                       //计算精度
-  {-----------------------------------------------------------------------------
-   描述:
-   *.重量为吨的计算中,小数值比较或者相减运算时会有误差,所以会先放大,去掉
-     小数位后按照整数计算.放大倍数由精度值确定.
-  -----------------------------------------------------------------------------}
-
+  
   cShouJuIDLength       = 7;                         //财务收据标识长度
   cItemIconIndex        = 11;                        //默认的提货单列表图标
 
@@ -85,7 +78,7 @@ const
   cFI_FormSaleContract  = $1009;                     //销售合同
   cFI_FormZhiKa         = $1010;                     //纸卡办理
   cFI_FormZhiKaParam    = $1011;                     //纸卡参数
-  cFI_FormZhiKaCard     = $1012;                     //纸卡磁卡
+  cFI_FormGetZhika      = $1012;                     //选择纸卡
 
   cFI_FormSetCardPwd    = $1013;                     //磁卡密码
   cFI_FormSetPassword   = $1014;                     //设置密码

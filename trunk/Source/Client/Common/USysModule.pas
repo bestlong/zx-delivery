@@ -10,6 +10,7 @@ unit USysModule;
 interface
 
 uses
+  UClientWorker, UMITPacker,
   UFrameLog, UFrameSysLog, UFormIncInfo, UFormBackupSQL, UFormRestoreSQL,
   UFormPassword, UFormBaseInfo, UFrameAuthorize, UFormAuthorize,
   UFrameCustomer, UFormCustomer, UFormGetCustom, UFrameSalesMan, UFormSalesMan,
@@ -17,7 +18,8 @@ uses
   UFormGetContract, UFormZhiKaAdjust, UFormZhiKaFixMoney, UFrameZhiKaVerify,
   UFormZhiKaVerify, UFrameShouJu, UFormShouJu, UFramePayment, UFormPayment,
   UFrameCustomerCredit, UFormCustomerCredit, UFrameCusAccount,
-  UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormBill;
+  UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormGetZhiKa, UFormBill,
+  UFormGetTruck;
 
 procedure InitSystemObject;
 procedure RunSystemObject;
@@ -38,7 +40,7 @@ begin
 
   gChannelManager := TChannelManager.Create;
   gChannelManager.ChannelMax := 20;
-  gChannelChoolser := TChannelChoolser.Create(gPath + 'Service.Ini');
+  gChannelChoolser := TChannelChoolser.Create('');
   gChannelChoolser.AutoUpdateLocal := False;
   //channel
 end;

@@ -41,6 +41,9 @@ procedure CombinListViewData(const nList: TStrings; nLv: TListView;
  const nAll: Boolean);
 //组合选中的项的数据
 
+function ParseCardNO(const nCard: string; const nHex: Boolean): string;
+//格式化磁卡编号
+
 implementation
 
 //---------------------------------- 配置运行环境 ------------------------------
@@ -177,6 +180,26 @@ begin
       CombinStr(nLv.Items[i].SubItems, sLogField));
     //combine items's data
   end;
+end;
+
+//Date: 2012-4-22
+//Parm: 16位卡号数据
+//Desc: 格式化nCard为标准卡号
+function ParseCardNO(const nCard: string; const nHex: Boolean): string;
+var nInt: Int64;
+    nIdx: Integer;
+begin
+  if nHex then
+  begin
+    Result := '';
+    for nIdx:=1 to Length(nCard) do
+      Result := Result + IntToHex(Ord(nCard[nIdx]), 2);
+    //xxxxx
+  end else Result := nCard;
+
+  nInt := StrToInt64('$' + Result);
+  Result := IntToStr(nInt);
+  Result := StringOfChar('0', 12 - Length(Result)) + Result;
 end;
 
 end.

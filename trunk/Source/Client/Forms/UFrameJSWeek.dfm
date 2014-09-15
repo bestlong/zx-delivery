@@ -37,14 +37,14 @@ inherited fFrameJSWeek: TfFrameJSWeek
     end
     object EditDesc: TcxTextEdit [1]
       Left = 413
-      Top = 93
+      Top = 96
       ParentFont = False
       TabOrder = 5
       Width = 185
     end
     object EditSName: TcxTextEdit [2]
       Left = 208
-      Top = 93
+      Top = 96
       ParentFont = False
       TabOrder = 4
       Width = 142
@@ -78,7 +78,7 @@ inherited fFrameJSWeek: TfFrameJSWeek
     end
     object EditSID: TcxTextEdit [5]
       Left = 57
-      Top = 93
+      Top = 96
       ParentFont = False
       TabOrder = 3
       Width = 112

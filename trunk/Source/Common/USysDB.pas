@@ -19,6 +19,13 @@ const
      'Access', 'SQL', 'MySQL', 'Oracle', 'DB2');
   //db names
 
+  cPrecision            = 100;
+  {-----------------------------------------------------------------------------
+   描述: 计算精度
+   *.重量为吨的计算中,小数值比较或者相减运算时会有误差,所以会先放大,去掉
+     小数位后按照整数计算.放大倍数由精度值确定.
+  -----------------------------------------------------------------------------}
+
 type
   TSysDatabaseType = (dtAccess, dtSQLServer, dtMySQL, dtOracle, dtDB2);
   //db types
@@ -171,6 +178,12 @@ ResourceString
 
   sFlag_HardSrvURL    = 'HardMonURL';
   sFlag_MITSrvURL     = 'MITServiceURL';
+
+  sFlag_BusGroup      = 'BusFunction';               //业务编码组
+  sFlag_BillNo        = 'Bus_Bill';                  //交货单号
+  sFlag_PoundID       = 'Bus_Pound';                 //称重记录
+  sFlag_Customer      = 'Bus_Customer';              //客户编号
+  sFlag_ForceHint     = 'Bus_HintMsg';               //强制提示
   
   {*数据表*}
   sTable_Group        = 'Sys_Group';                 //用户组
@@ -554,7 +567,8 @@ ResourceString
   -----------------------------------------------------------------------------}
 
   sSQL_NewBill = 'Create Table $Table(R_ID $Inc, L_ID varChar(20),' +
-       'L_Card varChar(16), L_ZhiKa varChar(15), L_Area varChar(50),' +
+       'L_Card varChar(16), L_ZhiKa varChar(15), Z_Project varChar(100),' +
+       'L_Area varChar(50),' +
        'L_CusID varChar(15), L_CusName varChar(80), L_CusPY varChar(80),' +
        'L_SaleID varChar(15), L_SaleMan varChar(32),' +
        'L_Type Char(1), L_StockNo varChar(20), L_StockName varChar(80),' +
@@ -786,6 +800,7 @@ begin
   AddSysTableItem(sTable_CusAccount, sSQL_NewCusAccount);
   AddSysTableItem(sTable_InOutMoney, sSQL_NewInOutMoney);
   AddSysTableItem(sTable_CusCredit, sSQL_NewCusCredit);
+  AddSysTableItem(sTable_JSWeek, sSQL_NewJSWeek);
   AddSysTableItem(sTable_SysShouJu, sSQL_NewSysShouJu);
 
   AddSysTableItem(sTable_ZhiKa, sSQL_NewZhiKa);
