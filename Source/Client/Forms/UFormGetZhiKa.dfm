@@ -1,32 +1,32 @@
 inherited fFormGetZhiKa: TfFormGetZhiKa
   Left = 351
   Top = 280
-  ClientHeight = 500
-  ClientWidth = 480
+  ClientHeight = 440
+  ClientWidth = 423
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 480
-    Height = 500
+    Width = 423
+    Height = 440
     inherited BtnOK: TButton
-      Left = 298
-      Top = 458
+      Left = 277
+      Top = 407
       Caption = #30830#23450
       TabOrder = 6
     end
     inherited BtnExit: TButton
-      Left = 385
-      Top = 458
+      Left = 347
+      Top = 407
       TabOrder = 7
     end
     object ListInfo: TcxMCListBox [2]
-      Left = 29
-      Top = 45
-      Width = 422
-      Height = 145
+      Left = 23
+      Top = 36
+      Width = 338
+      Height = 116
       HeaderSections = <
         item
           Text = #20449#24687#39033
@@ -35,15 +35,15 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
         item
           AutoSize = True
           Text = #20449#24687#20869#23481
-          Width = 333
+          Width = 249
         end>
       ParentFont = False
       Style.Edges = [bLeft, bTop, bRight, bBottom]
       TabOrder = 0
     end
     object EditID: TcxButtonEdit [3]
-      Left = 87
-      Top = 195
+      Left = 81
+      Top = 157
       ParentFont = False
       Properties.Buttons = <
         item
@@ -53,11 +53,11 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
       Properties.OnButtonClick = EditIDPropertiesButtonClick
       TabOrder = 1
       OnKeyPress = OnCtrlKeyPress
-      Width = 156
+      Width = 124
     end
     object EditSalesMan: TcxComboBox [4]
-      Left = 306
-      Top = 195
+      Left = 268
+      Top = 157
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.DropDownRows = 20
@@ -65,11 +65,11 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
       Properties.ItemHeight = 18
       Properties.OnChange = EditSalesManPropertiesChange
       TabOrder = 2
-      Width = 152
+      Width = 121
     end
     object EditName: TcxComboBox [5]
-      Left = 87
-      Top = 223
+      Left = 81
+      Top = 182
       ParentFont = False
       Properties.DropDownRows = 20
       Properties.ImmediateDropDown = False
@@ -78,26 +78,26 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
       Properties.OnEditValueChanged = EditNamePropertiesEditValueChanged
       TabOrder = 3
       OnKeyPress = EditNameKeyPress
-      Width = 232
+      Width = 185
     end
     object ListDetail: TcxListView [6]
-      Left = 29
-      Top = 319
-      Width = 444
-      Height = 192
+      Left = 23
+      Top = 264
+      Width = 355
+      Height = 154
       Checkboxes = True
       Columns = <
         item
           Caption = #27700#27877#31867#22411
-          Width = 150
+          Width = 120
         end
         item
           Caption = #21333#20215'('#20803'/'#21544')'
-          Width = 125
+          Width = 100
         end
         item
           Caption = #21150#29702#37327'('#21544')'
-          Width = 125
+          Width = 100
         end>
       HideSelection = False
       ParentFont = False
@@ -108,8 +108,8 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
       ViewStyle = vsReport
     end
     object EditZK: TcxComboBox [7]
-      Left = 87
-      Top = 291
+      Left = 81
+      Top = 239
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.DropDownRows = 20
@@ -119,7 +119,7 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
       Properties.OnEditValueChanged = EditZKPropertiesEditValueChanged
       TabOrder = 4
       OnKeyPress = EditNameKeyPress
-      Width = 460
+      Width = 368
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

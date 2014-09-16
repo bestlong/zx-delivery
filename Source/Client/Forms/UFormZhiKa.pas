@@ -91,10 +91,6 @@ type
     { Protected declarations }
     FRecordID: string;
     //记录编号
-    FPrefixID: string;
-    //前缀编号
-    FIDLength: integer;
-    //前缀长度
     FItemIndex: Integer;
     //记录索引
     FZhiKa: TZhiKaItem;
@@ -203,9 +199,6 @@ begin
   try
     LoadFormConfig(Self, nIni);
     LoadcxListViewConfig(Name, ListDetail, nIni);
-
-    FPrefixID := nIni.ReadString(Name, 'IDPrefix', 'ZK');
-    FIDLength := nIni.ReadInteger(Name, 'IDLength', 8);
     Check1.Checked := nIni.ReadBool(Name, 'XianTi', False);
   finally
     nIni.Free;
@@ -782,6 +775,9 @@ begin
 
     if FRecordID = '' then
     begin
+      nZID := GetSerialNo(sFlag_BusGroup, sFlag_ZhiKa, True);
+      nList.Add(Format('Z_ID=''%s''', [nZID]));
+
       if IsZhiKaNeedVerify then
            nStr := sFlag_No
       else nStr := sFlag_Yes;
@@ -792,22 +788,13 @@ begin
       nSQL := MakeSQLByForm(Self, sTable_ZhiKa, '', True, nil, nList);
     end else
     begin
+      nZID := FRecordID;
       nStr := Format('Z_ID=''%s''', [FRecordID]);
       nSQL := MakeSQLByForm(Self, sTable_ZhiKa, nStr, False, nil, nList);
     end;
 
      FDM.ExecuteSQL(nSQL);
     //write data
-
-    if FRecordID = '' then
-    begin
-      nIdx := FDM.GetFieldMax(sTable_ZhiKa, 'R_ID');
-      nZID := FDM.GetSerialID2(FPrefixID, sTable_ZhiKa, 'R_ID', 'Z_ID', nIdx);
-
-      nSQL := 'Update %s Set Z_ID=''%s'' Where R_ID=%d';
-      nSQL := Format(nSQL, [sTable_ZhiKa, nZID, nIdx]);
-      FDM.ExecuteSQL(nSQL);
-    end else nZID := FRecordID;
 
     if FRecordID <> '' then
     begin

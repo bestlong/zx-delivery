@@ -62,10 +62,6 @@ type
     { Private declarations }
     FSalesManID: string;
     //业务员标识
-    FPrefixID: string;
-    //前缀编号
-    FIDLength: integer;
-    //前缀长度
     procedure InitFormData(const nID: string);
     //载入数据
     procedure GetData(Sender: TObject; var nData: string);
@@ -83,7 +79,7 @@ implementation
 {$R *.dfm}
 uses
   IniFiles, ULibFun, UMgrControl, UFormCtrl, UAdjustForm, UFormBaseInfo,
-  USysGrid, USysDB, USysConst;
+  USysBusiness, USysGrid, USysDB, USysConst;
 
 var
   gForm: TfFormSalesMan = nil;
@@ -164,9 +160,6 @@ begin
   try
     LoadFormConfig(Self, nIni);
     LoadMCListBoxConfig(Name, InfoList1, nIni);
-
-    FPrefixID := nIni.ReadString(Name, 'IDPrefix', 'Yw');
-    FIDLength := nIni.ReadInteger(Name, 'IDLength', 8);
   finally
     nIni.Free;
   end;
@@ -347,10 +340,13 @@ begin
 
   if FSalesManID = '' then
   begin
-     nSQL := MakeSQLByForm(Self, sTable_Salesman, '', True, GetData, nList);
+    nID := GetSerialNo(sFlag_BusGroup, sFlag_SaleMan, False);
+    nList.Add(SF('S_ID', nID));
+    nSQL := MakeSQLByForm(Self, sTable_Salesman, '', True, GetData, nList);
   end else
   begin
-    nStr := 'S_ID=''' + FSalesManID + '''';
+    nID := FSalesManID;
+    nStr := SF('S_ID', nID);
     nSQL := MakeSQLByForm(Self, sTable_Salesman, nStr, False, GetData, nList);
   end;
 
@@ -358,17 +354,8 @@ begin
   FDM.ADOConn.BeginTrans;
   try
     FDM.ExecuteSQL(nSQL);
-
-    if FSalesManID = '' then
-    begin
-      i := FDM.GetFieldMax(sTable_Salesman, 'R_ID');
-      nID := FDM.GetSerialID2(FPrefixID, sTable_Salesman, 'R_ID', 'S_ID', i);
-
-      nSQL := 'Update %s Set S_ID=''%s'' Where R_ID=%d';
-      nSQL := Format(nSQL, [sTable_Salesman, nID, i]);
-      FDM.ExecuteSQL(nSQL);
-    end else nID := FSalesManID;
-
+    //xxxxx
+    
     if FSalesManID <> '' then
     begin
       nSQL := 'Delete From %s Where I_Group=''%s'' and I_ItemID=''%s''';

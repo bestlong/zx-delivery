@@ -28,6 +28,10 @@ const
   cBC_GetZhiKaMoney           = $0011;   //获取纸卡可用金
   cBC_CustomerHasMoney        = $0012;   //客户是否有余额
 
+  cBC_SaveBills               = $0020;   //保存交货单列表
+  cBC_DeleteBill              = $0021;   //删除交货单
+  cBC_ModifyBillTruck         = $0022;   //修改车牌号
+
   cBC_PrintCode               = $0056;
   cBC_PrinterEnable           = $0057;
   cBC_PrintFixCode            = $0058;
@@ -67,18 +71,14 @@ resourcestring
   sBus_ServiceStatus          = 'Bus_ServiceStatus';    //服务状态
   sBus_GetQueryField          = 'Bus_GetQueryField';    //查询的字段
 
-  sBus_CreateSaleBill         = 'Bus_Create_SaleBill';  //创建交货单
-  sBus_ModifySaleBill         = 'Bus_Modify_SaleBill';  //修改交货单
-  sBus_DeleteSaleBill         = 'Bus_Delete_SaleBill';  //删除交货单
+  sBus_BusinessSaleBill       = 'sBus_BusinessSaleBill';//交货单相关
   sBus_BusinessCommand        = 'Bus_BusinessCommand';  //业务指令
 
   {*client function name*}
   sCLI_ServiceStatus          = 'CLI_ServiceStatus';    //服务状态
   sCLI_GetQueryField          = 'CLI_GetQueryField';    //查询的字段
 
-  sCLI_CreateSaleBill         = 'CLI_Create_SaleBill';  //创建交货单
-  sCLI_ModifySaleBill         = 'CLI_Modify_SaleBill';  //修改交货单
-  sCLI_DeleteSaleBill         = 'CLI_Delete_SaleBill';  //删除交货单
+  sCLI_BusinessSaleBill       = 'CLI_BusinessSaleBill'; //交货单业务
   sCLI_BusinessCommand        = 'CLI_BusinessCommand';  //业务指令
 
 implementation

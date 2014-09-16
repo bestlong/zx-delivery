@@ -3,51 +3,51 @@ inherited fFormSalesMan: TfFormSalesMan
   Top = 166
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  ClientHeight = 500
-  ClientWidth = 485
+  ClientHeight = 405
+  ClientWidth = 403
   OldCreateOrder = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   object dxLayoutControl1: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 485
-    Height = 500
+    Width = 403
+    Height = 405
     Align = alClient
     TabOrder = 0
     TabStop = False
     AutoContentSizes = [acsWidth, acsHeight]
     LookAndFeel = FDM.dxLayoutWeb1
     object EditName: TcxTextEdit
-      Left = 87
-      Top = 45
+      Left = 81
+      Top = 36
       Hint = 'T.S_Name'
       ParentFont = False
       Properties.MaxLength = 30
       TabOrder = 0
       OnKeyDown = FormKeyDown
-      Width = 173
+      Width = 138
     end
     object EditMemo: TcxMemo
-      Left = 87
-      Top = 120
+      Left = 81
+      Top = 111
       Hint = 'T.S_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
       TabOrder = 3
-      Height = 62
-      Width = 460
+      Height = 50
+      Width = 368
     end
     object InfoList1: TcxMCListBox
-      Left = 29
-      Top = 281
-      Width = 496
-      Height = 132
+      Left = 23
+      Top = 248
+      Width = 397
+      Height = 105
       HeaderSections = <
         item
           Text = #20449#24687#39033
@@ -56,7 +56,7 @@ inherited fFormSalesMan: TfFormSalesMan
         item
           AutoSize = True
           Text = #20869#23481
-          Width = 387
+          Width = 288
         end>
       ParentFont = False
       Style.BorderStyle = cbsOffice11
@@ -64,8 +64,8 @@ inherited fFormSalesMan: TfFormSalesMan
       TabOrder = 8
     end
     object InfoItems: TcxComboBox
-      Left = 87
-      Top = 227
+      Left = 81
+      Top = 198
       ParentFont = False
       Properties.DropDownRows = 15
       Properties.ImmediateDropDown = False
@@ -73,65 +73,65 @@ inherited fFormSalesMan: TfFormSalesMan
       Properties.ItemHeight = 20
       Properties.MaxLength = 30
       TabOrder = 4
-      Width = 94
+      Width = 75
     end
     object EditInfo: TcxTextEdit
-      Left = 87
-      Top = 254
+      Left = 81
+      Top = 223
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 6
-      Width = 112
+      Width = 89
     end
     object BtnAdd: TButton
-      Left = 400
-      Top = 227
-      Width = 56
-      Height = 22
+      Left = 335
+      Top = 198
+      Width = 45
+      Height = 17
       Caption = #28155#21152
       TabOrder = 5
       OnClick = BtnAddClick
     end
     object BtnDel: TButton
-      Left = 400
-      Top = 254
-      Width = 56
-      Height = 22
+      Left = 335
+      Top = 223
+      Width = 45
+      Height = 18
       Caption = #21024#38500
       TabOrder = 7
       OnClick = BtnDelClick
     end
     object BtnOK: TButton
-      Left = 290
-      Top = 456
-      Width = 88
-      Height = 27
+      Left = 246
+      Top = 372
+      Width = 70
+      Height = 21
       Caption = #20445#23384
       TabOrder = 10
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
-      Left = 383
-      Top = 456
-      Width = 88
-      Height = 27
+      Left = 321
+      Top = 372
+      Width = 71
+      Height = 21
       Caption = #21462#28040
       TabOrder = 11
       OnClick = BtnExitClick
     end
     object cxTextEdit3: TcxTextEdit
-      Left = 87
-      Top = 70
+      Left = 81
+      Top = 61
       Hint = 'T.S_Phone'
       ParentFont = False
       Properties.MaxLength = 15
       TabOrder = 1
       OnKeyDown = FormKeyDown
-      Width = 199
+      Width = 159
     end
     object EditArea: TcxButtonEdit
-      Left = 87
-      Top = 95
+      Left = 81
+      Top = 86
       Hint = 'T.S_Area'
       ParentFont = False
       Properties.Buttons = <
@@ -143,17 +143,17 @@ inherited fFormSalesMan: TfFormSalesMan
       Properties.OnButtonClick = EditAreaPropertiesButtonClick
       TabOrder = 2
       OnKeyDown = FormKeyDown
-      Width = 152
+      Width = 121
     end
     object Check1: TcxCheckBox
-      Left = 14
-      Top = 456
+      Left = 11
+      Top = 372
       Hint = 'T.S_InValid'
       Caption = #26080#25928#20154#21592': '#27491#24120#26597#35810#26102#19981#20104#26174#31034'.'
       ParentFont = False
       TabOrder = 9
       Transparent = True
-      Width = 227
+      Width = 220
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       ShowCaption = False

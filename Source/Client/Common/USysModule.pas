@@ -18,8 +18,9 @@ uses
   UFormGetContract, UFormZhiKaAdjust, UFormZhiKaFixMoney, UFrameZhiKaVerify,
   UFormZhiKaVerify, UFrameShouJu, UFormShouJu, UFramePayment, UFormPayment,
   UFrameCustomerCredit, UFormCustomerCredit, UFrameCusAccount,
-  UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormGetZhiKa, UFormBill,
-  UFormGetTruck;
+  UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormGetZhiKa, UFrameBill,
+  UFormBill, UFormGetTruck, UFrameZhiKaDetail, UFormZhiKaFreeze,
+  UFormZhiKaPrice, UFrameQueryDiapatch, UFrameTruckQuery;
 
 procedure InitSystemObject;
 procedure RunSystemObject;

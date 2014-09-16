@@ -3,43 +3,17 @@ inherited fFrameCusAccount: TfFrameCusAccount
   Height = 407
   inherited ToolBar1: TToolBar
     Width = 788
-    ButtonWidth = 79
     inherited BtnAdd: TToolButton
       Visible = False
     end
     inherited BtnEdit: TToolButton
-      Left = 79
       Visible = False
     end
     inherited BtnDel: TToolButton
-      Left = 158
       Visible = False
     end
     inherited S1: TToolButton
-      Left = 237
       Visible = False
-    end
-    inherited BtnRefresh: TToolButton
-      Left = 245
-      Caption = '    '#21047#26032'    '
-    end
-    inherited S2: TToolButton
-      Left = 324
-    end
-    inherited BtnPrint: TToolButton
-      Left = 332
-    end
-    inherited BtnPreview: TToolButton
-      Left = 411
-    end
-    inherited BtnExport: TToolButton
-      Left = 490
-    end
-    inherited S3: TToolButton
-      Left = 569
-    end
-    inherited BtnExit: TToolButton
-      Left = 577
     end
   end
   inherited cxGrid1: TcxGrid
@@ -55,7 +29,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     Height = 135
     object cxTextEdit3: TcxTextEdit [0]
       Left = 81
-      Top = 93
+      Top = 96
       Hint = 'T.A_CID'
       ParentFont = False
       TabOrder = 3
@@ -77,7 +51,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit4: TcxTextEdit [2]
       Left = 259
-      Top = 93
+      Top = 96
       Hint = 'T.C_Name'
       ParentFont = False
       TabOrder = 4
@@ -99,7 +73,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit5: TcxTextEdit [4]
       Left = 710
-      Top = 93
+      Top = 96
       Hint = 'T.C_Bank'
       ParentFont = False
       TabOrder = 6
@@ -107,7 +81,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit1: TcxTextEdit [5]
       Left = 472
-      Top = 93
+      Top = 96
       Hint = 'T.C_Account'
       ParentFont = False
       TabOrder = 5
