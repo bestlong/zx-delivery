@@ -44,6 +44,12 @@ type
     class function FunctionName: string; override;
   end;
 
+  TClientBusinessSaleBill = class(TClient2MITWorker)
+  public
+    function GetFlagStr(const nFlag: Integer): string; override;
+    class function FunctionName: string; override;
+  end;
+
 resourcestring
   sParam_NoHintOnError     = 'NH';
 
@@ -258,7 +264,24 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
+class function TClientBusinessSaleBill.FunctionName: string;
+begin
+  Result := sCLI_BusinessSaleBill;
+end;
+
+function TClientBusinessSaleBill.GetFlagStr(const nFlag: Integer): string;
+begin
+  Result := inherited GetFlagStr(nFlag);
+
+  case nFlag of
+   cWorker_GetPackerName : Result := sBus_BusinessCommand;
+   cWorker_GetMITName    : Result := sBus_BusinessSaleBill;
+  end;
+end;
+
 initialization
   gBusinessWorkerManager.RegisteWorker(TClientWorkerQueryField);
   gBusinessWorkerManager.RegisteWorker(TClientBusinessCommand);
+  gBusinessWorkerManager.RegisteWorker(TClientBusinessSaleBill);
 end.

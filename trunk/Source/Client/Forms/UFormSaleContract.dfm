@@ -3,19 +3,19 @@ inherited fFormSaleContract: TfFormSaleContract
   Top = 235
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  ClientHeight = 606
-  ClientWidth = 578
+  ClientHeight = 518
+  ClientWidth = 502
   OldCreateOrder = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   object dxLayoutControl1: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 578
-    Height = 606
+    Width = 502
+    Height = 518
     Align = alClient
     TabOrder = 0
     TabStop = False
@@ -23,38 +23,38 @@ inherited fFormSaleContract: TfFormSaleContract
     AutoControlAlignment = False
     LookAndFeel = FDM.dxLayoutWeb1
     object EditMemo: TcxMemo
-      Left = 87
-      Top = 225
+      Left = 81
+      Top = 211
       Hint = 'T.C_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
       TabOrder = 12
-      Height = 50
-      Width = 547
+      Height = 40
+      Width = 437
     end
     object BtnOK: TButton
-      Left = 385
-      Top = 564
-      Width = 87
-      Height = 28
+      Left = 347
+      Top = 484
+      Width = 70
+      Height = 23
       Caption = #20445#23384
       TabOrder = 19
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
-      Left = 477
-      Top = 564
-      Width = 87
-      Height = 28
+      Left = 422
+      Top = 484
+      Width = 69
+      Height = 23
       Caption = #21462#28040
       TabOrder = 20
       OnClick = BtnExitClick
     end
     object EditID: TcxButtonEdit
-      Left = 87
-      Top = 45
+      Left = 81
+      Top = 36
       Hint = 'T.C_ID'
       HelpType = htKeyword
       HelpKeyword = 'NU'
@@ -66,13 +66,13 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.MaxLength = 15
       Properties.OnButtonClick = EditIDPropertiesButtonClick
       TabOrder = 0
-      Width = 219
+      Width = 175
     end
     object StockList1: TcxMCListBox
-      Left = 29
-      Top = 370
-      Width = 591
-      Height = 215
+      Left = 23
+      Top = 338
+      Width = 473
+      Height = 172
       HeaderSections = <
         item
           DataIndex = 1
@@ -103,8 +103,8 @@ inherited fFormSaleContract: TfFormSaleContract
       OnClick = StockList1Click
     end
     object EditSalesMan: TcxComboBox
-      Left = 87
-      Top = 95
+      Left = 81
+      Top = 86
       Hint = 'T.C_SaleMan'
       ParentFont = False
       Properties.DropDownRows = 20
@@ -113,20 +113,20 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.OnEditValueChanged = EditSalesManPropertiesEditValueChanged
       TabOrder = 2
       OnKeyDown = EditSalesManKeyDown
-      Width = 182
+      Width = 145
     end
     object cxTextEdit1: TcxTextEdit
-      Left = 87
-      Top = 70
+      Left = 81
+      Top = 61
       Hint = 'T.C_Project'
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 1
-      Width = 152
+      Width = 121
     end
     object EditCustomer: TcxComboBox
-      Left = 332
-      Top = 95
+      Left = 289
+      Top = 86
       Hint = 'T.C_Customer'
       ParentFont = False
       Properties.DropDownRows = 25
@@ -134,29 +134,29 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.ItemHeight = 20
       TabOrder = 3
       OnKeyDown = EditSalesManKeyDown
-      Width = 152
+      Width = 121
     end
     object cxTextEdit2: TcxTextEdit
-      Left = 332
-      Top = 120
+      Left = 289
+      Top = 111
       Hint = 'T.C_Addr'
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 5
-      Width = 152
+      Width = 121
     end
     object cxTextEdit3: TcxTextEdit
-      Left = 332
-      Top = 145
+      Left = 289
+      Top = 136
       Hint = 'T.C_Delivery'
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 7
-      Width = 152
+      Width = 121
     end
     object EditPayment: TcxComboBox
-      Left = 87
-      Top = 170
+      Left = 81
+      Top = 161
       Hint = 'T.C_Payment'
       ParentFont = False
       Properties.DropDownRows = 20
@@ -164,52 +164,52 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.ItemHeight = 20
       Properties.MaxLength = 20
       TabOrder = 8
-      Width = 182
+      Width = 145
     end
     object cxTextEdit4: TcxTextEdit
-      Left = 332
-      Top = 170
+      Left = 289
+      Top = 161
       Hint = 'T.C_Approval'
       ParentFont = False
       Properties.MaxLength = 30
       TabOrder = 9
-      Width = 152
+      Width = 121
     end
     object EditName: TcxTextEdit
-      Left = 63
-      Top = 320
+      Left = 57
+      Top = 288
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 13
-      Width = 150
+      Width = 120
     end
     object EditMoney: TcxTextEdit
-      Left = 252
-      Top = 345
+      Left = 216
+      Top = 313
       ParentFont = False
       TabOrder = 16
       OnExit = EditValueExit
-      Width = 150
+      Width = 120
     end
     object EditPrice: TcxTextEdit
-      Left = 63
-      Top = 345
+      Left = 57
+      Top = 313
       ParentFont = False
       TabOrder = 15
       OnExit = EditValueExit
-      Width = 150
+      Width = 120
     end
     object EditValue: TcxTextEdit
-      Left = 252
-      Top = 320
+      Left = 216
+      Top = 288
       ParentFont = False
       TabOrder = 14
       OnExit = EditValueExit
-      Width = 150
+      Width = 120
     end
     object EditDate: TcxButtonEdit
-      Left = 87
-      Top = 120
+      Left = 81
+      Top = 111
       Hint = 'T.C_Date'
       ParentFont = False
       Properties.Buttons = <
@@ -220,11 +220,11 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.MaxLength = 20
       Properties.OnButtonClick = EditDatePropertiesButtonClick
       TabOrder = 4
-      Width = 182
+      Width = 145
     end
     object cxButtonEdit1: TcxButtonEdit
-      Left = 87
-      Top = 145
+      Left = 81
+      Top = 136
       Hint = 'T.C_Area'
       ParentFont = False
       Properties.Buttons = <
@@ -235,37 +235,37 @@ inherited fFormSaleContract: TfFormSaleContract
       Properties.ReadOnly = True
       Properties.OnButtonClick = cxButtonEdit1PropertiesButtonClick
       TabOrder = 6
-      Width = 182
+      Width = 145
     end
     object Check1: TcxCheckBox
-      Left = 14
-      Top = 568
+      Left = 11
+      Top = 486
       Caption = #34394#25311#21512#21516': '#21150#29702#32440#21345#26102#20801#35768#21464#26356#19994#21153#21592#21644#23458#25143#21517#31216'.'
       ParentFont = False
       TabOrder = 18
       Transparent = True
-      Width = 349
+      Width = 300
     end
     object EditDays: TcxTextEdit
-      Left = 87
-      Top = 195
+      Left = 81
+      Top = 186
       Hint = 'T.C_ZKDays'
       ParentFont = False
       TabOrder = 10
       Text = '1'
-      Width = 182
+      Width = 145
     end
     object cxLabel1: TcxLabel
-      Left = 274
-      Top = 195
+      Left = 231
+      Top = 186
       AutoSize = False
       Caption = #22825'  '#27880':'#29992#25143#38656#35201#22312#25351#23450#26102#38271#20869#23558#27700#27877#25552#23436'.'
       ParentFont = False
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 335
-      AnchorY = 208
+      Height = 20
+      Width = 268
+      AnchorY = 196
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       ShowCaption = False

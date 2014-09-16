@@ -2,59 +2,64 @@ inherited fFormAuthorize: TfFormAuthorize
   Left = 438
   Top = 418
   Caption = #25509#20837#30003#35831
-  ClientHeight = 244
-  ClientWidth = 438
+  ClientHeight = 210
+  ClientWidth = 371
   Position = poDesktopCenter
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 438
-    Height = 244
+    Width = 371
+    Height = 210
     inherited BtnOK: TButton
-      Left = 256
-      Top = 202
+      Left = 225
+      Top = 177
       TabOrder = 5
     end
     inherited BtnExit: TButton
-      Left = 343
-      Top = 202
+      Left = 295
+      Top = 177
       TabOrder = 6
     end
     object EditName: TcxTextEdit [2]
-      Left = 87
-      Top = 73
+      Left = 81
+      Top = 61
+      ParentFont = False
       Properties.MaxLength = 100
       Properties.ReadOnly = False
       TabOrder = 1
-      Width = 121
+      Width = 96
     end
     object EditMAC: TcxTextEdit [3]
-      Left = 87
-      Top = 45
+      Left = 81
+      Top = 36
+      ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 0
-      Width = 121
+      Width = 96
     end
     object EditFact: TcxTextEdit [4]
-      Left = 87
-      Top = 101
+      Left = 81
+      Top = 86
+      ParentFont = False
       Properties.MaxLength = 32
       TabOrder = 2
-      Width = 121
+      Width = 96
     end
     object EditSerial: TcxTextEdit [5]
-      Left = 87
-      Top = 129
+      Left = 81
+      Top = 111
+      ParentFont = False
       Properties.MaxLength = 32
       TabOrder = 3
-      Width = 121
+      Width = 96
     end
     object EditDepart: TcxTextEdit [6]
-      Left = 87
-      Top = 157
+      Left = 81
+      Top = 136
+      ParentFont = False
       Properties.MaxLength = 32
       TabOrder = 4
-      Width = 121
+      Width = 96
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

@@ -1,31 +1,30 @@
 inherited fFormZKFreeze: TfFormZKFreeze
   Left = 327
   Top = 288
-  ClientHeight = 310
-  ClientWidth = 445
+  ClientHeight = 388
+  ClientWidth = 556
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
-  TextHeight = 12
+  PixelsPerInch = 120
+  TextHeight = 15
   inherited dxLayout1: TdxLayoutControl
-    Width = 445
-    Height = 310
-    AutoContentSizes = [acsWidth, acsHeight]
+    Width = 556
+    Height = 388
     inherited BtnOK: TButton
-      Left = 299
-      Top = 277
+      Left = 374
+      Top = 346
       TabOrder = 6
     end
     inherited BtnExit: TButton
-      Left = 369
-      Top = 277
+      Left = 461
+      Top = 346
       TabOrder = 7
     end
     object Radio1: TcxRadioButton [2]
-      Left = 23
-      Top = 216
-      Width = 113
-      Height = 17
+      Left = 29
+      Top = 264
+      Width = 141
+      Height = 21
       Caption = #20923#32467#21253#21547#35813#21697#31181#30340#25152#26377#32440#21345'.'
       Checked = True
       ParentColor = False
@@ -33,50 +32,50 @@ inherited fFormZKFreeze: TfFormZKFreeze
       TabStop = True
     end
     object Radio2: TcxRadioButton [3]
-      Left = 23
-      Top = 238
-      Width = 113
-      Height = 17
+      Left = 29
+      Top = 290
+      Width = 141
+      Height = 21
       Caption = #35299#38500#20923#32467#21253#21547#35813#21697#31181#30340#32440#21345'.'
       ParentColor = False
       TabOrder = 5
     end
     object Check1: TcxCheckBox [4]
-      Left = 23
-      Top = 177
+      Left = 29
+      Top = 220
       Caption = #20840#36873'/'#20840#19981#36873'('#34955#35013')'
       ParentFont = False
       Properties.OnEditValueChanged = Check1PropertiesEditValueChanged
       TabOrder = 1
       Transparent = True
-      Width = 135
+      Width = 169
     end
     object cxLabel1: TcxLabel [5]
-      Left = 23
-      Top = 203
+      Left = 29
+      Top = 249
       AutoSize = False
       ParentFont = False
       Properties.LineOptions.Alignment = cxllaBottom
       Properties.LineOptions.Visible = True
       Transparent = True
-      Height = 8
-      Width = 362
+      Height = 10
+      Width = 452
     end
     object Check2: TcxCheckBox [6]
-      Left = 163
-      Top = 177
+      Left = 203
+      Top = 220
       Caption = #20840#36873'/'#20840#19981#36873'('#25955#35013')'
       ParentFont = False
       Properties.OnEditValueChanged = Check1PropertiesEditValueChanged
       TabOrder = 2
       Transparent = True
-      Width = 135
+      Width = 169
     end
     object ListStock: TcxCheckListBox [7]
-      Left = 23
-      Top = 36
-      Width = 394
-      Height = 136
+      Left = 29
+      Top = 45
+      Width = 492
+      Height = 170
       Images = cxImageList1
       Items = <>
       ParentFont = False
@@ -86,8 +85,6 @@ inherited fFormZKFreeze: TfFormZKFreeze
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
-        AutoAligns = [aaHorizontal]
-        AlignVert = avClient
         Caption = #27700#27877#21697#31181
         object dxLayout1Item9: TdxLayoutItem
           Caption = #21697#31181#21015#34920':'

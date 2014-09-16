@@ -83,10 +83,6 @@ type
     { Private declarations }
     FCustomerID: string;
     //客户标识
-    FPrefixID: string;
-    //前缀编号
-    FIDLength: integer;
-    //前缀长度
     procedure InitFormData(const nID: string);
     //载入数据
     procedure GetData(Sender: TObject; var nData: string);
@@ -185,9 +181,6 @@ begin
   try
     LoadFormConfig(Self, nIni);
     LoadMCListBoxConfig(Name, InfoList1, nIni);
-
-    FPrefixID := nIni.ReadString(Name, 'IDPrefix', 'KH');
-    FIDLength := nIni.ReadInteger(Name, 'IDLength', 8);
   finally
     nIni.Free;
   end;

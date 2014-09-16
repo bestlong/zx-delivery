@@ -1,59 +1,59 @@
 inherited fFormShouJu: TfFormShouJu
   Left = 684
   Top = 370
-  ClientHeight = 315
-  ClientWidth = 610
+  ClientHeight = 282
+  ClientWidth = 512
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 610
-    Height = 315
+    Width = 512
+    Height = 282
     inherited BtnOK: TButton
-      Left = 428
-      Top = 273
+      Left = 366
+      Top = 249
       TabOrder = 11
     end
     inherited BtnExit: TButton
-      Left = 515
-      Top = 273
+      Left = 436
+      Top = 249
       TabOrder = 12
     end
     object EditDate: TcxDateEdit [2]
-      Left = 87
-      Top = 45
+      Left = 81
+      Top = 36
       Hint = 'T.S_Date'
       ParentFont = False
       Properties.Kind = ckDateTime
       TabOrder = 0
-      Width = 207
+      Width = 165
     end
     object EditMan: TcxTextEdit [3]
-      Left = 357
-      Top = 45
+      Left = 309
+      Top = 36
       Hint = 'T.S_Man'
       ParentFont = False
       Properties.MaxLength = 32
       TabOrder = 1
-      Width = 218
+      Width = 174
     end
     object cxLabel2: TcxLabel [4]
-      Left = 29
-      Top = 70
+      Left = 23
+      Top = 61
       AutoSize = False
       ParentFont = False
       Properties.Alignment.Vert = taBottomJustify
       Properties.LineOptions.Alignment = cxllaBottom
       Properties.LineOptions.Visible = True
       Transparent = True
-      Height = 19
-      Width = 576
-      AnchorY = 89
+      Height = 15
+      Width = 461
+      AnchorY = 76
     end
     object EditID: TcxButtonEdit [5]
-      Left = 87
-      Top = 94
+      Left = 81
+      Top = 81
       Hint = 'T.S_Code'
       HelpType = htKeyword
       ParentFont = False
@@ -64,71 +64,71 @@ inherited fFormShouJu: TfFormShouJu
       Properties.MaxLength = 15
       Properties.OnButtonClick = EditIDPropertiesButtonClick
       TabOrder = 3
-      Width = 207
+      Width = 165
     end
     object EditName: TcxTextEdit [6]
-      Left = 87
-      Top = 119
+      Left = 81
+      Top = 106
       Hint = 'T.S_Sender'
       ParentFont = False
       Properties.MaxLength = 100
       TabOrder = 5
-      Width = 504
+      Width = 403
     end
     object EditReason: TcxTextEdit [7]
-      Left = 87
-      Top = 144
+      Left = 81
+      Top = 131
       Hint = 'T.S_Reason'
       ParentFont = False
       Properties.MaxLength = 100
       TabOrder = 6
-      Width = 504
+      Width = 403
     end
     object EditMoney: TcxTextEdit [8]
-      Left = 87
-      Top = 169
+      Left = 81
+      Top = 156
       Hint = 'T.S_Money'
       ParentFont = False
       TabOrder = 7
       OnExit = EditMoneyExit
-      Width = 125
+      Width = 100
     end
     object cxLabel1: TcxLabel [9]
-      Left = 217
-      Top = 169
+      Left = 186
+      Top = 156
       AutoSize = False
       Caption = #20803
       ParentFont = False
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 32
-      AnchorY = 182
+      Height = 20
+      Width = 25
+      AnchorY = 166
     end
     object EditBig: TcxTextEdit [10]
-      Left = 312
-      Top = 169
+      Left = 274
+      Top = 156
       Hint = 'T.S_BigMoney'
       ParentFont = False
       Properties.MaxLength = 50
       TabOrder = 9
-      Width = 261
+      Width = 208
     end
     object EditMemo: TcxMemo [11]
-      Left = 87
-      Top = 199
+      Left = 81
+      Top = 181
       Hint = 'T.S_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
       TabOrder = 10
-      Height = 57
-      Width = 504
+      Height = 46
+      Width = 403
     end
     object EditBank: TcxComboBox [12]
-      Left = 357
-      Top = 94
+      Left = 309
+      Top = 81
       Hint = 'T.S_Bank'
       ParentFont = False
       Properties.DropDownRows = 16
@@ -137,7 +137,7 @@ inherited fFormShouJu: TfFormShouJu
       Properties.ItemHeight = 18
       Properties.MaxLength = 35
       TabOrder = 4
-      Width = 152
+      Width = 121
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

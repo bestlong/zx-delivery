@@ -1,44 +1,44 @@
 inherited fFormZhiKa: TfFormZhiKa
   Left = 629
   Top = 200
-  ClientHeight = 517
-  ClientWidth = 502
+  ClientHeight = 431
+  ClientWidth = 434
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 502
-    Height = 517
+    Width = 434
+    Height = 431
     AutoControlAlignment = False
     inherited BtnOK: TButton
-      Left = 320
-      Top = 475
+      Left = 288
+      Top = 398
       TabOrder = 15
     end
     inherited BtnExit: TButton
-      Left = 407
-      Top = 475
+      Left = 358
+      Top = 398
       TabOrder = 16
     end
     object ListDetail: TcxListView [2]
-      Left = 29
-      Top = 246
-      Width = 500
-      Height = 187
+      Left = 23
+      Top = 218
+      Width = 400
+      Height = 150
       Checkboxes = True
       Columns = <
         item
           Caption = #27700#27877#31867#22411
-          Width = 150
+          Width = 120
         end
         item
           Caption = #21333#20215'('#20803'/'#21544')'
-          Width = 125
+          Width = 100
         end
         item
           Caption = #21150#29702#37327'('#21544')'
-          Width = 125
+          Width = 100
         end>
       HideSelection = False
       ParentFont = False
@@ -51,32 +51,32 @@ inherited fFormZhiKa: TfFormZhiKa
       OnClick = ListDetailClick
     end
     object EditStock: TcxTextEdit [3]
-      Left = 63
-      Top = 441
+      Left = 57
+      Top = 366
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 11
-      Width = 152
+      Width = 122
     end
     object EditPrice: TcxTextEdit [4]
-      Left = 228
-      Top = 441
+      Left = 205
+      Top = 366
       ParentFont = False
       Properties.OnEditValueChanged = EditPricePropertiesEditValueChanged
       TabOrder = 12
-      Width = 97
+      Width = 78
     end
     object EditValue: TcxTextEdit [5]
-      Left = 376
-      Top = 441
+      Left = 334
+      Top = 366
       ParentFont = False
       Properties.OnEditValueChanged = EditPricePropertiesEditValueChanged
       TabOrder = 13
-      Width = 97
+      Width = 77
     end
     object EditCID: TcxButtonEdit [6]
-      Left = 307
-      Top = 45
+      Left = 269
+      Top = 36
       ParentFont = False
       Properties.Buttons = <
         item
@@ -87,29 +87,29 @@ inherited fFormZhiKa: TfFormZhiKa
       TabOrder = 1
       OnExit = EditCIDExit
       OnKeyPress = EditCIDKeyPress
-      Width = 152
+      Width = 121
     end
     object EditPName: TcxTextEdit [7]
-      Left = 87
-      Top = 73
+      Left = 81
+      Top = 61
       ParentFont = False
       Properties.MaxLength = 100
       TabOrder = 2
-      Width = 152
+      Width = 121
     end
     object EditSMan: TcxComboBox [8]
-      Left = 87
-      Top = 98
+      Left = 81
+      Top = 86
       ParentFont = False
       Properties.DropDownRows = 20
       Properties.ItemHeight = 18
       Properties.OnEditValueChanged = EditSManPropertiesEditValueChanged
       TabOrder = 3
-      Width = 152
+      Width = 121
     end
     object EditCustom: TcxComboBox [9]
-      Left = 87
-      Top = 123
+      Left = 81
+      Top = 111
       ParentFont = False
       Properties.DropDownRows = 20
       Properties.ImmediateDropDown = False
@@ -117,11 +117,11 @@ inherited fFormZhiKa: TfFormZhiKa
       Properties.ItemHeight = 18
       TabOrder = 4
       OnKeyPress = EditCustomKeyPress
-      Width = 152
+      Width = 121
     end
     object EditLading: TcxComboBox [10]
-      Left = 87
-      Top = 148
+      Left = 81
+      Top = 136
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.DropDownRows = 20
@@ -133,63 +133,64 @@ inherited fFormZhiKa: TfFormZhiKa
         'X=X'#12289#36816#21368)
       Properties.MaxLength = 20
       TabOrder = 5
-      Width = 157
+      Width = 125
     end
     object EditPayment: TcxComboBox [11]
-      Left = 87
-      Top = 173
+      Left = 81
+      Top = 161
       ParentFont = False
       Properties.DropDownRows = 20
       Properties.IncrementalSearch = False
       Properties.ItemHeight = 18
       Properties.MaxLength = 20
       TabOrder = 7
-      Width = 157
+      Width = 125
     end
     object EditMoney: TcxTextEdit [12]
-      Left = 307
-      Top = 173
+      Left = 269
+      Top = 161
       ParentFont = False
       TabOrder = 8
       Text = '0'
-      Width = 152
+      Width = 121
     end
     object cxLabel2: TcxLabel [13]
-      Left = 448
-      Top = 173
+      Left = 391
+      Top = 161
       AutoSize = False
       Caption = #20803
       ParentFont = False
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 25
-      AnchorY = 186
+      Height = 20
+      Width = 20
+      AnchorY = 171
     end
     object Check1: TcxCheckBox [14]
-      Left = 14
-      Top = 475
+      Left = 11
+      Top = 398
       Caption = #23436#25104#21518#25171#24320#38480#25552#31383#21475
       ParentFont = False
       TabOrder = 14
       Transparent = True
-      Width = 177
+      Width = 142
     end
     object EditDays: TcxDateEdit [15]
-      Left = 307
-      Top = 148
+      Left = 269
+      Top = 136
       ParentFont = False
       Properties.SaveTime = False
       Properties.ShowTime = False
       TabOrder = 6
-      Width = 152
+      Width = 121
     end
     object EditName: TcxTextEdit [16]
-      Left = 87
-      Top = 45
+      Left = 81
+      Top = 36
+      ParentFont = False
       Properties.MaxLength = 100
       TabOrder = 0
-      Width = 157
+      Width = 125
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

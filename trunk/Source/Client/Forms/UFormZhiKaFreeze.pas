@@ -175,8 +175,8 @@ begin
   if ListStock.Items[nIdx].State = cbsChecked then
   begin
     if nStock = '' then
-         nStock := '''' + gItems[nIdx].FName + ''''
-    else nStock := nStock + ',''' + gItems[nIdx].FName + '''';
+         nStock := '''' + gItems[nIdx].FID + ''''
+    else nStock := nStock + ',''' + gItems[nIdx].FID + '''';
   end;
 
   if nStock = '' then
@@ -185,7 +185,7 @@ begin
     ShowMsg('请选择有效的水泥品种', sHint); Exit;
   end;
 
-  nStr := '确定要%s所有包含[ %s ]的纸卡吗?';
+  nStr := '确定要%s所有包含被选中品种的纸卡吗?';
   if Radio1.Checked then
        nStr := Format(nStr, ['冻结', nStock])
   else nStr := Format(nStr, ['解冻', nStock]);
@@ -194,13 +194,13 @@ begin
   if Radio1.Checked then
   begin
     nStr := 'Update $ZK Set Z_TJStatus=''$Frz'' Where Z_ID In (' +
-            'Select D_ZID From $Dtl Where D_Stock In ($Stock)) and ' +
+            'Select D_ZID From $Dtl Where D_StockNo In ($Stock)) and ' +
             'IsNull(Z_InValid,'''')<>''$Yes'' And Z_ValidDays>$Now';
     //tjing
   end else
   begin
     nStr := 'Update $ZK Set Z_TJStatus=''$Ovr'' Where Z_ID In (' +
-            'Select D_ZID From $Dtl Where D_Stock In ($Stock)) and ' +
+            'Select D_ZID From $Dtl Where D_StockNo In ($Stock)) and ' +
             'Z_TJStatus=''$Frz''';
     //jtover
   end;

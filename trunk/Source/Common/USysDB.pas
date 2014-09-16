@@ -171,18 +171,21 @@ ResourceString
   sFlag_ContractItem  = 'ContractItem';              //合同信息项
   sFlag_SalesmanItem  = 'SalesmanItem';              //业务员信息项
   sFlag_ZhiKaItem     = 'ZhiKaItem';                 //纸卡信息项
+  sFlag_TruckQueue    = 'TruckQueue';                //车辆队列
                                                                
   sFlag_PaymentItem   = 'PaymentItem';               //付款方式信息项
   sFlag_PaymentItem2  = 'PaymentItem2';              //销售回款信息项
   sFlag_LadingItem    = 'LadingItem';                //提货方式信息项
 
   sFlag_HardSrvURL    = 'HardMonURL';
-  sFlag_MITSrvURL     = 'MITServiceURL';
+  sFlag_MITSrvURL     = 'MITServiceURL';             //服务地址
 
   sFlag_BusGroup      = 'BusFunction';               //业务编码组
   sFlag_BillNo        = 'Bus_Bill';                  //交货单号
   sFlag_PoundID       = 'Bus_Pound';                 //称重记录
   sFlag_Customer      = 'Bus_Customer';              //客户编号
+  sFlag_SaleMan       = 'Bus_SaleMan';               //业务员编号
+  sFlag_ZhiKa         = 'Bus_ZhiKa';                 //纸卡编号
   sFlag_ForceHint     = 'Bus_HintMsg';               //强制提示
   
   {*数据表*}
@@ -218,6 +221,7 @@ ResourceString
   sTable_Card         = 'S_Card';                    //销售磁卡
   sTable_Bill         = 'S_Bill';                    //提货单
   sTable_BillBak      = 'S_BillBak';                 //已删交货单
+  sTable_StockMatch   = 'S_StockMatch';              //品种映射
 
   sTable_Truck        = 'S_Truck';                   //车辆表
   sTable_ZTLines      = 'S_ZTLines';                 //装车道
@@ -580,8 +584,9 @@ ResourceString
        'L_LadeTime DateTime, L_LadeMan varChar(32), ' +
        'L_LadeLine varChar(15), L_LineName varChar(32), ' +
        'L_DaiTotal Integer , L_DaiNormal Integer, L_DaiBuCha Integer,' +
+       'L_OutFact DateTime, L_OutMan varChar(32),' +
        'L_Lading Char(1), L_IsVIP varChar(1), L_Seal varChar(100),' +
-       'L_Man varChar(32), L_Date DateTime, L_OutFact DateTime,' +
+       'L_Man varChar(32), L_Date DateTime,' +
        'L_DelMan varChar(8), L_DelDate DateTime)';
   {-----------------------------------------------------------------------------
    交货单表: Bill
@@ -600,18 +605,18 @@ ResourceString
    *.L_ZKMoney: 占用纸卡限提(Y/N)
    *.L_Truck: 车船号
    *.L_Status,L_NextStatus:状态控制
-   *.T_InTime,L_InMan: 进厂方形
+   *.L_InTime,L_InMan: 进厂放行
    *.L_PValue,L_PDate,L_PMan: 称皮重
    *.L_MValue,L_MDate,L_MMan: 称毛重
    *.L_LadeTime,L_LadeMan: 发货时间,发货人
    *.L_LadeLine,L_LineName: 发货通道
    *.L_DaiTotal,L_DaiNormal,L_DaiBuCha:总装,正常,补差
+   *.L_OutFact,L_OutMan: 出厂放行
    *.L_Lading: 提货方式(自提,送货)
    *.L_IsVIP:VIP单
    *.L_Seal: 封签号
    *.L_Man:操作人
    *.L_Date:创建时间
-   *.L_OutFact: 出厂日期
    *.L_DelMan: 交货单删除人员
    *.L_DelDate: 交货单删除时间
    *.L_Memo: 动作备注
@@ -637,7 +642,7 @@ ResourceString
    *.C_Date:办理时间
    *.C_Memo:备注信息
   -----------------------------------------------------------------------------}
-  
+
   sSQL_NewTruck = 'Create Table $Table(R_ID $Inc, T_Truck varChar(15), ' +
        'T_PY varChar(15), T_Owner varChar(32), T_Phone varChar(15), ' +
        'T_Used Char(1), T_PrePValue $Float, T_PrePMan varChar(32), ' +
@@ -790,6 +795,7 @@ begin
   AddSysTableItem(sTable_BaseInfo, sSQL_NewBaseInfo);
   AddSysTableItem(sTable_SerialBase, sSQL_NewSerialBase);
   AddSysTableItem(sTable_SerialStatus, sSQL_NewSerialStatus);
+  AddSysTableItem(sTable_StockMatch, sSQL_NewStockMatch);
   AddSysTableItem(sTable_WorkePC, sSQL_NewWorkePC);
 
   AddSysTableItem(sTable_Customer, sSQL_NewCustomer);

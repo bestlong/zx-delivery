@@ -31,36 +31,27 @@ const
   cFI_FrameMakeCard     = $0012;                     //办理磁卡
   cFI_FrameBill         = $0013;                     //开提货单
   cFI_FrameBillQuery    = $0014;                     //开单查询
-  cFI_FrameTruckQuery   = $0015;                     //车辆查询
-  cFI_FrameLadingDai    = $0016;                     //袋装提货
-  cFI_FramePoundQuery   = $0017;                     //磅房查询
-  cFI_FrameFangHuiQuery = $0019;                     //放灰查询
-  cFI_FrameZhanTaiQuery = $0020;                     //栈台查询
-  cFI_FrameZTDispatch   = $0021;                     //栈台调度
 
-  cFI_FrameStock        = $0022;                     //品种管理
-  cFI_FrameStockRecord  = $0023;                     //检验记录
-  cFI_FrameStockHuaYan  = $0025;                     //开化验单
-  cFI_FrameStockHY_Each = $0026;                     //随车开单
-  cFI_FrameShouJu       = $0027;                     //收据查询
+  cFI_FrameShouJu       = $0020;                     //收据查询
+  cFI_FrameZhiKaVerify  = $0021;                     //纸卡审核
+  cFI_FramePayment      = $0022;                     //销售回款
+  cFI_FrameCusCredit    = $0023;                     //信用管理
+  cFI_FrameJSWeek       = $0024;                     //结算周期
+  cFI_FrameSaleZZ       = $0025;                     //销售扎账
 
-  cFI_FrameZhiKaVerify  = $0051;                     //纸卡审核
-  cFI_FramePayment      = $0052;                     //销售回款
-  cFI_FramePaymentC     = $0053;                     //补缴差价
+  cFI_FrameLadingDai    = $0030;                     //袋装提货
+  cFI_FramePoundQuery   = $0031;                     //磅房查询
+  cFI_FrameFangHuiQuery = $0032;                     //放灰查询
+  cFI_FrameZhanTaiQuery = $0033;                     //栈台查询
+  cFI_FrameZTDispatch   = $0034;                     //栈台调度
 
-  cFI_FrameTruckQuery2  = $0055;                     //车辆查询
-  cFI_FrameCusAccountQuery = $0056;                  //客户账户
-  cFI_FrameCusInOutMoney   = $0057;                  //出入金明细
-
-  cFI_FrameSaleTotalQuery  = $0058;                  //累计发货
-  cFI_FrameSaleDetailQuery = $0059;                  //发货明细
-  cFI_FrameSaleZhiKaQuery  = $0060;                  //用户业务
-
-  cFI_FrameJSWeek       = $0063;                     //结算周期
-  cFI_FrameSaleZZ       = $0065;                     //销售扎账
-  cFI_FrameCusCredit    = $0067;                     //信用管理
-  cFI_FrameZhiKaDetail  = $0068;                     //纸卡明细
-  cFI_FrameSaleJS       = $0069;                     //销售结算
+  cFI_FrameTruckQuery   = $0050;                     //车辆查询
+  cFI_FrameCusAccountQuery = $0051;                  //客户账户
+  cFI_FrameCusInOutMoney   = $0052;                  //出入金明细
+  cFI_FrameSaleTotalQuery  = $0053;                  //累计发货
+  cFI_FrameSaleDetailQuery = $0054;                  //发货明细
+  cFI_FrameZhiKaDetail  = $0055;                     //纸卡明细
+  cFI_FrameDispatchQuery = $0056;                    //调度查询
 
   cFI_FrameProvider     = $0102;                     //供应
   cFI_FrameProvideLog   = $0105;                     //供应日志
@@ -297,22 +288,13 @@ begin
   AddMenuModuleItem('MAIN_G01', cFI_FormLadSan, mtForm);
   AddMenuModuleItem('MAIN_G02', cFI_FrameFangHuiQuery);
 
-  AddMenuModuleItem('MAIN_K01', cFI_FrameStock);
-  AddMenuModuleItem('MAIN_K02', cFI_FrameStockRecord);
-  AddMenuModuleItem('MAIN_K03', cFI_FrameStockHuaYan);
-  AddMenuModuleItem('MAIN_K04', cFI_FormStockHuaYan, mtForm);
-  AddMenuModuleItem('MAIN_K05', cFI_FormStockHY_Each, mtForm);
-  AddMenuModuleItem('MAIN_K06', cFI_FrameStockHY_Each);
-
-  AddMenuModuleItem('MAIN_L01', cFI_FrameTruckQuery2);
+  AddMenuModuleItem('MAIN_L01', cFI_FrameTruckQuery);
   AddMenuModuleItem('MAIN_L02', cFI_FrameCusAccountQuery);
   AddMenuModuleItem('MAIN_L03', cFI_FrameCusInOutMoney);
-  AddMenuModuleItem('MAIN_L04', cFI_FormZhiKaQuery, mtForm);
-  AddMenuModuleItem('MAIN_L05', cFI_FrameBillQuery);
+  AddMenuModuleItem('MAIN_L05', cFI_FrameDispatchQuery);
   AddMenuModuleItem('MAIN_L06', cFI_FrameSaleDetailQuery);
   AddMenuModuleItem('MAIN_L07', cFI_FrameSaleTotalQuery);
   AddMenuModuleItem('MAIN_L08', cFI_FrameZhiKaDetail);
-  AddMenuModuleItem('MAIN_L09', cFI_FrameSaleJS);
 
   AddMenuModuleItem('MAIN_H01', cFI_FormTruckIn, mtForm);
   AddMenuModuleItem('MAIN_H02', cFI_FormTruckOut, mtForm);

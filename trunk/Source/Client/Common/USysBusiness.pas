@@ -11,6 +11,17 @@ uses
   UBusinessConst, ULibFun, UAdjustForm, UFormCtrl, UDataModule, UDataReport,
   cxMCListBox, USysConst, USysDB;
 
+type
+  TLadingStockItem = record
+    FID: string;         //编号
+    FType: string;       //类型
+    FName: string;       //名称
+    FParam: string;      //扩展
+  end;
+
+  TDynamicStockItemArray = array of TLadingStockItem;
+  //系统可用的品种列表
+  
 //------------------------------------------------------------------------------
 function AdjustHintToRead(const nHint: string): string;
 //调整提示内容
@@ -20,6 +31,8 @@ function GetSysValidDate: Integer;
 //获取系统有效期
 function GetSerialNo(const nGroup,nObject: string; nUseDate: Boolean = True): string;
 //获取串行编号
+function GetLadingStockItems(var nItems: TDynamicStockItemArray): Boolean;
+//可用品种列表
 
 function LoadSysDictItem(const nItem: string; const nList: TStrings): TDataSet;
 //读取系统字典项
@@ -61,6 +74,12 @@ function IsCustomerCreditValid(const nCusID: string): Boolean;
 
 function ShowPriceWhenBill: Boolean;
 //开单时显单价
+function SaveBill(const nBillData: string): string;
+//保存交货单
+function DeleteBill(const nBill: string): Boolean;
+//删除交货单
+function ChangeLadingTruckNo(const nBill,nTruck: string): Boolean;
+//更改提货车辆
 
 //------------------------------------------------------------------------------
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -123,6 +142,28 @@ begin
   end;
 end;
 
+//Date: 2014-09-05
+//Parm: 命令;数据;参数;输出
+//Desc: 调用中间件上的销售单据对象
+function CallBusinessSaleBill(const nCmd: Integer; const nData,nExt: string;
+  const nOut: PWorkerBusinessCommand): Boolean;
+var nIn: TWorkerBusinessCommand;
+    nWorker: TBusinessWorkerBase;
+begin
+  nWorker := nil;
+  try
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nExt;
+
+    nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessSaleBill);
+    //get worker
+    Result := nWorker.WorkActive(@nIn, nOut);
+  finally
+    gBusinessWorkerManager.RelaseWorker(nWorker);
+  end;
+end;
+
 //Date: 2014-09-04
 //Parm: 分组;对象;使用日期编码模式
 //Desc: 依据nGroup.nObject生成串行编号
@@ -157,6 +198,40 @@ begin
   if CallBusinessCommand(cBC_IsSystemExpired, '', '', @nOut) then
        Result := StrToInt(nOut.FData)
   else Result := 0;
+end;
+
+//Desc: 获取当前系统可用的水泥品种列表
+function GetLadingStockItems(var nItems: TDynamicStockItemArray): Boolean;
+var nStr: string;
+    nIdx: Integer;
+begin
+  nStr := 'Select D_Value,D_Memo,D_ParamB From $Table ' +
+          'Where D_Name=''$Name'' Order By D_Index ASC';
+  nStr := MacroValue(nStr, [MI('$Table', sTable_SysDict),
+                            MI('$Name', sFlag_StockItem)]);
+  //xxxxx
+
+  with FDM.QueryTemp(nStr) do
+  begin
+    SetLength(nItems, RecordCount);
+    if RecordCount > 0 then
+    begin
+      nIdx := 0;
+      First;
+
+      while not Eof do
+      begin
+        nItems[nIdx].FType := FieldByName('D_Memo').AsString;
+        nItems[nIdx].FName := FieldByName('D_Value').AsString;
+        nItems[nIdx].FID := FieldByName('D_ParamB').AsString;
+
+        Next;
+        Inc(nIdx);
+      end;
+    end;
+  end;
+
+  Result := Length(nItems) > 0;
 end;
 
 //------------------------------------------------------------------------------
@@ -579,6 +654,35 @@ begin
   else Result := False;
 end;
 
+//Date: 2014-09-15
+//Parm: 开单数据
+//Desc: 保存交货单,返回交货单号列表
+function SaveBill(const nBillData: string): string;
+var nOut: TWorkerBusinessCommand;
+begin
+  if CallBusinessSaleBill(cBC_SaveBills, nBillData, '', @nOut) then
+       Result := nOut.FData
+  else Result := '';
+end;
+
+//Date: 2014-09-15
+//Parm: 交货单号
+//Desc: 删除nBillID单据
+function DeleteBill(const nBill: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessSaleBill(cBC_DeleteBill, nBill, '', @nOut);
+end;
+
+//Date: 2014-09-15
+//Parm: 交货单;新车牌
+//Desc: 修改nBill的车牌为nTruck.
+function ChangeLadingTruckNo(const nBill,nTruck: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessSaleBill(cBC_ModifyBillTruck, nBill, nTruck, @nOut);
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 打印标识为nID的销售合同
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -721,7 +825,7 @@ begin
     if not QueryDlg(nStr, sAsk) then Exit;
   end;
 
-  nStr := 'Select * From %s b Where R_ID In(%s)';
+  nStr := 'Select * From %s b Where L_ID In(%s)';
   nStr := Format(nStr, [sTable_Bill, nBill]);
   //xxxxx
 
@@ -741,6 +845,10 @@ begin
 
   nParam.FName := 'UserName';
   nParam.FValue := gSysParam.FUserID;
+  FDR.AddParamItem(nParam);
+
+  nParam.FName := 'Company';
+  nParam.FValue := gSysParam.FHintText;
   FDR.AddParamItem(nParam);
 
   FDR.Dataset1.DataSet := FDM.SqlTemp;

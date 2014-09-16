@@ -2,56 +2,30 @@ inherited fFrameCusInOutMoney: TfFrameCusInOutMoney
   Width = 699
   inherited ToolBar1: TToolBar
     Width = 699
-    ButtonWidth = 79
     inherited BtnAdd: TToolButton
       Visible = False
     end
     inherited BtnEdit: TToolButton
-      Left = 79
       Visible = False
     end
     inherited BtnDel: TToolButton
-      Left = 158
       Visible = False
     end
     inherited S1: TToolButton
-      Left = 237
       Visible = False
-    end
-    inherited BtnRefresh: TToolButton
-      Left = 245
-      Caption = '    '#21047#26032'    '
-    end
-    inherited S2: TToolButton
-      Left = 324
-    end
-    inherited BtnPrint: TToolButton
-      Left = 332
-    end
-    inherited BtnPreview: TToolButton
-      Left = 411
-    end
-    inherited BtnExport: TToolButton
-      Left = 490
-    end
-    inherited S3: TToolButton
-      Left = 569
-    end
-    inherited BtnExit: TToolButton
-      Left = 577
     end
   end
   inherited cxGrid1: TcxGrid
-    Top = 200
+    Top = 202
     Width = 699
-    Height = 167
+    Height = 165
   end
   inherited dxLayout1: TdxLayoutControl
     Width = 699
     Height = 135
     object cxTextEdit3: TcxTextEdit [0]
       Left = 81
-      Top = 93
+      Top = 96
       Hint = 'T.M_CusID'
       ParentFont = False
       TabOrder = 2
@@ -73,7 +47,7 @@ inherited fFrameCusInOutMoney: TfFrameCusInOutMoney
     end
     object cxTextEdit4: TcxTextEdit [2]
       Left = 264
-      Top = 93
+      Top = 96
       Hint = 'T.M_CusName'
       ParentFont = False
       TabOrder = 3
@@ -95,7 +69,7 @@ inherited fFrameCusInOutMoney: TfFrameCusInOutMoney
     end
     object cxTextEdit5: TcxTextEdit [4]
       Left = 512
-      Top = 93
+      Top = 96
       Hint = 'T.M_Memo'
       ParentFont = False
       TabOrder = 4
@@ -136,7 +110,7 @@ inherited fFrameCusInOutMoney: TfFrameCusInOutMoney
     end
   end
   inherited cxSplitter1: TcxSplitter
-    Top = 192
+    Top = 194
     Width = 699
   end
   inherited TitlePanel1: TZnBitmapPanel

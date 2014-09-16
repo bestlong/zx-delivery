@@ -38,6 +38,9 @@ type
     EditZK: TcxTextEdit;
     dxLayout1Item5: TdxLayoutItem;
     dxLayout1Group2: TdxLayoutGroup;
+    dxLayout1Item6: TdxLayoutItem;
+    EditType: TcxComboBox;
+    dxLayout1Group3: TdxLayoutGroup;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure EditStockPropertiesChange(Sender: TObject);
@@ -62,8 +65,8 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, DB, IniFiles, UMgrControl, UAdjustForm, UFormBase, USysPopedom,
-  UDataModule, USysBusiness, USysDB, USysGrid, USysConst;
+  ULibFun, DB, IniFiles, UMgrControl, UAdjustForm, UFormBase, UBusinessPacker,
+  UDataModule, USysPopedom, USysBusiness, USysDB, USysGrid, USysConst;
 
 type
   TCommonInfo = record
@@ -289,6 +292,7 @@ begin
   //load stock into window
 
   gInfo.FShowPrice := ShowPriceWhenBill;
+  EditType.ItemIndex := 0;
   ActiveControl := EditTruck;
 end;
 
@@ -414,6 +418,13 @@ begin
     nIdx := StrToInt(GetCtrlData(EditStock));
     with gStockList[nIdx] do
     begin
+      if (FType = sFlag_San) and (ListBill.Items.Count > 0) then
+      begin
+        ShowMsg('散装水泥不能混装', sHint);
+        ActiveControl := EditStock;
+        Exit;
+      end;
+
       FValue := StrToFloat(EditValue.Text);
       FValue := Float2Float(FValue, cPrecision, False);
       FSelecte := True;
@@ -447,10 +458,51 @@ end;
 
 //Desc: 保存
 procedure TfFormBill.BtnOKClick(Sender: TObject);
+var nIdx: Integer;
+    nList,nTmp: TStrings;
 begin
   if ListBill.Items.Count < 1 then
   begin
     ShowMsg('请先办理提货单', sHint); Exit;
+  end;
+
+  nList := TStringList.Create;
+  nTmp := TStringList.Create;
+  try
+    nList.Clear;
+    //init
+
+    for nIdx:=Low(gStockList) to High(gStockList) do
+    with gStockList[nIdx],nTmp do
+    begin
+      if not FSelecte then Continue;
+      //xxxxx
+
+      Values['Type'] := FType;
+      Values['StockNO'] := FStockNO;
+      Values['StockName'] := FStockName;
+      Values['Price'] := FloatToStr(FPrice);
+      Values['Value'] := FloatToStr(FValue);
+
+      nList.Add(PackerEncodeStr(nTmp.Text));
+      //new bill
+    end;
+
+    with nList do
+    begin
+      Values['Bills'] := PackerEncodeStr(nList.Text);
+      Values['ZhiKa'] := gInfo.FZhiKa;
+      Values['Truck'] := EditTruck.Text;
+      Values['Lading'] := GetCtrlData(EditLading);
+      Values['IsVIP'] := GetCtrlData(EditType);
+    end;
+
+    gInfo.FIDList := SaveBill(PackerEncodeStr(nList.Text));
+    //call mit bus
+    if gInfo.FIDList = '' then Exit;
+  finally
+    nTmp.Free;
+    nList.Free;
   end;
 
   if gInfo.FIDList <> '' then

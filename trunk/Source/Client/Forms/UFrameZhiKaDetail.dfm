@@ -1,10 +1,10 @@
-inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
+inherited fFrameZhiKaDetail: TfFrameZhiKaDetail
   Width = 686
   inherited ToolBar1: TToolBar
     Width = 686
     inherited BtnAdd: TToolButton
-      Caption = '   '#23457#26680'   '
-      OnClick = BtnAddClick
+      Caption = #21150#29702
+      Visible = False
     end
     inherited BtnEdit: TToolButton
       Visible = False
@@ -17,26 +17,44 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
     end
   end
   inherited cxGrid1: TcxGrid
-    Top = 202
+    Top = 205
     Width = 686
-    Height = 165
+    Height = 162
+    LevelTabs.Slants.Kind = skCutCorner
     inherited cxView1: TcxGridDBTableView
       PopupMenu = PMenu1
-      OnDblClick = cxView1DblClick
+      OptionsSelection.MultiSelect = True
+    end
+    inherited cxLevel1: TcxGridLevel
+      Caption = #24050#21150#29702
     end
   end
   inherited dxLayout1: TdxLayoutControl
     Width = 686
-    Height = 135
+    Height = 138
     object cxTextEdit1: TcxTextEdit [0]
-      Left = 259
+      Left = 81
       Top = 96
       Hint = 'T.Z_ID'
       ParentFont = False
-      TabOrder = 4
-      Width = 115
+      TabOrder = 3
+      Width = 112
     end
     object EditCus: TcxButtonEdit [1]
+      Left = 256
+      Top = 36
+      ParentFont = False
+      Properties.Buttons = <
+        item
+          Default = True
+          Kind = bkEllipsis
+        end>
+      Properties.OnButtonClick = EditZKPropertiesButtonClick
+      TabOrder = 1
+      OnKeyPress = OnCtrlKeyPress
+      Width = 135
+    end
+    object EditZK: TcxButtonEdit [2]
       Left = 81
       Top = 36
       ParentFont = False
@@ -45,27 +63,13 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
           Default = True
           Kind = bkEllipsis
         end>
-      Properties.OnButtonClick = EditTruckPropertiesButtonClick
+      Properties.OnButtonClick = EditZKPropertiesButtonClick
       TabOrder = 0
       OnKeyPress = OnCtrlKeyPress
-      Width = 115
-    end
-    object EditZK: TcxButtonEdit [2]
-      Left = 259
-      Top = 36
-      ParentFont = False
-      Properties.Buttons = <
-        item
-          Default = True
-          Kind = bkEllipsis
-        end>
-      Properties.OnButtonClick = EditTruckPropertiesButtonClick
-      TabOrder = 1
-      OnKeyPress = OnCtrlKeyPress
-      Width = 115
+      Width = 112
     end
     object EditDate: TcxButtonEdit [3]
-      Left = 437
+      Left = 454
       Top = 36
       ParentFont = False
       Properties.Buttons = <
@@ -79,31 +83,39 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
       Width = 185
     end
     object cxTextEdit4: TcxTextEdit [4]
-      Left = 81
+      Left = 256
       Top = 96
-      Hint = 'T.Z_CID'
+      Hint = 'T.D_Stock'
       ParentFont = False
-      TabOrder = 3
-      Width = 115
+      TabOrder = 4
+      Width = 135
     end
     object cxTextEdit2: TcxTextEdit [5]
-      Left = 437
+      Left = 617
       Top = 96
-      Hint = 'T.M_Memo'
+      Hint = 'T.C_Name'
+      ParentFont = False
+      TabOrder = 6
+      Width = 121
+    end
+    object cxTextEdit3: TcxTextEdit [6]
+      Left = 454
+      Top = 96
+      Hint = 'T.D_Value'
       ParentFont = False
       TabOrder = 5
-      Width = 121
+      Width = 100
     end
     inherited dxGroup1: TdxLayoutGroup
       inherited GroupSearch1: TdxLayoutGroup
-        object dxLayout1Item2: TdxLayoutItem
-          Caption = #23458#25143#21517#31216':'
-          Control = EditCus
-          ControlOptions.ShowBorder = False
-        end
         object dxLayout1Item3: TdxLayoutItem
           Caption = #32440#21345#32534#21495':'
           Control = EditZK
+          ControlOptions.ShowBorder = False
+        end
+        object dxLayout1Item2: TdxLayoutItem
+          Caption = #23458#25143#21517#31216':'
+          Control = EditCus
           ControlOptions.ShowBorder = False
         end
         object dxLayout1Item6: TdxLayoutItem
@@ -113,20 +125,25 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
         end
       end
       inherited GroupDetail1: TdxLayoutGroup
-        object dxLayout1Item7: TdxLayoutItem
-          Caption = #21512#21516#32534#21495':'
-          Control = cxTextEdit4
-          ControlOptions.ShowBorder = False
-        end
         object dxLayout1Item1: TdxLayoutItem
           Caption = #32440#21345#32534#21495':'
           Control = cxTextEdit1
           ControlOptions.ShowBorder = False
         end
+        object dxLayout1Item7: TdxLayoutItem
+          Caption = #27700#27877#21697#31181':'
+          Control = cxTextEdit4
+          ControlOptions.ShowBorder = False
+        end
+        object dxLayout1Item5: TdxLayoutItem
+          Caption = #21150#29702#21544#25968':'
+          Control = cxTextEdit3
+          ControlOptions.ShowBorder = False
+        end
         object dxLayout1Item4: TdxLayoutItem
           AutoAligns = [aaVertical]
           AlignHorz = ahClient
-          Caption = #22791#27880#20449#24687':'
+          Caption = #23458#25143#21517#31216':'
           Control = cxTextEdit2
           ControlOptions.ShowBorder = False
         end
@@ -134,13 +151,13 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
     end
   end
   inherited cxSplitter1: TcxSplitter
-    Top = 194
+    Top = 197
     Width = 686
   end
   inherited TitlePanel1: TZnBitmapPanel
     Width = 686
     inherited TitleBar: TcxLabel
-      Caption = #32440#21345#23457#26680#35760#24405
+      Caption = #32440#21345#26126#32454#26597#35810
       Style.IsFontAssigned = True
       Width = 686
       AnchorX = 343
@@ -148,36 +165,72 @@ inherited fFrameZhiKaVerify: TfFrameZhiKaVerify
     end
   end
   inherited SQLQuery: TADOQuery
-    Left = 4
-    Top = 232
+    Left = 2
+    Top = 242
   end
   inherited DataSource1: TDataSource
-    Left = 32
-    Top = 232
+    Left = 30
+    Top = 242
   end
   object PMenu1: TPopupMenu
     AutoHotkeys = maManual
-    Left = 4
-    Top = 260
-    object N1: TMenuItem
-      Caption = #23457#26680#32440#21345
+    OnPopup = PMenu1Popup
+    Left = 2
+    Top = 270
+    object N4: TMenuItem
+      Caption = #8251#32440#21345#20923#32467#8251
+      Enabled = False
+    end
+    object N7: TMenuItem
+      Tag = 30
+      Caption = #20923#32467#32440#21345
       OnClick = N1Click
     end
-    object N2: TMenuItem
+    object N10: TMenuItem
+      Tag = 40
+      Caption = #35299#38500#20923#32467
+      OnClick = N1Click
+    end
+    object N8: TMenuItem
+      Caption = #25353#21697#31181#20923#32467
+      OnClick = N8Click
+    end
+    object N9: TMenuItem
+      Caption = '-'
+    end
+    object N6: TMenuItem
+      Caption = #8251#32440#21345#35843#20215#8251
+      Enabled = False
+    end
+    object N14: TMenuItem
+      Caption = #20215#26684#35843#25972
+      OnClick = N6Click
+    end
+    object N13: TMenuItem
+      Caption = #35843#20215#35760#24405
+      OnClick = N13Click
+    end
+    object N5: TMenuItem
       Caption = '-'
     end
     object N3: TMenuItem
-      Caption = #26597#35810#36873#39033
-      object N4: TMenuItem
-        Tag = 10
-        Caption = #26410#23457#26680#32440#21345
-        OnClick = N5Click
-      end
-      object N5: TMenuItem
-        Tag = 20
-        Caption = #24050#23457#26680#32440#21345
-        OnClick = N5Click
-      end
+      Caption = #8251#20449#24687#26597#35810#8251
+      Enabled = False
+    end
+    object N1: TMenuItem
+      Tag = 10
+      Caption = #26080#25928#32440#21345
+      OnClick = N1Click
+    end
+    object N2: TMenuItem
+      Tag = 20
+      Caption = #26597#35810#20840#37096
+      OnClick = N1Click
+    end
+    object N12: TMenuItem
+      Tag = 50
+      Caption = #24050#20923#32467#32440#21345
+      OnClick = N1Click
     end
   end
 end

@@ -3,43 +3,18 @@ inherited fFrameCustomerCredit: TfFrameCustomerCredit
   Height = 436
   inherited ToolBar1: TToolBar
     Width = 773
-    ButtonWidth = 79
     inherited BtnAdd: TToolButton
       Visible = False
     end
     inherited BtnEdit: TToolButton
-      Left = 79
-      Caption = '  '#20449#29992#21464#21160'  '
+      Caption = #20449#29992#21464#21160
       OnClick = BtnEditClick
     end
     inherited BtnDel: TToolButton
-      Left = 158
       Visible = False
     end
     inherited S1: TToolButton
-      Left = 237
       Visible = False
-    end
-    inherited BtnRefresh: TToolButton
-      Left = 245
-    end
-    inherited S2: TToolButton
-      Left = 324
-    end
-    inherited BtnPrint: TToolButton
-      Left = 332
-    end
-    inherited BtnPreview: TToolButton
-      Left = 411
-    end
-    inherited BtnExport: TToolButton
-      Left = 490
-    end
-    inherited S3: TToolButton
-      Left = 569
-    end
-    inherited BtnExit: TToolButton
-      Left = 577
     end
   end
   inherited cxGrid1: TcxGrid
@@ -101,7 +76,7 @@ inherited fFrameCustomerCredit: TfFrameCustomerCredit
     end
     object EditCusID: TcxTextEdit [2]
       Left = 81
-      Top = 93
+      Top = 96
       Hint = 'T.C_ID'
       ParentFont = False
       TabOrder = 3
@@ -109,7 +84,7 @@ inherited fFrameCustomerCredit: TfFrameCustomerCredit
     end
     object EditCusName: TcxTextEdit [3]
       Left = 249
-      Top = 93
+      Top = 96
       Hint = 'T.C_Name'
       ParentFont = False
       TabOrder = 4
@@ -117,7 +92,7 @@ inherited fFrameCustomerCredit: TfFrameCustomerCredit
     end
     object EditMoney: TcxTextEdit [4]
       Left = 456
-      Top = 93
+      Top = 96
       Hint = 'T.A_CreditLimit'
       ParentFont = False
       TabOrder = 5
@@ -125,7 +100,7 @@ inherited fFrameCustomerCredit: TfFrameCustomerCredit
     end
     object EditMemo: TcxTextEdit [5]
       Left = 593
-      Top = 93
+      Top = 96
       ParentFont = False
       TabOrder = 6
       Width = 121
