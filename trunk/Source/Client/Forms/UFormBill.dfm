@@ -1,33 +1,33 @@
 inherited fFormBill: TfFormBill
   Left = 630
   Top = 259
-  ClientHeight = 452
-  ClientWidth = 419
+  ClientHeight = 565
+  ClientWidth = 524
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
-  TextHeight = 12
+  PixelsPerInch = 120
+  TextHeight = 15
   inherited dxLayout1: TdxLayoutControl
-    Width = 419
-    Height = 452
+    Width = 524
+    Height = 565
     AutoControlTabOrders = False
     inherited BtnOK: TButton
-      Left = 273
-      Top = 419
+      Left = 342
+      Top = 523
       Caption = #24320#21333
       TabOrder = 5
     end
     inherited BtnExit: TButton
-      Left = 343
-      Top = 419
+      Left = 429
+      Top = 523
       TabOrder = 9
     end
     object ListInfo: TcxMCListBox [2]
-      Left = 23
-      Top = 36
-      Width = 351
-      Height = 116
+      Left = 29
+      Top = 45
+      Width = 439
+      Height = 145
       HeaderSections = <
         item
           Text = #20449#24687#39033
@@ -36,29 +36,29 @@ inherited fFormBill: TfFormBill
         item
           AutoSize = True
           Text = #20449#24687#20869#23481
-          Width = 273
+          Width = 361
         end>
       ParentFont = False
       Style.Edges = [bLeft, bTop, bRight, bBottom]
       TabOrder = 8
     end
     object ListBill: TcxListView [3]
-      Left = 23
-      Top = 291
-      Width = 372
-      Height = 114
+      Left = 29
+      Top = 357
+      Width = 465
+      Height = 142
       Columns = <
         item
           Caption = #27700#27877#31867#22411
-          Width = 80
+          Width = 100
         end
         item
           Caption = #25552#36135#36710#36742
-          Width = 70
+          Width = 88
         end
         item
           Caption = #21150#29702#37327'('#21544')'
-          Width = 100
+          Width = 125
         end>
       ParentFont = False
       ReadOnly = True
@@ -69,25 +69,25 @@ inherited fFormBill: TfFormBill
       ViewStyle = vsReport
     end
     object EditValue: TcxTextEdit [4]
-      Left = 81
-      Top = 266
+      Left = 87
+      Top = 329
       ParentFont = False
       TabOrder = 3
       OnKeyPress = EditLadingKeyPress
-      Width = 120
+      Width = 150
     end
     object EditTruck: TcxTextEdit [5]
-      Left = 264
-      Top = 182
+      Left = 300
+      Top = 223
       ParentFont = False
       Properties.MaxLength = 15
       TabOrder = 2
       OnKeyPress = EditLadingKeyPress
-      Width = 116
+      Width = 145
     end
     object EditStock: TcxComboBox [6]
-      Left = 81
-      Top = 241
+      Left = 87
+      Top = 301
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.DropDownRows = 15
@@ -95,29 +95,29 @@ inherited fFormBill: TfFormBill
       Properties.OnChange = EditStockPropertiesChange
       TabOrder = 0
       OnKeyPress = EditLadingKeyPress
-      Width = 115
+      Width = 144
     end
     object BtnAdd: TButton [7]
-      Left = 357
-      Top = 241
-      Width = 39
-      Height = 17
+      Left = 446
+      Top = 301
+      Width = 49
+      Height = 22
       Caption = #28155#21152
       TabOrder = 4
       OnClick = BtnAddClick
     end
     object BtnDel: TButton [8]
-      Left = 357
-      Top = 266
-      Width = 39
-      Height = 18
+      Left = 446
+      Top = 329
+      Width = 49
+      Height = 22
       Caption = #21024#38500
       TabOrder = 7
       OnClick = BtnDelClick
     end
     object EditLading: TcxComboBox [9]
-      Left = 81
-      Top = 182
+      Left = 87
+      Top = 223
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.ItemHeight = 18
@@ -127,18 +127,18 @@ inherited fFormBill: TfFormBill
         'X=X'#12289#36816#21368)
       TabOrder = 1
       OnKeyPress = EditLadingKeyPress
-      Width = 120
+      Width = 150
     end
     object EditZK: TcxTextEdit [10]
-      Left = 264
-      Top = 157
+      Left = 300
+      Top = 195
       ParentFont = False
       TabOrder = 13
-      Width = 120
+      Width = 150
     end
     object EditType: TcxComboBox [11]
-      Left = 81
-      Top = 157
+      Left = 87
+      Top = 195
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.ItemHeight = 18
@@ -149,7 +149,7 @@ inherited fFormBill: TfFormBill
         'S=S'#12289#33337#36816)
       TabOrder = 14
       OnKeyPress = EditLadingKeyPress
-      Width = 120
+      Width = 150
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

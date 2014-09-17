@@ -140,11 +140,7 @@ ResourceString
   sFlag_EnableBakdb   = 'Uses_BackDB';               //备用库
   sFlag_ValidDate     = 'SysValidDate';              //有效期
   sFlag_ZhiKaVerify   = 'ZhiKaVerify';               //纸卡审核
-  sFlag_ZKMonModify   = 'ZKMoneyModify';             //改限提金
-  sFlag_WuCha         = 'WeightWuCha';               //净重误差
-  sFlag_JBTime        = 'JiaoBanTime';               //交班时间
-  sFlag_JBParam       = 'JiaoBanParam';              //交班参数
-  sFlag_HYValue       = 'HYMaxValue';                //化验批次量
+  //sFlag_ZKMonModify   = 'ZKMoneyModify';             //改限提金
   sFlag_Tunnels       = 'JSTunnelNum';               //计数通道
   sFlag_ViaZT         = 'ViaLadingDai';              //直接栈台
   sFlag_AutoP24H      = 'AutoP_24H';                 //自动称重
@@ -152,10 +148,11 @@ ResourceString
   sFlag_AutoOut       = 'AutoO_Truck';               //自动出厂
   sFlag_PrintZK       = 'PrintZK';                   //打印纸卡
   sFlag_BillPrice     = 'Bill_Price';                //开单显单价
-  sFlag_BillSingle    = 'Bill_Single';               //单提货单
-  sFlag_HYCard        = 'HYData_Card';               //化验单刷卡
+  sFlag_PrintBill     = 'PrintStockBill';            //需打印订单
+  sFlag_NFStock       = 'NoFaHuoStock';              //无发货品种
+  sFlag_ViaBillCard   = 'ViaBillCard';               //直接制卡
   sFlag_PayCredit     = 'Pay_Credit';                //回款冲信用
-
+                                          
   sFlag_ProPreTruckP  = 'ProPreTruckP';              //预置皮重
   sFlag_ProCardOpt    = 'ProCardOpt';                //供应磁卡
   sFlag_ProDoorOpt    = 'ProDoorOpt';                //供应门卫

@@ -112,6 +112,10 @@ type
     //删除交货单
     function ChangeBillTruck(var nData: string): Boolean;
     //修改车牌号
+    function SaveBillCard(var nData: string): Boolean;
+    //绑定磁卡
+    function LogoffCard(var nData: string): Boolean;
+    //注销磁卡
   public
     constructor Create; override;
     destructor destroy; override;
@@ -660,6 +664,8 @@ begin
    cBC_SaveBills           : Result := SaveBills(nData);
    cBC_DeleteBill          : Result := DeleteBill(nData);
    cBC_ModifyBillTruck     : Result := ChangeBillTruck(nData);
+   cBC_SaveBillCard        : Result := SaveBillCard(nData);
+   cBC_LogoffCard          : Result := LogoffCard(nData);
    else
     begin
       Result := False;
@@ -804,7 +810,7 @@ begin
       if FieldByName('T_Type').AsString = sFlag_San then
       begin
         nStr := '车辆[ %s ]在未完成[ %s ]交货单之前禁止开单.';
-        nData := Format(nStr, [nTruck, Fields[2].AsString]);
+        nData := Format(nStr, [nTruck, FieldByName('T_Bill').AsString]);
         Exit;
       end else
 
@@ -812,14 +818,14 @@ begin
          (FieldByName('T_InFact').AsString <> '') then
       begin
         nStr := '车辆[ %s ]在未完成[ %s ]交货单之前禁止开单.';
-        nData := Format(nStr, [nTruck, Fields[2].AsString]);
+        nData := Format(nStr, [nTruck, FieldByName('T_Bill').AsString]);
         Exit;
       end else
 
       if FieldByName('T_Valid').AsString = sFlag_No then
       begin
         nStr := '车辆[ %s ]有已出队的交货单[ %s ],需先处理.';
-        nData := Format(nStr, [nTruck, Fields[2].AsString]);
+        nData := Format(nStr, [nTruck, FieldByName('T_Bill').AsString]);
         Exit;
       end; 
 
@@ -973,7 +979,7 @@ begin
         raise Exception.Create(nOut.FData);
       //xxxxx
 
-      FOut.FData := FOut.FData + '''' + nOut.FData + '''' + ',';
+      FOut.FData := FOut.FData + nOut.FData + ',';
       //combine bill
       FListC.Text := PackerDecodeStr(FListB[nIdx]);
       //get bill info
@@ -1066,6 +1072,7 @@ end;
 
 //------------------------------------------------------------------------------
 //Date: 2014-09-16
+//Parm: 交货单[FIn.FData];车牌号[FIn.FExtParam]
 //Desc: 修改指定交货单的车牌号
 function TWorkerBusinessBills.ChangeBillTruck(var nData: string): Boolean;
 var nIdx: Integer;
@@ -1157,6 +1164,9 @@ begin
   end;
 end;
 
+//Date: 2014-09-16
+//Parm: 交货单号[FIn.FData]
+//Desc: 删除指定交货单
 function TWorkerBusinessBills.DeleteBill(var nData: string): Boolean;
 var nIdx: Integer;
     nVal,nMoney: Double;
@@ -1288,6 +1298,189 @@ begin
     nStr := Format(nStr, [sTable_Bill, FIn.FData]);
     gDBConnManager.WorkerExec(FDBConn, nStr);
     
+    FDBConn.FConn.CommitTrans;
+    Result := True;
+  except
+    FDBConn.FConn.RollbackTrans;
+    raise;
+  end;
+end;
+
+//Date: 2014-09-17
+//Parm: 交货单[FIn.FData];磁卡号[FIn.FExtParam]
+//Desc: 为交货单绑定磁卡
+function TWorkerBusinessBills.SaveBillCard(var nData: string): Boolean;
+var nStr,nSQL,nTruck,nType: string;
+begin  
+  nType := '';
+  nTruck := '';
+  Result := False;
+
+  FListB.Text := FIn.FExtParam;
+  //磁卡列表
+  nStr := AdjustListStrFormat(FIn.FData, '''', True, ',', False);
+  //交货单列表
+
+  nSQL := 'Select L_ID,L_Card,L_Type,L_Truck,L_OutFact From %s ' +
+          'Where L_ID In (%s)';
+  nSQL := Format(nSQL, [sTable_Bill, nStr]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nSQL) do
+  begin
+    if RecordCount < 1 then
+    begin
+      nData := Format('交货单[ %s ]已丢失.', [FIn.FData]);
+      Exit;
+    end;
+
+    First;
+    while not Eof do
+    begin
+      if FieldByName('L_OutFact').AsString <> '' then
+      begin
+        nData := '交货单[ %s ]已出厂,禁止办卡.';
+        nData := Format(nData, [FieldByName('L_ID').AsString]);
+        Exit;
+      end;
+
+      nStr := FieldByName('L_Truck').AsString;
+      if (nTruck <> '') and (nStr <> nTruck) then
+      begin
+        nData := '交货单[ %s ]的车牌号不一致,不能并单.' + #13#10#13#10 +
+                 '*.本单车牌: %s' + #13#10 +
+                 '*.其它车牌: %s' + #13#10#13#10 +
+                 '相同牌号才能并单,请修改车牌号,或者单独办卡.';
+        nData := Format(nData, [FieldByName('L_ID').AsString, nStr, nTruck]);
+        Exit;
+      end;
+
+      if nTruck = '' then
+        nTruck := nStr;
+      //xxxxx
+
+      nStr := FieldByName('L_Type').AsString;
+      if (nType <> '') and ((nStr <> nType) or (nStr = sFlag_San)) then
+      begin
+        if nStr = sFlag_San then
+             nData := '交货单[ %s ]同为散装,不能并单.'
+        else nData := '交货单[ %s ]的水泥类型不一致,不能并单.';
+          
+        nData := Format(nData, [FieldByName('L_ID').AsString]);
+        Exit;
+      end;
+
+      if nType = '' then
+        nType := nStr;
+      //xxxxx
+
+      nStr := FieldByName('L_Card').AsString;
+      //正在使用的磁卡
+        
+      if (nStr <> '') and (FListB.IndexOf(nStr) < 0) then
+        FListB.Add(nStr);
+      Next;
+    end;
+  end;
+
+  //----------------------------------------------------------------------------
+  SplitStr(FIn.FData, FListA, 0, ',');
+  //交货单列表
+  nStr := AdjustListStrFormat2(FListB, '''', True, ',', False);
+  //磁卡列表
+
+  nSQL := 'Select L_ID,L_Type,L_Truck From %s Where L_Card In (%s)';
+  nSQL := Format(nSQL, [sTable_Bill, nStr]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nSQL) do
+  if RecordCount > 0 then
+  begin
+    First;
+
+    while not Eof do
+    begin
+      nStr := FieldByName('L_Type').AsString;
+      if (nStr <> sFlag_Dai) or ((nType <> '') and (nStr <> nType)) then
+      begin
+        nData := '车辆[ %s ]正在使用该卡,无法并单.';
+        nData := Format(nData, [FieldByName('L_Truck').AsString]);
+        Exit;
+      end;
+
+      nStr := FieldByName('L_Truck').AsString;
+      if (nTruck <> '') and (nStr <> nTruck) then
+      begin
+        nData := '车辆[ %s ]正在使用该卡,相同牌号才能并单.';
+        nData := Format(nData, [nStr]);
+        Exit;
+      end;
+
+      nStr := FieldByName('L_ID').AsString;
+      if FListA.IndexOf(nStr) < 0 then
+        FListA.Add(nStr);
+      Next;
+    end;
+  end;
+
+  FDBConn.FConn.BeginTrans;
+  try
+    if FIn.FData <> '' then
+    begin
+      nStr := AdjustListStrFormat2(FListA, '''', True, ',', False);
+      //重新计算列表
+
+      nSQL := 'Update %s Set L_Card=''%s'' Where L_ID In(%s)';
+      nSQL := Format(nSQL, [sTable_Bill, FIn.FExtParam, nStr]);
+      gDBConnManager.WorkerExec(FDBConn, nSQL);
+    end;
+
+    nStr := 'Select Count(*) From %s Where C_Card=''%s''';
+    nStr := Format(nStr, [sTable_Card, FIn.FExtParam]);
+
+    with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+    if Fields[0].AsInteger < 1 then
+    begin
+      nStr := MakeSQLByStr([SF('C_Card', FIn.FExtParam),
+              SF('C_Status', sFlag_CardUsed),
+              SF('C_Freeze', sFlag_No),
+              SF('C_Man', FIn.FBase.FFrom.FUser),
+              SF('C_Date', sField_SQLServer_Now, sfVal)
+              ], sTable_Card, '', True);
+      gDBConnManager.WorkerExec(FDBConn, nStr);
+    end else
+    begin
+      nStr := Format('C_Card=''%s''', [FIn.FExtParam]);
+      nStr := MakeSQLByStr([SF('C_Status', sFlag_CardUsed),
+              SF('C_Freeze', sFlag_No),
+              SF('C_Man', FIn.FBase.FFrom.FUser),
+              SF('C_Date', sField_SQLServer_Now, sfVal)
+              ], sTable_Card, nStr, False);
+      gDBConnManager.WorkerExec(FDBConn, nStr);
+    end;
+
+    FDBConn.FConn.CommitTrans;
+    Result := True;
+  except
+    FDBConn.FConn.RollbackTrans;
+    raise;
+  end;
+end;
+
+//Date: 2014-09-17
+//Parm: 磁卡号[FIn.FData]
+//Desc: 注销磁卡
+function TWorkerBusinessBills.LogoffCard(var nData: string): Boolean;
+var nStr: string;
+begin
+  FDBConn.FConn.BeginTrans;
+  try
+    nStr := 'Update %s Set L_Card=Null Where L_Card=''%s''';
+    nStr := Format(nStr, [sTable_Bill, FIn.FData]);
+    gDBConnManager.WorkerExec(FDBConn, nStr);
+
+    nStr := 'Update %s Set C_Status=''%s'' Where C_Card=''%s''';
+    nStr := Format(nStr, [sTable_Card, sFlag_CardInvalid, FIn.FData]);
+    gDBConnManager.WorkerExec(FDBConn, nStr);
+
     FDBConn.FConn.CommitTrans;
     Result := True;
   except
