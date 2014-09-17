@@ -459,18 +459,23 @@ end;
 //Desc: 保存
 procedure TfFormBill.BtnOKClick(Sender: TObject);
 var nIdx: Integer;
-    nList,nTmp: TStrings;
+    nPrint: Boolean;
+    nList,nTmp,nStocks: TStrings;
 begin
   if ListBill.Items.Count < 1 then
   begin
     ShowMsg('请先办理提货单', sHint); Exit;
   end;
 
+  nStocks := TStringList.Create;
   nList := TStringList.Create;
   nTmp := TStringList.Create;
   try
     nList.Clear;
     //init
+    nPrint := False;
+    LoadSysDictItem(sFlag_PrintBill, nStocks);
+    //需打印品种
 
     for nIdx:=Low(gStockList) to High(gStockList) do
     with gStockList[nIdx],nTmp do
@@ -486,6 +491,10 @@ begin
 
       nList.Add(PackerEncodeStr(nTmp.Text));
       //new bill
+
+      if not nPrint then
+        nPrint := nStocks.IndexOf(FStockNO) >= 0;
+      //xxxxx
     end;
 
     with nList do
@@ -503,9 +512,13 @@ begin
   finally
     nTmp.Free;
     nList.Free;
+    nStocks.Free;
   end;
 
-  if gInfo.FIDList <> '' then
+  SetBillCard(gInfo.FIDList, EditTruck.Text, True);
+  //办理磁卡
+
+  if nPrint then
     PrintBillReport(gInfo.FIDList, True);
   //print report
   

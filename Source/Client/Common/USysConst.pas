@@ -70,10 +70,8 @@ const
   cFI_FormZhiKa         = $1010;                     //纸卡办理
   cFI_FormZhiKaParam    = $1011;                     //纸卡参数
   cFI_FormGetZhika      = $1012;                     //选择纸卡
+  cFI_FormMakeCard      = $1011;                     //办理磁卡
 
-  cFI_FormSetCardPwd    = $1013;                     //磁卡密码
-  cFI_FormSetPassword   = $1014;                     //设置密码
-  cFI_FormVerifyCardPwd = $1015;                     //验证身份
   cFI_FormBill          = $1016;                     //开提货单
   cFI_FormShouJu        = $1017;                     //开收据
   cFI_FormZhiKaVerify   = $1018;                     //纸卡审核
@@ -96,8 +94,6 @@ const
   cFI_FormZhiKaAdjust   = $1035;                     //纸卡调整
   cFI_FormZhiKaFixMoney = $1036;                     //限提金额
   cFI_FormSaleAdjust    = $1037;                     //销售调剂
-  cFI_FormDaiHeKa       = $1038;                     //袋装合卡
-  cFI_FormSanHeKa       = $1039;                     //散装合卡
   cFI_FormEditPrice     = $1040;                     //提货单价
 
   cFI_FormGetTruck      = $1047;                     //选择车辆
@@ -270,7 +266,7 @@ begin
   AddMenuModuleItem('MAIN_C07', cFI_FrameShouJu);
 
   AddMenuModuleItem('MAIN_D01', cFI_FormZhiKa, mtForm);
-  AddMenuModuleItem('MAIN_D02', cFI_FormSetCardPwd, mtForm);
+  AddMenuModuleItem('MAIN_D02', cFI_FrameMakeCard);
   AddMenuModuleItem('MAIN_D03', cFI_FormBill, mtForm);
   AddMenuModuleItem('MAIN_D04', cFI_FormPayCustom, mtForm);
   AddMenuModuleItem('MAIN_D05', cFI_FrameZhiKa);

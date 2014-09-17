@@ -9,7 +9,7 @@ interface
 uses
   Windows, DB, Classes, Controls, SysUtils, UBusinessPacker, UBusinessWorker,
   UBusinessConst, ULibFun, UAdjustForm, UFormCtrl, UDataModule, UDataReport,
-  cxMCListBox, USysConst, USysDB;
+  UFormBase, cxMCListBox, USysConst, USysDB;
 
 type
   TLadingStockItem = record
@@ -80,6 +80,12 @@ function DeleteBill(const nBill: string): Boolean;
 //删除交货单
 function ChangeLadingTruckNo(const nBill,nTruck: string): Boolean;
 //更改提货车辆
+function SetBillCard(const nBill,nTruck: string; nVerify: Boolean): Boolean;
+//为交货单办理磁卡
+function SaveBillCard(const nBill, nCard: string): Boolean;
+//保存交货单磁卡
+function LogoutBillCard(const nCard: string): Boolean;
+//注销指定磁卡
 
 //------------------------------------------------------------------------------
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -88,7 +94,7 @@ function PrintZhiKaReport(const nZID: string; const nAsk: Boolean): Boolean;
 //打印纸卡
 function PrintShouJuReport(const nSID: string; const nAsk: Boolean): Boolean;
 //打印收据
-function PrintBillReport(const nBill: string; const nAsk: Boolean): Boolean;
+function PrintBillReport(nBill: string; const nAsk: Boolean): Boolean;
 //打印提货单
 
 implementation
@@ -683,6 +689,48 @@ begin
   Result := CallBusinessSaleBill(cBC_ModifyBillTruck, nBill, nTruck, @nOut);
 end;
 
+//Date: 2014-09-17
+//Parm: 交货单;车牌号;校验制卡开关
+//Desc: 为nBill交货单制卡
+function SetBillCard(const nBill,nTruck: string; nVerify: Boolean): Boolean;
+var nStr: string;
+    nP: TFormCommandParam;
+begin
+  Result := True;
+  if nVerify then
+  begin
+    nStr := 'Select D_Value From %s Where D_Name=''%s'' And D_Memo=''%s''';
+    nStr := Format(nStr, [sTable_SysDict, sFlag_SysParam, sFlag_ViaBillCard]);
+
+    with FDM.QueryTemp(nStr) do
+     if (RecordCount < 1) or (Fields[0].AsString <> sFlag_Yes) then Exit;
+    //no need do card
+  end;
+
+  nP.FParamA := nBill;
+  nP.FParamB := nTruck;
+  CreateBaseFormItem(cFI_FormMakeCard, '', @nP);
+  Result := (nP.FCommand = cCmd_ModalResult) and (nP.FParamA = mrOK);
+end;
+
+//Date: 2014-09-17
+//Parm: 交货单号;磁卡
+//Desc: 绑定nBill.nCard
+function SaveBillCard(const nBill, nCard: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessSaleBill(cBC_SaveBillCard, nBill, nCard, @nOut);
+end;
+
+//Date: 2014-09-17
+//Parm: 磁卡号
+//Desc: 注销nCard
+function LogoutBillCard(const nCard: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessSaleBill(cBC_LogoffCard, nCard, '', @nOut);
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 打印标识为nID的销售合同
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -813,7 +861,7 @@ begin
 end;
 
 //Desc: 打印提货单
-function PrintBillReport(const nBill: string; const nAsk: Boolean): Boolean;
+function PrintBillReport(nBill: string; const nAsk: Boolean): Boolean;
 var nStr: string;
     nParam: TReportParamItem;
 begin
@@ -825,6 +873,9 @@ begin
     if not QueryDlg(nStr, sAsk) then Exit;
   end;
 
+  nBill := AdjustListStrFormat(nBill, '''', True, ',', False);
+  //添加引号
+  
   nStr := 'Select * From %s b Where L_ID In(%s)';
   nStr := Format(nStr, [sTable_Bill, nBill]);
   //xxxxx

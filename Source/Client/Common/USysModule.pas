@@ -20,7 +20,8 @@ uses
   UFrameCustomerCredit, UFormCustomerCredit, UFrameCusAccount,
   UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormGetZhiKa, UFrameBill,
   UFormBill, UFormGetTruck, UFrameZhiKaDetail, UFormZhiKaFreeze,
-  UFormZhiKaPrice, UFrameQueryDiapatch, UFrameTruckQuery;
+  UFormZhiKaPrice, UFrameQueryDiapatch, UFrameTruckQuery, UFrameBillCard,
+  UFormCard;
 
 procedure InitSystemObject;
 procedure RunSystemObject;

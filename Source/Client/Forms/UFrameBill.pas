@@ -210,7 +210,7 @@ var nStr: string;
 begin
   if cxView1.DataController.GetSelectedCount > 0 then
   begin
-    nStr := '''' + SQLQuery.FieldByName('L_ID').AsString + '''';
+    nStr := SQLQuery.FieldByName('L_ID').AsString;
     PrintBillReport(nStr, False);
   end;
 end;

@@ -31,6 +31,8 @@ const
   cBC_SaveBills               = $0020;   //保存交货单列表
   cBC_DeleteBill              = $0021;   //删除交货单
   cBC_ModifyBillTruck         = $0022;   //修改车牌号
+  cBC_SaveBillCard            = $0023;   //绑定交货单磁卡
+  cBC_LogoffCard              = $0024;   //注销磁卡
 
   cBC_PrintCode               = $0056;
   cBC_PrinterEnable           = $0057;

@@ -82,7 +82,6 @@ end;
 
 //------------------------------------------------------------------------------
 function TfFrameTruckQuery.InitFormDataSQL(const nWhere: string): string;
-var nStr: string;
 begin
   EditDate.Text := Format('%s жа %s', [Date2Str(FStart), Date2Str(FEnd)]);
   //xxxxx
