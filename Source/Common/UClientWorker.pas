@@ -50,9 +50,6 @@ type
     class function FunctionName: string; override;
   end;
 
-resourcestring
-  sParam_NoHintOnError     = 'NH';
-
 implementation
 
 uses

@@ -130,6 +130,7 @@ ResourceString
   sFlag_PoundPZ       = 'Z';                         //皮重
   sFlag_PoundPD       = 'P';                         //配对
   sFlag_PoundCC       = 'C';                         //出厂(过磅模式)
+  sFlag_PoundLS       = 'L';                         //临时
   
   sFlag_MoneyHuiKuan  = 'R';                         //回款入金
   sFlag_MoneyJiaCha   = 'C';                         //补缴价差
@@ -140,19 +141,20 @@ ResourceString
   sFlag_EnableBakdb   = 'Uses_BackDB';               //备用库
   sFlag_ValidDate     = 'SysValidDate';              //有效期
   sFlag_ZhiKaVerify   = 'ZhiKaVerify';               //纸卡审核
-  //sFlag_ZKMonModify   = 'ZKMoneyModify';             //改限提金
-  sFlag_Tunnels       = 'JSTunnelNum';               //计数通道
-  sFlag_ViaZT         = 'ViaLadingDai';              //直接栈台
-  sFlag_AutoP24H      = 'AutoP_24H';                 //自动称重
   sFlag_AutoIn        = 'AutoI_Truck';               //自动进厂
   sFlag_AutoOut       = 'AutoO_Truck';               //自动出厂
   sFlag_PrintZK       = 'PrintZK';                   //打印纸卡
   sFlag_BillPrice     = 'Bill_Price';                //开单显单价
   sFlag_PrintBill     = 'PrintStockBill';            //需打印订单
-  sFlag_NFStock       = 'NoFaHuoStock';              //无发货品种
   sFlag_ViaBillCard   = 'ViaBillCard';               //直接制卡
   sFlag_PayCredit     = 'Pay_Credit';                //回款冲信用
-                                          
+  sFlag_PDaiWuChaZ    = 'PoundDaiWuChaZ';            //袋装正误差
+  sFlag_PDaiWuChaF    = 'PoundDaiWuChaF';            //袋装负误差
+  sFlag_PSanWuChaF    = 'PoundSanWuChaF';            //散装负误差
+  sFlag_PoundWuCha    = 'PoundWuCha';                //过磅误差分组
+  sFlag_PoundIfDai    = 'PoundIFDai';                //袋装是否过磅
+  sFlag_NFStock       = 'NoFaHuoStock';              //现场无需发货
+
   sFlag_ProPreTruckP  = 'ProPreTruckP';              //预置皮重
   sFlag_ProCardOpt    = 'ProCardOpt';                //供应磁卡
   sFlag_ProDoorOpt    = 'ProDoorOpt';                //供应门卫
@@ -173,6 +175,9 @@ ResourceString
   sFlag_PaymentItem   = 'PaymentItem';               //付款方式信息项
   sFlag_PaymentItem2  = 'PaymentItem2';              //销售回款信息项
   sFlag_LadingItem    = 'LadingItem';                //提货方式信息项
+
+  sFlag_ProviderItem  = 'ProviderItem';              //供应商信息项
+  sFlag_MaterailsItem = 'MaterailsItem';             //原材料信息项
 
   sFlag_HardSrvURL    = 'HardMonURL';
   sFlag_MITSrvURL     = 'MITServiceURL';             //服务地址
@@ -224,8 +229,11 @@ ResourceString
   sTable_ZTLines      = 'S_ZTLines';                 //装车道
   sTable_ZTTrucks     = 'S_ZTTrucks';                //车辆队列
 
+  sTable_Provider     = 'P_Provider';                //客户表
+  sTable_Materails    = 'P_Materails';               //物料表
   sTable_PoundLog     = 'Sys_PoundLog';              //过磅数据
   sTable_PoundBak     = 'Sys_PoundBak';              //过磅作废
+  sTable_Picture      = 'Sys_Picture';               //存放图片
 
   {*新建表*}
   sSQL_NewSysDict = 'Create Table $Table(D_ID $Inc, D_Name varChar(15),' +
@@ -665,7 +673,7 @@ ResourceString
        'P_MType varChar(10), P_LimValue $Float,' +
        'P_PValue $Float, P_PDate DateTime, P_PMan varChar(32), ' +
        'P_MValue $Float, P_MDate DateTime, P_MMan varChar(32), ' +
-       'P_FactID varChar(32), P_Station varChar(10), P_MAC varChar(32),' +
+       'P_FactID varChar(32), P_PStation varChar(10), P_MStation varChar(10),' +
        'P_Direction varChar(10), P_PModel varChar(10), P_Status Char(1),' +
        'P_Valid Char(1), P_PrintNum Integer Default 1,' +
        'P_DelMan varChar(32), P_DelDate DateTime)';
@@ -685,13 +693,24 @@ ResourceString
    *.P_PValue,P_PDate,P_PMan: 皮重
    *.P_MValue,P_MDate,P_MMan: 毛重
    *.P_FactID: 工厂编号
-   *.P_Station,P_MAC: 磅站标识
+   *.P_PStation,P_MStation: 称重磅站
    *.P_Direction: 物料流向(进,出)
    *.P_PModel: 过磅模式(标准,配对等)
    *.P_Status: 记录状态
    *.P_Valid: 是否有效
    *.P_PrintNum: 打印次数
    *.P_DelMan,P_DelDate: 删除记录
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewPicture = 'Create Table $Table(R_ID $Inc, P_ID varChar(15),' +
+       'P_Name varChar(32), P_Mate varChar(80), P_Date DateTime, P_Picture Image)';
+  {-----------------------------------------------------------------------------
+   图片: Picture
+   *.P_ID: 编号
+   *.P_Name: 名称
+   *.P_Mate: 物料
+   *.P_Date: 时间
+   *.P_Picture: 图片
   -----------------------------------------------------------------------------}
 
   sSQL_NewZTLines = 'Create Table $Table(R_ID $Inc, Z_ID varChar(15),' +
@@ -747,6 +766,33 @@ ResourceString
    *.T_HKBills: 合卡交货单列表
   -----------------------------------------------------------------------------}
 
+  sSQL_NewProvider = 'Create Table $Table(R_ID $Inc, P_ID varChar(32),' +
+       'P_Name varChar(80),P_PY varChar(80), P_Phone varChar(20),' +
+       'P_Saler varChar(32),P_Memo varChar(50))';
+  {-----------------------------------------------------------------------------
+   供应商: Provider
+   *.P_ID: 编号
+   *.P_Name: 名称
+   *.P_PY: 拼音简写
+   *.P_Phone: 联系方式
+   *.P_Saler: 业务员
+   *.P_Memo: 备注
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewMaterails = 'Create Table $Table(R_ID $Inc, M_ID varChar(32),' +
+       'M_Name varChar(80),M_PY varChar(80),M_Unit varChar(20),M_Price $Float,' +
+       'M_PrePValue Char(1), M_PrePTime Integer, M_Memo varChar(50))';
+  {-----------------------------------------------------------------------------
+   物料表: Materails
+   *.M_ID: 编号
+   *.M_Name: 名称
+   *.M_PY: 拼音简写
+   *.M_Unit: 单位
+   *.M_PrePValue: 预置皮重
+   *.M_PrePTime: 皮重时长(天)
+   *.M_Memo: 备注
+  -----------------------------------------------------------------------------}
+
 //------------------------------------------------------------------------------
 // 数据查询
 //------------------------------------------------------------------------------
@@ -766,9 +812,59 @@ ResourceString
    *.$Group:分组名称
    *.$ID:信息标识
   -----------------------------------------------------------------------------}
-  
+
+function CardStatusToStr(const nStatus: string): string;
+//磁卡状态
+function TruckStatusToStr(const nStatus: string): string;
+//车辆状态
+function BillTypeToStr(const nType: string): string;
+//订单类型
+function PostTypeToStr(const nPost: string): string;
+//岗位类型
+
 implementation
 
+//Desc: 将nStatus转为可读内容
+function CardStatusToStr(const nStatus: string): string;
+begin
+  if nStatus = sFlag_CardIdle then Result := '空闲' else
+  if nStatus = sFlag_CardUsed then Result := '正常' else
+  if nStatus = sFlag_CardLoss then Result := '挂失' else
+  if nStatus = sFlag_CardInvalid then Result := '注销' else Result := '未知';
+end;
+
+//Desc: 将nStatus转为可识别的内容
+function TruckStatusToStr(const nStatus: string): string;
+begin
+  if nStatus = sFlag_TruckIn then Result := '进厂' else
+  if nStatus = sFlag_TruckOut then Result := '出厂' else
+  if nStatus = sFlag_TruckBFP then Result := '称皮重' else
+  if nStatus = sFlag_TruckBFM then Result := '称毛重' else
+  if nStatus = sFlag_TruckSH then Result := '送货中' else
+  if nStatus = sFlag_TruckFH then Result := '放灰处' else
+  if nStatus = sFlag_TruckZT then Result := '栈台' else Result := '未进厂';
+end;
+
+//Desc: 交货单类型转为可识别内容
+function BillTypeToStr(const nType: string): string;
+begin
+  if nType = sFlag_TypeShip then Result := '船运' else
+  if nType = sFlag_TypeZT   then Result := '栈台' else
+  if nType = sFlag_TypeVIP  then Result := 'VIP' else Result := '普通';
+end;
+
+//Desc: 将岗位转为可识别内容
+function PostTypeToStr(const nPost: string): string;
+begin
+  if nPost = sFlag_TruckIn   then Result := '门卫进厂' else
+  if nPost = sFlag_TruckOut  then Result := '门卫出厂' else
+  if nPost = sFlag_TruckBFP  then Result := '磅房称皮' else
+  if nPost = sFlag_TruckBFM  then Result := '磅房称重' else
+  if nPost = sFlag_TruckFH   then Result := '散装放灰' else
+  if nPost = sFlag_TruckZT   then Result := '袋装栈台' else Result := '厂外';
+end;
+
+//------------------------------------------------------------------------------
 //Desc: 添加系统表项
 procedure AddSysTableItem(const nTable,nNewSQL: string);
 var nP: PSysTableItem;
@@ -817,6 +913,9 @@ begin
   AddSysTableItem(sTable_ZTTrucks, sSQL_NewZTTrucks);
   AddSysTableItem(sTable_PoundLog, sSQL_NewPoundLog);
   AddSysTableItem(sTable_PoundBak, sSQL_NewPoundLog);
+  AddSysTableItem(sTable_Picture, sSQL_NewPicture);
+  AddSysTableItem(sTable_Provider, ssql_NewProvider);
+  AddSysTableItem(sTable_Materails, sSQL_NewMaterails);
 end;
 
 //Desc: 清理系统表

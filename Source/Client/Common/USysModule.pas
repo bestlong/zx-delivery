@@ -21,7 +21,9 @@ uses
   UFrameCusInOutMoney, UFrameJSWeek, UFormJSWeek, UFormGetZhiKa, UFrameBill,
   UFormBill, UFormGetTruck, UFrameZhiKaDetail, UFormZhiKaFreeze,
   UFormZhiKaPrice, UFrameQueryDiapatch, UFrameTruckQuery, UFrameBillCard,
-  UFormCard;
+  UFormCard, UFormTruckIn, UFormTruckOut, UFormLadingDai, UFormLadingSan,
+  UFramePoundManual, UFramePMaterails, UFormPMaterails, UFramePProvider,
+  UFormPProvider, UFramePoundQuery;
 
 procedure InitSystemObject;
 procedure RunSystemObject;
@@ -66,6 +68,39 @@ begin
   begin
     gSysParam.FFactNum := Fields[0].AsString;
     gSysParam.FSerialID := Fields[1].AsString;
+  end;
+
+  //----------------------------------------------------------------------------
+  with gSysParam do
+  begin
+    FPoundDaiZ := 0;
+    FPoundDaiF := 0;
+    FPoundSanF := 0;
+  end;
+
+  nStr := 'Select D_Value,D_Memo From %s Where D_Name=''%s''';
+  nStr := Format(nStr, [sTable_SysDict, sFlag_PoundWuCha]);
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    First;
+
+    while not Eof do
+    begin
+      nStr := Fields[1].AsString;
+      if nStr = sFlag_PDaiWuChaZ then
+        gSysParam.FPoundDaiZ := Fields[0].AsInteger;
+      //xxxxx
+
+      if nStr = sFlag_PDaiWuChaF then
+        gSysParam.FPoundDaiF := Fields[0].AsInteger;
+      //xxxxx
+
+      if nStr = sFlag_PSanWuChaF then
+        gSysParam.FPoundSanF := Fields[0].AsInteger;
+      Next;
+    end;
   end;
 
   //----------------------------------------------------------------------------

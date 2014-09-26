@@ -32,32 +32,18 @@ inherited fFrameCusAccount: TfFrameCusAccount
       Top = 96
       Hint = 'T.A_CID'
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 2
       Width = 115
     end
-    object EditDate: TcxButtonEdit [1]
-      Left = 472
-      Top = 36
-      ParentFont = False
-      Properties.Buttons = <
-        item
-          Default = True
-          Kind = bkEllipsis
-        end>
-      Properties.ReadOnly = True
-      Properties.OnButtonClick = EditDatePropertiesButtonClick
-      TabOrder = 2
-      Width = 175
-    end
-    object cxTextEdit4: TcxTextEdit [2]
+    object cxTextEdit4: TcxTextEdit [1]
       Left = 259
       Top = 96
       Hint = 'T.C_Name'
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 3
       Width = 150
     end
-    object EditCustomer: TcxButtonEdit [3]
+    object EditCustomer: TcxButtonEdit [2]
       Left = 259
       Top = 36
       ParentFont = False
@@ -71,23 +57,23 @@ inherited fFrameCusAccount: TfFrameCusAccount
       OnKeyPress = OnCtrlKeyPress
       Width = 150
     end
-    object cxTextEdit5: TcxTextEdit [4]
+    object cxTextEdit5: TcxTextEdit [3]
       Left = 710
       Top = 96
       Hint = 'T.C_Bank'
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 5
       Width = 100
     end
-    object cxTextEdit1: TcxTextEdit [5]
+    object cxTextEdit1: TcxTextEdit [4]
       Left = 472
       Top = 96
       Hint = 'T.C_Account'
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 4
       Width = 175
     end
-    object EditID: TcxButtonEdit [6]
+    object EditID: TcxButtonEdit [5]
       Left = 81
       Top = 36
       ParentFont = False
@@ -111,11 +97,6 @@ inherited fFrameCusAccount: TfFrameCusAccount
         object dxLayout1Item8: TdxLayoutItem
           Caption = #23458#25143#21517#31216':'
           Control = EditCustomer
-          ControlOptions.ShowBorder = False
-        end
-        object dxLayout1Item6: TdxLayoutItem
-          Caption = #26085#26399#31579#36873':'
-          Control = EditDate
           ControlOptions.ShowBorder = False
         end
       end

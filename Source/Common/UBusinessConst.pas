@@ -9,7 +9,8 @@ unit UBusinessConst;
 
 interface
 
-uses UBusinessPacker, Classes;
+uses
+  Classes, SysUtils, UBusinessPacker, ULibFun, USysDB;
 
 const
   {*channel type*}
@@ -28,11 +29,17 @@ const
   cBC_GetZhiKaMoney           = $0011;   //获取纸卡可用金
   cBC_CustomerHasMoney        = $0012;   //客户是否有余额
 
+  cBC_GetTruckPoundData       = $0015;   //获取车辆称重数据
+  cBC_SaveTruckPoundData      = $0016;   //保存车辆称重数据
+
   cBC_SaveBills               = $0020;   //保存交货单列表
   cBC_DeleteBill              = $0021;   //删除交货单
   cBC_ModifyBillTruck         = $0022;   //修改车牌号
   cBC_SaveBillCard            = $0023;   //绑定交货单磁卡
   cBC_LogoffCard              = $0024;   //注销磁卡
+
+  cBC_GetPostBills            = $0030;   //获取岗位交货单
+  cBC_SavePostBills           = $0031;   //保存岗位交货单
 
   cBC_PrintCode               = $0056;
   cBC_PrinterEnable           = $0057;
@@ -62,7 +69,53 @@ type
     FExtParam : string;            //参数
   end;
 
+  TPoundStationData = record
+    FStation  : string;            //磅站标识
+    FValue    : Double;           //皮重
+    FDate     : TDateTime;        //称重日期
+    FOperator : string;           //操作员
+  end;
+
+  PLadingBillItem = ^TLadingBillItem;
+  TLadingBillItem = record
+    FID         : string;          //交货单号
+    FZhiKa      : string;          //纸卡编号
+    FCusID      : string;          //客户编号
+    FCusName    : string;          //客户名称
+    FTruck      : string;          //车牌号码
+
+    FType       : string;          //品种类型
+    FStockNo    : string;          //品种编号
+    FStockName  : string;          //品种名称
+    FValue      : Double;          //提货量
+    FPrice      : Double;          //提货单价
+
+    FCard       : string;          //磁卡号
+    FIsVIP      : string;          //通道类型
+    FStatus     : string;          //当前状态
+    FNextStatus : string;          //下一状态
+
+    FPData      : TPoundStationData; //称皮
+    FMData      : TPoundStationData; //称毛
+    FFactory    : string;          //工厂编号
+    FPModel     : string;          //称重模式
+    FPType      : string;          //业务类型
+    FPoundID    : string;          //称重记录
+    FSelected   : Boolean;         //选中状态
+  end;
+
+  TLadingBillItems = array of TLadingBillItem;
+  //交货单列表
+
+procedure AnalyseBillItems(const nData: string; var nItems: TLadingBillItems);
+//解析由业务对象返回的交货单数据
+function CombineBillItmes(const nItems: TLadingBillItems): string;
+//合并交货单数据为业务对象能处理的字符串
+
 resourcestring
+  {*PBWDataBase.FParam*}
+  sParam_NoHintOnError        = 'NHE';                  //不提示错误
+
   {*plug module id*}
   sPlug_ModuleBus             = '{DF261765-48DC-411D-B6F2-0B37B14E014E}';
                                                         //业务模块
@@ -84,6 +137,170 @@ resourcestring
   sCLI_BusinessCommand        = 'CLI_BusinessCommand';  //业务指令
 
 implementation
+
+//Date: 2014-09-17
+//Parm: 交货单数据;解析结果
+//Desc: 解析nData为结构化列表数据
+procedure AnalyseBillItems(const nData: string; var nItems: TLadingBillItems);
+var nStr: string;
+    nIdx,nInt: Integer;
+    nListA,nListB: TStrings;
+begin
+  nListA := TStringList.Create;
+  nListB := TStringList.Create;
+  try
+    nListA.Text := PackerDecodeStr(nData);
+    //bill list
+    nInt := 0;
+    SetLength(nItems, nListA.Count);
+
+    for nIdx:=0 to nListA.Count - 1 do
+    begin
+      nListB.Text := PackerDecodeStr(nListA[nIdx]);
+      //bill item
+
+      with nListB,nItems[nInt] do
+      begin
+        FID         := Values['ID'];
+        FZhiKa      := Values['ZhiKa'];
+        FCusID      := Values['CusID'];
+        FCusName    := Values['CusName'];
+        FTruck      := Values['Truck'];
+
+        FType       := Values['Type'];
+        FStockNo    := Values['StockNo'];
+        FStockName  := Values['StockName'];
+
+        FCard       := Values['Card'];
+        FIsVIP      := Values['IsVIP'];
+        FStatus     := Values['Status'];
+        FNextStatus := Values['NextStatus'];
+
+        FFactory    := Values['Factory'];
+        FPModel     := Values['PModel'];
+        FPType      := Values['PType'];
+        FPoundID    := Values['PoundID'];
+        FSelected   := Values['Selected'] = sFlag_Yes;
+
+        with FPData do
+        begin
+          FStation  := Values['PStation'];
+          FDate     := Str2DateTime(Values['PDate']);
+          FOperator := Values['PMan'];
+
+          nStr := Trim(Values['PValue']);
+          if (nStr <> '') and IsNumber(nStr, True) then
+               FPData.FValue := StrToFloat(nStr)
+          else FPData.FValue := 0;
+        end;
+
+        with FMData do
+        begin
+          FStation  := Values['MStation'];
+          FDate     := Str2DateTime(Values['MDate']);
+          FOperator := Values['MMan'];
+
+          nStr := Trim(Values['MValue']);
+          if (nStr <> '') and IsNumber(nStr, True) then
+               FMData.FValue := StrToFloat(nStr)
+          else FMData.FValue := 0;
+        end;
+
+        nStr := Trim(Values['Value']);
+        if (nStr <> '') and IsNumber(nStr, True) then
+             FValue := StrToFloat(nStr)
+        else FValue := 0;
+
+        nStr := Trim(Values['Price']);
+        if (nStr <> '') and IsNumber(nStr, True) then
+             FPrice := StrToFloat(nStr)
+        else FPrice := 0;
+      end;
+
+      Inc(nInt);
+    end;
+  finally
+    nListB.Free;
+    nListA.Free;
+  end;   
+end;
+
+//Date: 2014-09-18
+//Parm: 交货单列表
+//Desc: 将nItems合并为业务对象能处理的
+function CombineBillItmes(const nItems: TLadingBillItems): string;
+var nIdx: Integer;
+    nListA,nListB: TStrings;
+begin
+  nListA := TStringList.Create;
+  nListB := TStringList.Create;
+  try
+    Result := '';
+    nListA.Clear;
+    nListB.Clear;
+
+    for nIdx:=Low(nItems) to High(nItems) do
+    with nItems[nIdx] do
+    begin
+      if not FSelected then Continue;
+      //ignored
+
+      with nListB do
+      begin
+        Values['ID']         := FID;
+        Values['ZhiKa']      := FZhiKa;
+        Values['CusID']      := FCusID;
+        Values['CusName']    := FCusName;
+        Values['Truck']      := FTruck;
+
+        Values['Type']       := FType;
+        Values['StockNo']    := FStockNo;
+        Values['StockName']  := FStockName;
+        Values['Value']      := FloatToStr(FValue);
+        Values['Price']      := FloatToStr(FPrice);
+
+        Values['Card']       := FCard;
+        Values['IsVIP']      := FIsVIP;
+        Values['Status']     := FStatus;
+        Values['NextStatus'] := FNextStatus;
+
+        Values['Factory']    := FFactory;
+        Values['PModel']     := FPModel;
+        Values['PType']      := FPType;
+        Values['PoundID']    := FPoundID;
+
+        with FPData do
+        begin
+          Values['PStation'] := FStation;
+          Values['PValue']   := FloatToStr(FPData.FValue);
+          Values['PDate']    := DateTime2Str(FDate);
+          Values['PMan']     := FOperator;
+        end;
+
+        with FMData do
+        begin
+          Values['MStation'] := FStation;
+          Values['MValue']   := FloatToStr(FMData.FValue);
+          Values['MDate']    := DateTime2Str(FDate);
+          Values['MMan']     := FOperator;
+        end;
+
+        if FSelected then
+             Values['Selected'] := sFlag_Yes
+        else Values['Selected'] := sFlag_No;
+      end;
+
+      nListA.Add(PackerEncodeStr(nListB.Text));
+      //add bill
+    end;
+
+    Result := PackerEncodeStr(nListA.Text);
+    //pack all
+  finally
+    nListB.Free;
+    nListA.Free;
+  end;
+end;
 
 end.
 

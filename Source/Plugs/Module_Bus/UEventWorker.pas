@@ -55,7 +55,7 @@ begin
   nItem.FModule := ModuleInfo.FModuleID;
   nItem.FCaption := '“µŒÒ≤‚ ‘';
   nItem.FFormID := cFI_FormTest1;
-  nItem.FDefault := True;
+  nItem.FDefault := False;
 end;
 {$ENDIF}
 

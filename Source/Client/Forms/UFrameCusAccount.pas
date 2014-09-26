@@ -8,19 +8,18 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, UFrameNormal, cxStyles, cxCustomData, cxGraphics, cxFilter,
-  cxData, cxDataStorage, cxEdit, DB, cxDBData, dxLayoutControl, cxMaskEdit,
-  cxButtonEdit, cxTextEdit, ADODB, cxContainer, cxLabel, UBitmapPanel,
-  cxSplitter, cxGridLevel, cxClasses, cxControls, cxGridCustomView,
+  UFrameNormal, cxGraphics, cxControls, cxLookAndFeels,
+  cxLookAndFeelPainters, cxStyles, cxCustomData, cxFilter, cxData,
+  cxDataStorage, cxEdit, DB, cxDBData, cxContainer, Menus, dxLayoutControl,
+  cxMaskEdit, cxButtonEdit, cxTextEdit, ADODB, cxLabel, UBitmapPanel,
+  cxSplitter, cxGridLevel, cxClasses, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
-  ComCtrls, ToolWin, Menus, cxLookAndFeels, cxLookAndFeelPainters;
+  ComCtrls, ToolWin;
 
 type
   TfFrameCusAccount = class(TfFrameNormal)
     cxTextEdit3: TcxTextEdit;
     dxLayout1Item5: TdxLayoutItem;
-    EditDate: TcxButtonEdit;
-    dxLayout1Item6: TdxLayoutItem;
     cxTextEdit4: TcxTextEdit;
     dxLayout1Item7: TdxLayoutItem;
     EditCustomer: TcxButtonEdit;
@@ -35,19 +34,12 @@ type
     N3: TMenuItem;
     EditID: TcxButtonEdit;
     dxLayout1Item2: TdxLayoutItem;
-    procedure EditDatePropertiesButtonClick(Sender: TObject;
-      AButtonIndex: Integer);
-    procedure BtnExitClick(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
   private
     { Private declarations }
   protected
-    FStart,FEnd: TDate;
-    //时间区间
-    procedure OnCreateFrame; override;
-    procedure OnDestroyFrame; override;
     function InitFormDataSQL(const nWhere: string): string; override;
     {*查询SQL*}
   public
@@ -59,63 +51,30 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, UMgrControl, USysConst, USysDB, UDataModule, UFormDateFilter;
+  ULibFun, UMgrControl, USysConst, USysDB, UDataModule;
 
 class function TfFrameCusAccount.FrameID: integer;
 begin
   Result := cFI_FrameCusAccountQuery;
 end;
 
-procedure TfFrameCusAccount.OnCreateFrame;
-begin
-  inherited;
-  InitDateRange(Name, FStart, FEnd);
-end;
-
-procedure TfFrameCusAccount.OnDestroyFrame;
-begin
-  SaveDateRange(Name, FStart, FEnd);
-  inherited;
-end;
-
-procedure TfFrameCusAccount.BtnExitClick(Sender: TObject);
-begin
-  inherited;
-  Close;
-end;
-
 function TfFrameCusAccount.InitFormDataSQL(const nWhere: string): string;
-var nStr: string;
 begin
-  EditDate.Text := Format('%s 至 %s', [Date2Str(FStart), Date2Str(FEnd)]);
-
-  nStr := 'Select cus.*,S_Name as C_SaleName From $Cus cus ' +
-          ' Left Join $SM sm On sm.S_ID=cus.C_SaleMan';
-  nStr := MacroValue(nStr, [MI('$Cus', sTable_Customer),
-          MI('$SM', sTable_Salesman)]);
-  //xxxxx
-
-  Result := 'Select *,(A_InMoney-A_OutMoney-A_Compensation-A_FreezeMoney) ' +
-            'As A_YuE From $CA ca ' +
-            ' Left Join ($Cus) as cus On cus.C_ID=ca.A_CID ';
+  Result := 'Select ca.*,cus.*,S_Name as C_SaleName,' +
+            '(A_InMoney-A_OutMoney-A_Compensation-A_FreezeMoney) As A_YuE ' +
+            'From $CA ca ' +
+            ' Left Join $Cus cus On cus.C_ID=ca.A_CID ' +
+            ' Left Join $SM sm On sm.S_ID=cus.C_SaleMan ';
   //xxxxx
 
   if nWhere = '' then
-       Result := Result + 'Where (A_Date>=''$S'' And A_Date<''$End'') And ' +
-                 'IsNull(C_XuNi, '''')<>''$Yes'''
+       Result := Result + 'Where IsNull(C_XuNi, '''')<>''$Yes'''
   else Result := Result + 'Where (' + nWhere + ')';
 
-  Result := MacroValue(Result, [MI('$CA', sTable_CusAccount), MI('$Cus', nStr),
-            MI('$Yes', sFlag_Yes),
-            MI('$S', Date2Str(FStart)), MI('$End', Date2Str(FEnd + 1))]);
+  Result := MacroValue(Result, [MI('$CA', sTable_CusAccount),
+            MI('$Cus', sTable_Customer), MI('$SM', sTable_Salesman),
+            MI('$Yes', sFlag_Yes)]);
   //xxxxx
-end;
-
-//Desc: 日期筛选
-procedure TfFrameCusAccount.EditDatePropertiesButtonClick(Sender: TObject;
-  AButtonIndex: Integer);
-begin
-  if ShowDateFilterForm(FStart, FEnd) then InitFormData(FWhere);
 end;
 
 //Desc: 执行查询  
