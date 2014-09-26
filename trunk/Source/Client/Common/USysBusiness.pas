@@ -87,6 +87,21 @@ function SaveBillCard(const nBill, nCard: string): Boolean;
 function LogoutBillCard(const nCard: string): Boolean;
 //注销指定磁卡
 
+function GetLadingBills(const nCard,nPost: string;
+ var nBills: TLadingBillItems): Boolean;
+//获取指定岗位的交货单列表
+procedure LoadBillItemToMC(const nItem: TLadingBillItem; const nMC: TStrings;
+ const nDelimiter: string);
+//载入单据信息到列表
+function SaveLadingBills(const nPost: string; nData: TLadingBillItems): Boolean;
+//保存指定岗位的交货单
+
+function GetTruckPoundItem(const nTruck: string;
+ var nPoundData: TLadingBillItems): Boolean;
+//获取指定车辆的已称皮重信息
+function SaveTruckPoundItem(nData: TLadingBillItems): Boolean;
+//保存指定岗位的交货单
+
 //------------------------------------------------------------------------------
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
 //打印合同
@@ -96,6 +111,8 @@ function PrintShouJuReport(const nSID: string; const nAsk: Boolean): Boolean;
 //打印收据
 function PrintBillReport(nBill: string; const nAsk: Boolean): Boolean;
 //打印提货单
+function PrintPoundReport(const nPound: string; nAsk: Boolean): Boolean;
+//打印榜单
 
 implementation
 
@@ -130,7 +147,7 @@ end;
 //Parm: 命令;数据;参数;输出
 //Desc: 调用中间件上的业务命令对象
 function CallBusinessCommand(const nCmd: Integer; const nData,nExt: string;
-  const nOut: PWorkerBusinessCommand): Boolean;
+  const nOut: PWorkerBusinessCommand; const nWarn: Boolean = True): Boolean;
 var nIn: TWorkerBusinessCommand;
     nWorker: TBusinessWorkerBase;
 begin
@@ -139,6 +156,10 @@ begin
     nIn.FCommand := nCmd;
     nIn.FData := nData;
     nIn.FExtParam := nExt;
+
+    if nWarn then
+         nIn.FBase.FParam := ''
+    else nIn.FBase.FParam := sParam_NoHintOnError;
 
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessCommand);
     //get worker
@@ -152,7 +173,7 @@ end;
 //Parm: 命令;数据;参数;输出
 //Desc: 调用中间件上的销售单据对象
 function CallBusinessSaleBill(const nCmd: Integer; const nData,nExt: string;
-  const nOut: PWorkerBusinessCommand): Boolean;
+  const nOut: PWorkerBusinessCommand; const nWarn: Boolean = True): Boolean;
 var nIn: TWorkerBusinessCommand;
     nWorker: TBusinessWorkerBase;
 begin
@@ -161,6 +182,10 @@ begin
     nIn.FCommand := nCmd;
     nIn.FData := nData;
     nIn.FExtParam := nExt;
+
+    if nWarn then
+         nIn.FBase.FParam := ''
+    else nIn.FBase.FParam := sParam_NoHintOnError;
 
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessSaleBill);
     //get worker
@@ -522,6 +547,29 @@ begin
   else Result := False;
 end;
 
+//Date: 2014-09-25
+//Parm: 车牌号
+//Desc: 获取nTruck的称皮记录
+function GetTruckPoundItem(const nTruck: string;
+ var nPoundData: TLadingBillItems): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessCommand(cBC_GetTruckPoundData, nTruck, '', @nOut);
+  if Result then
+    AnalyseBillItems(nOut.FData, nPoundData);
+  //xxxxx
+end;
+
+//Date: 2014-09-25
+//Parm: 称重数据
+//Desc: 保存nData称重数据
+function SaveTruckPoundItem(nData: TLadingBillItems): Boolean;
+var nStr: string;
+    nOut: TWorkerBusinessCommand;
+begin
+  nStr := CombineBillItmes(nData);
+  Result := CallBusinessCommand(cBC_SaveTruckPoundData, nStr, '', @nOut);
+end;
 //------------------------------------------------------------------------------
 //Desc: 纸卡是否需要审核
 function IsZhiKaNeedVerify: Boolean;
@@ -731,6 +779,58 @@ begin
   Result := CallBusinessSaleBill(cBC_LogoffCard, nCard, '', @nOut);
 end;
 
+//Date: 2014-09-17
+//Parm: 磁卡号;岗位;交货单列表
+//Desc: 获取nPost岗位上磁卡为nCard的交货单列表
+function GetLadingBills(const nCard,nPost: string;
+ var nBills: TLadingBillItems): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessSaleBill(cBC_GetPostBills, nCard, nPost, @nOut);
+  if Result then
+    AnalyseBillItems(nOut.FData, nBills);
+  //xxxxx
+end;
+
+//Date: 2014-09-18
+//Parm: 岗位;交货单列表
+//Desc: 保存nPost岗位上的交货单数据
+function SaveLadingBills(const nPost: string; nData: TLadingBillItems): Boolean;
+var nStr: string;
+    nOut: TWorkerBusinessCommand;
+begin
+  nStr := CombineBillItmes(nData);
+  Result := CallBusinessSaleBill(cBC_SavePostBills, nStr, nPost, @nOut);
+end;
+
+//Date: 2014-09-17
+//Parm: 交货单项; MCListBox;分隔符
+//Desc: 将nItem载入nMC
+procedure LoadBillItemToMC(const nItem: TLadingBillItem; const nMC: TStrings;
+ const nDelimiter: string);
+var nStr: string;
+begin
+  with nItem,nMC do
+  begin
+    Clear;
+    Add(Format('车牌号码:%s %s', [nDelimiter, FTruck]));
+    Add(Format('当前状态:%s %s', [nDelimiter, TruckStatusToStr(FStatus)]));
+
+    Add(Format('%s ', [nDelimiter]));
+    Add(Format('交货单号:%s %s', [nDelimiter, FId]));
+    Add(Format('交货数量:%s %.3f 吨', [nDelimiter, FValue]));
+    if FType = sFlag_Dai then nStr := '袋装' else nStr := '散装';
+
+    Add(Format('品种类型:%s %s', [nDelimiter, nStr]));
+    Add(Format('品种名称:%s %s', [nDelimiter, FStockName]));
+    
+    Add(Format('%s ', [nDelimiter]));
+    Add(Format('提货磁卡:%s %s', [nDelimiter, FCard]));
+    Add(Format('单据类型:%s %s', [nDelimiter, BillTypeToStr(FIsVIP)]));
+    Add(Format('客户名称:%s %s', [nDelimiter, FCusName]));
+  end;
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 打印标识为nID的销售合同
 procedure PrintSaleContractReport(const nID: string; const nAsk: Boolean);
@@ -905,6 +1005,58 @@ begin
   FDR.Dataset1.DataSet := FDM.SqlTemp;
   FDR.ShowReport;
   Result := FDR.PrintSuccess;
+end;
+
+//Date: 2012-4-15
+//Parm: 过磅单号;是否询问
+//Desc: 打印nPound过磅记录
+function PrintPoundReport(const nPound: string; nAsk: Boolean): Boolean;
+var nStr: string;
+    nParam: TReportParamItem;
+begin
+  Result := False;
+
+  if nAsk then
+  begin
+    nStr := '是否要打印过磅单?';
+    if not QueryDlg(nStr, sAsk) then Exit;
+  end;
+
+  nStr := 'Select * From %s Where P_ID=''%s''';
+  nStr := Format(nStr, [sTable_PoundLog, nPound]);
+
+  if FDM.QueryTemp(nStr).RecordCount < 1 then
+  begin
+    nStr := '称重记录[ %s ] 已无效!!';
+    nStr := Format(nStr, [nPound]);
+    ShowMsg(nStr, sHint); Exit;
+  end;
+
+  nStr := gPath + sReportDir + 'Pound.fr3';
+  if not FDR.LoadReportFile(nStr) then
+  begin
+    nStr := '无法正确加载报表文件';
+    ShowMsg(nStr, sHint); Exit;
+  end;
+
+  nParam.FName := 'UserName';
+  nParam.FValue := gSysParam.FUserID;
+  FDR.AddParamItem(nParam);
+
+  nParam.FName := 'Company';
+  nParam.FValue := gSysParam.FHintText;
+  FDR.AddParamItem(nParam);
+
+  FDR.Dataset1.DataSet := FDM.SqlTemp;
+  FDR.ShowReport;
+  Result := FDR.PrintSuccess;
+
+  if Result  then
+  begin
+    nStr := 'Update %s Set P_PrintNum=P_PrintNum+1 Where P_ID=''%s''';
+    nStr := Format(nStr, [sTable_PoundLog, nPound]);
+    FDM.ExecuteSQL(nStr);
+  end;
 end;
 
 end.

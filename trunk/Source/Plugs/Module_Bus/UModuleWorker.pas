@@ -70,6 +70,9 @@ type
     //获取纸卡可用金
     function CustomerHasMoney(var nData: string): Boolean;
     //验证客户是否有钱
+    function GetTruckPoundData(var nData: string): Boolean;
+    function SaveTruckPoundData(var nData: string): Boolean;
+    //存取车辆称重数据
   public
     constructor Create; override;
     destructor destroy; override;
@@ -116,6 +119,10 @@ type
     //绑定磁卡
     function LogoffCard(var nData: string): Boolean;
     //注销磁卡
+    function GetPostBillItems(var nData: string): Boolean;
+    //获取岗位交货单
+    function SavePostBillItems(var nData: string): Boolean;
+    //保存岗位交货单
   public
     constructor Create; override;
     destructor destroy; override;
@@ -338,7 +345,9 @@ begin
    cBC_IsSystemExpired     : Result := IsSystemExpired(nData);
    cBC_GetCustomerMoney    : Result := GetCustomerValidMoney(nData);
    cBC_GetZhiKaMoney       : Result := GetZhiKaValidMoney(nData);
-   cBC_CustomerHasMoney    : Result := CustomerHasMoney(nData); 
+   cBC_CustomerHasMoney    : Result := CustomerHasMoney(nData);
+   cBC_GetTruckPoundData   : Result := GetTruckPoundData(nData);
+   cBC_SaveTruckPoundData  : Result := SaveTruckPoundData(nData);
    else
     begin
       Result := False;
@@ -610,6 +619,152 @@ begin
   end;
 end;
 
+//Date: 2014-09-25
+//Parm: 车牌号[FIn.FData]
+//Desc: 获取指定车牌号的称皮数据(使用配对模式,未称重)
+function TWorkerBusinessCommander.GetTruckPoundData(var nData: string): Boolean;
+var nStr: string;
+    nPound: TLadingBillItems;
+begin
+  SetLength(nPound, 1);
+  FillChar(nPound[0], SizeOf(TLadingBillItem), #0);
+
+  nStr := 'Select * From %s Where P_Truck=''%s'' And ' +
+          'P_MValue Is Null And P_PModel=''%s''';
+  nStr := Format(nStr, [sTable_PoundLog, FIn.FData, sFlag_PoundPD]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr),nPound[0] do
+  begin
+    if RecordCount > 0 then
+    begin
+      FCusID      := FieldByName('P_CusID').AsString;
+      FCusName    := FieldByName('P_CusName').AsString;
+      FTruck      := FieldByName('P_Truck').AsString;
+
+      FType       := FieldByName('P_MType').AsString;
+      FStockNo    := FieldByName('P_MID').AsString;
+      FStockName  := FieldByName('P_MName').AsString;
+
+      with FPData do
+      begin
+        FStation  := FieldByName('P_PStation').AsString;
+        FValue    := FieldByName('P_PValue').AsFloat;
+        FDate     := FieldByName('P_PDate').AsDateTime;
+        FOperator := FieldByName('P_PMan').AsString;
+      end;  
+
+      FFactory    := FieldByName('P_FactID').AsString;
+      FPModel     := FieldByName('P_PModel').AsString;
+      FPType      := FieldByName('P_Type').AsString;
+      FPoundID    := FieldByName('P_ID').AsString;
+
+      FStatus     := sFlag_TruckBFP;
+      FNextStatus := sFlag_TruckBFM;
+      FSelected   := True;
+    end else
+    begin
+      FTruck      := FIn.FData;
+      FPModel     := sFlag_PoundPD;
+
+      FStatus     := '';
+      FNextStatus := sFlag_TruckBFP;
+      FSelected   := True;
+    end;
+  end;
+
+  FOut.FData := CombineBillItmes(nPound);
+  Result := True;
+end;
+
+//Date: 2014-09-25
+//Parm: 称重数据[FIn.FData]
+//Desc: 获取指定车牌号的称皮数据(使用配对模式,未称重)
+function TWorkerBusinessCommander.SaveTruckPoundData(var nData: string): Boolean;
+var nStr,nSQL: string;
+    nPound: TLadingBillItems;
+    nOut: TWorkerBusinessCommand;
+begin
+  AnalyseBillItems(FIn.FData, nPound);
+  //解析数据
+
+  with nPound[0] do
+  begin
+    if FPoundID = '' then
+    begin
+      FListC.Clear;
+      FListC.Values['Group'] := sFlag_BusGroup;
+      FListC.Values['Object'] := sFlag_PoundID;
+
+      if not CallMe(cBC_GetSerialNO,
+            FListC.Text, sFlag_Yes, @nOut) then
+        raise Exception.Create(nOut.FData);
+      //xxxxx
+
+      FPoundID := nOut.FData;
+      //new id
+
+      if FPModel = sFlag_PoundLS then
+           nStr := sFlag_Other
+      else nStr := sFlag_Provide;
+
+      nSQL := MakeSQLByStr([
+              SF('P_ID', FPoundID),
+              SF('P_Type', nStr),
+              SF('P_Truck', FTruck),
+              SF('P_CusID', FCusID),
+              SF('P_CusName', FCusName),
+              SF('P_MID', FStockNo),
+              SF('P_MName', FStockName),
+              SF('P_MType', sFlag_San),
+              SF('P_PValue', FPData.FValue, sfVal),
+              SF('P_PDate', sField_SQLServer_Now, sfVal),
+              SF('P_PMan', FIn.FBase.FFrom.FUser),
+              SF('P_FactID', FFactory),
+              SF('P_PStation', FPData.FStation),
+              SF('P_Direction', '进厂'),
+              SF('P_PModel', FPModel),
+              SF('P_Status', sFlag_TruckBFP),
+              SF('P_Valid', sFlag_Yes),
+              SF('P_PrintNum', 1, sfVal)
+              ], sTable_PoundLog, '', True);
+      gDBConnManager.WorkerExec(FDBConn, nSQL);
+    end else
+    begin
+      nStr := SF('P_ID', FPoundID);
+      //where
+
+      if FNextStatus = sFlag_TruckBFP then
+      begin
+        nSQL := MakeSQLByStr([
+                SF('P_PValue', FPData.FValue, sfVal),
+                SF('P_PDate', sField_SQLServer_Now, sfVal),
+                SF('P_PMan', FIn.FBase.FFrom.FUser),
+                SF('P_PStation', FPData.FStation),
+                SF('P_MValue', FMData.FValue, sfVal),
+                SF('P_MDate', DateTime2Str(FMData.FDate)),
+                SF('P_MMan', FMData.FOperator),
+                SF('P_MStation', FMData.FStation)
+                ], sTable_PoundLog, nStr, False);
+        //称重时,由于皮重大,交换皮毛重数据
+      end else
+      begin
+        nSQL := MakeSQLByStr([
+                SF('P_MValue', FPData.FValue, sfVal),
+                SF('P_MDate', sField_SQLServer_Now, sfVal),
+                SF('P_MMan', FIn.FBase.FFrom.FUser),
+                SF('P_MStation', FMData.FStation)
+                ], sTable_PoundLog, nStr, False);
+        //xxxxx
+      end;
+
+      gDBConnManager.WorkerExec(FDBConn, nSQL);
+    end;
+
+    FOut.FData := FPoundID;
+    Result := True;
+  end;
+end;
+
 //------------------------------------------------------------------------------
 class function TWorkerBusinessBills.FunctionName: string;
 begin
@@ -666,6 +821,8 @@ begin
    cBC_ModifyBillTruck     : Result := ChangeBillTruck(nData);
    cBC_SaveBillCard        : Result := SaveBillCard(nData);
    cBC_LogoffCard          : Result := LogoffCard(nData);
+   cBC_GetPostBills        : Result := GetPostBillItems(nData);
+   cBC_SavePostBills       : Result := SavePostBillItems(nData);
    else
     begin
       Result := False;
@@ -983,7 +1140,7 @@ begin
       //combine bill
       FListC.Text := PackerDecodeStr(FListB[nIdx]);
       //get bill info
-      
+
       nStr := MakeSQLByStr([SF('L_ID', nOut.FData),
               SF('L_ZhiKa', FListA.Values['ZhiKa']),
               SF('Z_Project', FListA.Values['Project']),
@@ -1196,10 +1353,10 @@ begin
     end;
 
     nCus := FieldByName('L_CusID').AsString;
-    nZK := FieldByName('L_ZhiKa').AsString;
-    
-    nVal := FieldByName('L_Value').AsFloat;
+    nZK  := FieldByName('L_ZhiKa').AsString;
     nFix := FieldByName('L_ZKMoney').AsString;
+
+    nVal := FieldByName('L_Value').AsFloat; 
     nMoney := Float2Float(nVal*FieldByName('L_Price').AsFloat, cPrecision, True);
   end;
                    
@@ -1487,6 +1644,565 @@ begin
     FDBConn.FConn.RollbackTrans;
     raise;
   end;
+end;
+
+//Date: 2014-09-17
+//Parm: 磁卡号[FIn.FData];岗位[FIn.FExtParam]
+//Desc: 获取特定岗位所需要的交货单列表
+function TWorkerBusinessBills.GetPostBillItems(var nData: string): Boolean;
+var nStr: string;
+    nIdx: Integer;
+    nIsBill: Boolean;
+    nBills: TLadingBillItems;
+begin
+  Result := False;
+  nIsBill := False;
+
+  nStr := 'Select B_Prefix, B_IDLen From %s ' +
+          'Where B_Group=''%s'' And B_Object=''%s''';
+  nStr := Format(nStr, [sTable_SerialBase, sFlag_BusGroup, sFlag_BillNo]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  if RecordCount > 0 then
+  begin
+    nIsBill := (Pos(Fields[0].AsString, FIn.FData) = 1) and
+               (Length(FIn.FData) = Fields[1].AsInteger);
+    //前缀和长度都满足交货单编码规则,则视为交货单号
+  end;
+
+  if not nIsBill then
+  begin
+    nStr := 'Select C_Status,C_Freeze From %s Where C_Card=''%s''';
+    nStr := Format(nStr, [sTable_Card, FIn.FData]);
+    //card status
+
+    with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+    begin
+      if RecordCount < 1 then
+      begin
+        nData := Format('磁卡[ %s ]信息已丢失.', [FIn.FData]);
+        Exit;
+      end;
+
+      if Fields[0].AsString <> sFlag_CardUsed then
+      begin
+        nData := '磁卡[ %s ]当前状态为[ %s ],无法提货.';
+        nData := Format(nData, [FIn.FData, CardStatusToStr(Fields[0].AsString)]);
+        Exit;
+      end;
+
+      if Fields[1].AsString = sFlag_Yes then
+      begin
+        nData := '磁卡[ %s ]已被冻结,无法提货.';
+        nData := Format(nData, [FIn.FData]);
+        Exit;
+      end;
+    end;
+  end;
+
+  nStr := 'Select L_ID,L_ZhiKa,L_CusID,L_CusName,L_Type,L_StockNo,' +
+          'L_StockName,L_Truck,L_Value,L_Price,L_ZKMoney,L_Status,' +
+          'L_NextStatus,L_Card,L_IsVIP,L_PValue,L_MValue From $Bill b ';
+  //xxxxx
+
+  if nIsBill then
+       nStr := nStr + 'Where L_ID=''$CD'''
+  else nStr := nStr + 'Where L_Card=''$CD''';
+
+  nStr := MacroValue(nStr, [MI('$Bill', sTable_Bill), MI('$CD', FIn.FData)]);
+  //xxxxx
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  begin
+    if RecordCount < 1 then
+    begin
+      if nIsBill then
+           nData := '交货单[ %s ]已无效.'
+      else nData := '磁卡号[ %s ]没有交货单.';
+
+      nData := Format(nData, [FIn.FData]);
+      Exit;
+    end;
+
+    SetLength(nBills, RecordCount);
+    nIdx := 0;
+    First;
+
+    while not Eof do
+    with nBills[nIdx] do
+    begin
+      FID         := FieldByName('L_ID').AsString;
+      FZhiKa      := FieldByName('L_ZhiKa').AsString;
+      FCusID      := FieldByName('L_CusID').AsString;
+      FCusName    := FieldByName('L_CusName').AsString;
+      FTruck      := FieldByName('L_Truck').AsString;
+
+      FType       := FieldByName('L_Type').AsString;
+      FStockNo    := FieldByName('L_StockNo').AsString;
+      FStockName  := FieldByName('L_StockName').AsString;
+      FValue      := FieldByName('L_Value').AsFloat;
+      FPrice      := FieldByName('L_Price').AsFloat;
+
+      FCard       := FieldByName('L_Card').AsString;
+      FIsVIP      := FieldByName('L_IsVIP').AsString;
+      FStatus     := FieldByName('L_Status').AsString;
+      FNextStatus := FieldByName('L_NextStatus').AsString;
+
+      if FIsVIP = sFlag_TypeShip then
+      begin
+        FStatus    := sFlag_TruckZT;
+        FNextStatus := sFlag_TruckOut;
+      end;
+
+      if FStatus = sFlag_BillNew then
+      begin
+        FStatus     := sFlag_TruckNone;
+        FNextStatus := sFlag_TruckNone;
+      end;
+
+      FPData.FValue := FieldByName('L_PValue').AsFloat;
+      FMData.FValue := FieldByName('L_MValue').AsFloat;
+      FSelected := True;
+
+      Inc(nIdx);
+      Next;
+    end;
+  end;
+
+  FOut.FData := CombineBillItmes(nBills);
+  Result := True;
+end;
+
+//Date: 2014-09-18
+//Parm: 交货单[FIn.FData];岗位[FIn.FExtParam]
+//Desc: 保存指定岗位提交的交货单列表
+function TWorkerBusinessBills.SavePostBillItems(var nData: string): Boolean;
+var nStr,nSQL,nTmp: string;
+    f,m,nVal: Double;
+    i,nIdx,nInt: Integer;
+    nBills: TLadingBillItems;
+    nOut: TWorkerBusinessCommand;
+begin
+  Result := False;
+  AnalyseBillItems(FIn.FData, nBills);
+  nInt := Length(nBills);
+
+  if nInt < 1 then
+  begin
+    nData := '岗位[ %s ]提交的单据为空.';
+    nData := Format(nData, [PostTypeToStr(FIn.FExtParam)]);
+    Exit;
+  end;
+
+  if (nBills[0].FType = sFlag_San) and (nInt > 1) then
+  begin
+    nData := '岗位[ %s ]提交了散装合单,该业务系统暂时不支持.';
+    nData := Format(nData, [PostTypeToStr(FIn.FExtParam)]);
+    Exit;
+  end;
+
+  FListA.Clear;
+  //用于存储SQL列表
+
+  //----------------------------------------------------------------------------
+  if FIn.FExtParam = sFlag_TruckIn then //进厂
+  begin
+    with nBills[0] do
+    begin
+      FStatus := sFlag_TruckIn;
+      FNextStatus := sFlag_TruckBFP;
+    end;
+
+    if nBills[0].FType = sFlag_Dai then
+    begin
+      nStr := 'Select D_Value From %s Where D_Name=''%s'' And D_Memo=''%s''';
+      nStr := Format(nStr, [sTable_SysDict, sFlag_SysParam, sFlag_PoundIfDai]);
+
+      with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+       if (RecordCount > 0) and (Fields[0].AsString = sFlag_No) then
+        nBills[0].FNextStatus := sFlag_TruckZT;
+      //袋装不过磅
+    end;
+
+    for nIdx:=Low(nBills) to High(nBills) do
+    begin
+      nStr := SF('L_ID', nBills[nIdx].FID);
+      nSQL := MakeSQLByStr([
+              SF('L_Status', nBills[0].FStatus),
+              SF('L_NextStatus', nBills[0].FNextStatus),
+              SF('L_InTime', sField_SQLServer_Now, sfVal),
+              SF('L_InMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, nStr, False);
+      FListA.Add(nSQL);
+
+      nSQL := 'Update %s Set T_InFact=%s Where T_HKBills Like ''%%%s%%''';
+      nSQL := Format(nSQL, [sTable_ZTTrucks, sField_SQLServer_Now,
+              nBills[nIdx].FID]);
+      FListA.Add(nSQL);
+      //更新队列车辆进厂状态
+    end;
+  end else
+
+  //----------------------------------------------------------------------------
+  if FIn.FExtParam = sFlag_TruckBFP then //称量皮重
+  begin
+    FListB.Clear;
+    nStr := 'Select D_Value From %s Where D_Name=''%s''';
+    nStr := Format(nStr, [sTable_SysDict, sFlag_NFStock]);
+
+    with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+    if RecordCount > 0 then
+    begin
+      First;
+      while not Eof do
+      begin
+        FListB.Add(Fields[0].AsString);
+        Next;
+      end;
+    end;
+
+    nInt := -1;
+    for nIdx:=Low(nBills) to High(nBills) do
+    if nBills[nIdx].FPoundID = sFlag_Yes then
+    begin
+      nInt := nIdx;
+      Break;
+    end;
+
+    if nInt < 0 then
+    begin
+      nData := '岗位[ %s ]提交的皮重数据为0.';
+      nData := Format(nData, [PostTypeToStr(FIn.FExtParam)]);
+      Exit;
+    end;
+
+    FListC.Clear;
+    FListC.Values['Group'] := sFlag_BusGroup;
+    FListC.Values['Object'] := sFlag_PoundID;
+
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      FStatus := sFlag_TruckBFP;
+      if FType = sFlag_Dai then
+           FNextStatus := sFlag_TruckZT
+      else FNextStatus := sFlag_TruckFH;
+
+      if FListB.IndexOf(FStockNo) >= 0 then
+        FNextStatus := sFlag_TruckBFM;
+      //现场不发货直接过重
+
+      nSQL := MakeSQLByStr([
+              SF('L_Status', FStatus),
+              SF('L_NextStatus', FNextStatus),
+              SF('L_PValue', nBills[nInt].FPData.FValue, sfVal),
+              SF('L_PDate', sField_SQLServer_Now, sfVal),
+              SF('L_PMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, SF('L_ID', FID), False);
+      FListA.Add(nSQL);
+
+      if not TWorkerBusinessCommander.CallMe(cBC_GetSerialNO,
+            FListC.Text, sFlag_Yes, @nOut) then
+        raise Exception.Create(nOut.FData);
+      //xxxxx
+
+      nSQL := MakeSQLByStr([
+              SF('P_ID', nOut.FData),
+              SF('P_Type', sFlag_Sale),
+              SF('P_Bill', FID),
+              SF('P_Truck', FTruck),
+              SF('P_CusID', FCusID),
+              SF('P_CusName', FCusName),
+              SF('P_MID', FStockNo),
+              SF('P_MName', FStockName),
+              SF('P_MType', FType),
+              SF('P_LimValue', FValue),
+              SF('P_PValue', nBills[nInt].FPData.FValue, sfVal),
+              SF('P_PDate', sField_SQLServer_Now, sfVal),
+              SF('P_PMan', FIn.FBase.FFrom.FUser),
+              SF('P_FactID', nBills[nInt].FFactory),
+              SF('P_PStation', nBills[nInt].FPData.FStation),
+              SF('P_Direction', '出厂'),
+              SF('P_PModel', FPModel),
+              SF('P_Status', sFlag_TruckBFP),
+              SF('P_Valid', sFlag_Yes),
+              SF('P_PrintNum', 1, sfVal)
+              ], sTable_PoundLog, '', True);
+      FListA.Add(nSQL);
+    end;
+  end else
+
+  //----------------------------------------------------------------------------
+  if FIn.FExtParam = sFlag_TruckZT then //栈台现场
+  begin
+    nInt := -1;
+    for nIdx:=Low(nBills) to High(nBills) do
+    if nBills[nIdx].FPData.FValue > 0 then
+    begin
+      nInt := nIdx;
+      Break;
+    end;
+
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      FStatus := sFlag_TruckZT;
+      if nInt >= 0 then //已称皮
+           FNextStatus := sFlag_TruckBFM
+      else FNextStatus := sFlag_TruckOut;
+
+      nSQL := MakeSQLByStr([SF('L_Status', FStatus),
+              SF('L_NextStatus', FNextStatus),
+              SF('L_LadeTime', sField_SQLServer_Now, sfVal),
+              SF('L_LadeMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, SF('L_ID', FID), False);
+      FListA.Add(nSQL);
+
+      nSQL := 'Update %s Set T_InLade=%s Where T_HKBills Like ''%%%s%%''';
+      nSQL := Format(nSQL, [sTable_ZTTrucks, sField_SQLServer_Now, FID]);
+      FListA.Add(nSQL);
+      //更新队列车辆提货状态
+    end;
+  end else
+
+  if FIn.FExtParam = sFlag_TruckFH then //放灰现场
+  begin
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      nSQL := MakeSQLByStr([SF('L_Status', sFlag_TruckFH),
+              SF('L_NextStatus', sFlag_TruckBFM),
+              SF('L_LadeTime', sField_SQLServer_Now, sfVal),
+              SF('L_LadeMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, SF('L_ID', FID), False);
+      FListA.Add(nSQL);
+
+      nSQL := 'Update %s Set T_InLade=%s Where T_HKBills Like ''%%%s%%''';
+      nSQL := Format(nSQL, [sTable_ZTTrucks, sField_SQLServer_Now, FID]);
+      FListA.Add(nSQL);
+      //更新队列车辆提货状态
+    end;
+  end else
+
+  //----------------------------------------------------------------------------
+  if FIn.FExtParam = sFlag_TruckBFM then //称量毛重
+  begin
+    nInt := -1;
+    for nIdx:=Low(nBills) to High(nBills) do
+    if nBills[nIdx].FPoundID = sFlag_Yes then
+    begin
+      nInt := nIdx;
+      Break;
+    end;
+
+    if nInt < 0 then
+    begin
+      nData := '岗位[ %s ]提交的毛重数据为0.';
+      nData := Format(nData, [PostTypeToStr(FIn.FExtParam)]);
+      Exit;
+    end;
+
+    with nBills[0] do
+    if FType = sFlag_San then //散装需交验资金额
+    begin
+      if not TWorkerBusinessCommander.CallMe(cBC_GetZhiKaMoney,
+             nBills[0].FZhiKa, '', @nOut) then
+      begin
+        nData := nOut.FData;
+        Exit;
+      end;
+
+      m := StrToFloat(nOut.FData);
+      m := m + Float2Float(FPrice * FValue, cPrecision, False);
+      //纸卡可用金
+
+      nVal := FValue;
+      FValue := nBills[nInt].FMData.FValue - FPData.FValue;
+      //新净重,实际提货量
+      f := Float2Float(FPrice * FValue, cPrecision, True) - m;
+      //实际所需金额与可用金差额
+
+      if f > 0 then
+      begin
+        nData := '客户[ %s.%s ]资金余额不足,详情如下:' + #13#10#13#10 +
+                 '※.可用金额: %.2f元' + #13#10 +
+                 '※.提货金额: %.2f元' + #13#10 +
+                 '※.需 补 交: %.2f元' + #13#10+#13#10 +
+                 '请到财务室办理"补交货款"手续,然后再次称重.';
+        nData := Format(nData, [FCusID, FCusName, m, FPrice * FValue, f]);
+        Exit;
+      end;
+
+      m := Float2Float(FPrice * FValue, cPrecision, True);
+      m := m - Float2Float(FPrice * nVal, cPrecision, True);
+      //新增冻结金额
+
+      nSQL := 'Update %s Set A_FreezeMoney=A_FreezeMoney+(%.2f) ' +
+              'Where A_CID=''%s''';
+      nSQL := Format(nSQL, [sTable_CusAccount, m, FCusID]);
+      FListA.Add(nSQL); //更新账户
+
+      if nOut.FExtParam = sFlag_Yes then
+      begin
+        nSQL := 'Update %s Set Z_FixedMoney=Z_FixedMoney-(%.2f) ' +
+                'Where Z_ID=''%s''';
+        nSQL := Format(nSQL, [sTable_ZhiKa, m, FZhiKa]);
+        FListA.Add(nSQL); //更新纸卡限提金额
+      end;
+    end;
+
+    nVal := 0;
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      if nIdx < High(nBills) then
+      begin
+        nSQL := MakeSQLByStr([
+                SF('P_MValue', FPData.FValue + FValue, sfVal),
+                SF('P_MDate', sField_SQLServer_Now, sfVal),
+                SF('P_MMan', FIn.FBase.FFrom.FUser),
+                SF('P_MStation', nBills[nInt].FMData.FStation)
+                ], sTable_PoundLog, SF('P_Bill', FID), False);
+        FListA.Add(nSQL);
+
+        FMData.FValue := FValue;
+        nVal := nVal + FValue;
+        //累计净重
+      end else
+      begin
+        nVal := nBills[nInt].FMData.FValue - nVal;
+        //扣减已累计的净重
+        FMData.FValue := nVal;
+        
+        nSQL := MakeSQLByStr([
+                SF('P_MValue', nVal, sfVal),
+                SF('P_MDate', sField_SQLServer_Now, sfVal),
+                SF('P_MMan', FIn.FBase.FFrom.FUser),
+                SF('P_MStation', nBills[nInt].FMData.FStation)
+                ], sTable_PoundLog, SF('P_Bill', FID), False);
+        FListA.Add(nSQL);
+      end;
+    end;
+
+    FListB.Clear;
+    if nBills[nInt].FPModel <> sFlag_PoundCC then //出厂模式,毛重不生效
+    begin  
+      nSQL := 'Select L_ID From %s Where L_Card=''%s'' And L_MValue Is Null';
+      nSQL := Format(nSQL, [sTable_Bill, nBills[nInt].FCard]);
+      //未称毛重记录
+
+      with gDBConnManager.WorkerQuery(FDBConn, nSQL) do
+      if RecordCount > 0 then
+      begin
+        First;
+
+        while not Eof do
+        begin
+          FListB.Add(Fields[0].AsString);
+          Next;
+        end;
+      end;
+    end;
+
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      if nBills[nInt].FPModel = sFlag_PoundCC then Continue;
+      //出厂模式,不更新状态
+
+      i := FListB.IndexOf(FID);
+      if i >= 0 then
+        FListB.Delete(i);
+      //排除本次称重
+
+      nSQL := MakeSQLByStr([SF('L_Value', FValue, sfVal),
+              SF('L_Status', sFlag_TruckBFM),
+              SF('L_NextStatus', sFlag_TruckOut),
+              SF('L_MValue', FMData.FValue , sfVal),
+              SF('L_MDate', sField_SQLServer_Now, sfVal),
+              SF('L_MMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, SF('L_ID', FID), False);
+      FListA.Add(nSQL);
+    end;
+
+    if FListB.Count > 0 then
+    begin
+      nTmp := AdjustListStrFormat2(FListB, '''', True, ',', False);
+      //未过重交货单列表
+
+      nStr := Format('L_ID In (%s)', [nTmp]);
+      nSQL := MakeSQLByStr([
+              SF('L_PValue', nBills[nInt].FMData.FValue, sfVal),
+              SF('L_PDate', sField_SQLServer_Now, sfVal),
+              SF('L_PMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, nStr, False);
+      FListA.Add(nSQL);
+      //没有称毛重的提货记录的皮重,等于本次的毛重
+
+      nStr := Format('P_Bill In (%s)', [nTmp]);
+      nSQL := MakeSQLByStr([
+              SF('P_PValue', nBills[nInt].FMData.FValue, sfVal),
+              SF('P_PDate', sField_SQLServer_Now, sfVal),
+              SF('P_PMan', FIn.FBase.FFrom.FUser),
+              SF('P_PStation', nBills[nInt].FMData.FStation)
+              ], sTable_PoundLog, nStr, False);
+      FListA.Add(nSQL);
+      //没有称毛重的过磅记录的皮重,等于本次的毛重
+    end;
+  end else
+
+  //----------------------------------------------------------------------------
+  if FIn.FExtParam = sFlag_TruckOut then
+  begin
+    FListB.Clear;
+    for nIdx:=Low(nBills) to High(nBills) do
+    with nBills[nIdx] do
+    begin
+      FListB.Add(FID);
+      //交货单列表
+      
+      nSQL := MakeSQLByStr([SF('L_Status', sFlag_TruckOut),
+              SF('L_NextStatus', ''),
+              SF('L_Card', ''),
+              SF('L_OutFact', sField_SQLServer_Now, sfVal),
+              SF('L_OutMan', FIn.FBase.FFrom.FUser)
+              ], sTable_Bill, SF('L_ID', FID), False);
+      FListA.Add(nSQL); //更新交货单
+
+      nVal := Float2Float(FPrice * FValue, cPrecision, True);
+      //提货金额
+      
+      nSQL := 'Update %s Set A_OutMoney=A_OutMoney+%.2f,' +
+              'A_FreezeMoney=A_FreezeMoney-%.2f Where A_CID=''%s''';
+      nSQL := Format(nSQL, [sTable_CusAccount, nVal, nVal, FCusID]);
+      FListA.Add(nSQL); //更新客户资金
+
+      //todo: 合并袋装装车数据到交货单表
+    end;
+
+    nSQL := 'Update %s Set C_Status=''%s'' Where C_Card=''%s''';
+    nSQL := Format(nSQL, [sTable_Card, sFlag_CardIdle, nBills[0].FCard]);
+    FListA.Add(nSQL); //更新磁卡状态
+
+    nStr := AdjustListStrFormat2(FListB, '''', True, ',', False);
+    nSQL := 'Delete From %s Where T_Bill In (%s)';
+    nSQL := Format(nSQL, [sTable_ZTTrucks, nStr]);
+    FListA.Add(nSQL); //清理装车队列
+  end;
+
+  //----------------------------------------------------------------------------
+  FDBConn.FConn.BeginTrans;
+  try
+    for nIdx:=0 to FListA.Count - 1 do
+      gDBConnManager.WorkerExec(FDBConn, FListA[nIdx]);
+    //xxxxx
+
+    FDBConn.FConn.CommitTrans;
+    Result := True;
+  except
+    FDBConn.FConn.RollbackTrans;
+    raise;
+  end;  
 end;
 
 initialization

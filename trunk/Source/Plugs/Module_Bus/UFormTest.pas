@@ -4,10 +4,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, UFormBase, StdCtrls;
+  Dialogs, UFormBase, StdCtrls, ExtCtrls;
 
 type
   TBaseForm1 = class(TBaseForm)
+    Memo1: TMemo;
+    Panel1: TPanel;
     Button1: TButton;
     Edit1: TEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -22,6 +24,7 @@ type
     function GetCustomeMoney(const nCusID,nLimit: string): string;
     function GetZKMoney(const nZK: string): string;
     function CustomerHasMoney(const nCID: string): Boolean;
+    function GetPostBills(const nCard, nPost: string): string;
   public
     { Public declarations }
     class function CreateForm(const nPopedom: string = '';
@@ -70,7 +73,7 @@ end;
 
 procedure TBaseForm1.Button1Click(Sender: TObject);
 begin
-  CustomerHasMoney(edit1.Text);
+  Memo1.Text := GetPostBills(Edit1.Text, '');
 end;
 
 //------------------------------------------------------------------------------
@@ -86,6 +89,38 @@ begin
   try
     nPack := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
     nWorker := gBusinessWorkerManager.LockWorker(sBus_BusinessCommand);
+
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nParma;
+    nStr := nPack.PackIn(@nIn);
+
+    Result := nWorker.WorkActive(nStr);
+    if not Result then
+    begin
+      ShowDlg(nStr, sWarn);
+      Exit;
+    end;
+
+    nPack.UnPackOut(nStr, nOut);
+  finally
+    gBusinessPackerManager.RelasePacker(nPack);
+    gBusinessWorkerManager.RelaseWorker(nWorker);
+  end;
+end;
+
+function CallBusinessBills(const nCmd: Integer; const nData,nParma: string;
+  const nOut: PWorkerBusinessCommand): Boolean;
+var nStr: string;
+    nIn: TWorkerBusinessCommand;
+    nPack: TBusinessPackerBase;
+    nWorker: TBusinessWorkerBase;
+begin
+  nPack := nil;
+  nWorker := nil;
+  try
+    nPack := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
+    nWorker := gBusinessWorkerManager.LockWorker(sBus_BusinessSaleBill);
 
     nIn.FCommand := nCmd;
     nIn.FData := nData;
@@ -155,6 +190,25 @@ begin
   if CallBusinessCommand(cBC_CustomerHasMoney, nCID, '', @nOut) then
     Result := nOut.FData = sFlag_Yes;
   //xxxxx
+end;
+
+function TBaseForm1.GetPostBills(const nCard, nPost: string): string;
+var nIdx: Integer;
+    nList: TStrings;
+    nOut: TWorkerBusinessCommand;
+begin
+  Result := '';
+  if not CallBusinessBills(cBC_GetPostBills, nCard, nPost, @nOut) then Exit;
+
+  nList := TStringList.Create;
+  try
+    nList.Text := PackerDecodeStr(nOut.FData);
+    for nIdx:=0 to nList.Count - 1 do
+      Result := Result + PackerDecodeStr(nList[nIdx]) + #13#10;
+    //xxxxx
+  finally
+    nList.Free;
+  end;
 end;
 
 initialization

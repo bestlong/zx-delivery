@@ -44,6 +44,7 @@ const
   cFI_FrameFangHuiQuery = $0032;                     //放灰查询
   cFI_FrameZhanTaiQuery = $0033;                     //栈台查询
   cFI_FrameZTDispatch   = $0034;                     //栈台调度
+  cFI_FramePoundManual  = $0035;                     //手动称重
 
   cFI_FrameTruckQuery   = $0050;                     //车辆查询
   cFI_FrameCusAccountQuery = $0051;                  //客户账户
@@ -165,7 +166,12 @@ type
     FLocalName  : string;                            //本机名称
     FFactNum    : string;                            //工厂编号
     FSerialID   : string;                            //电脑编号
+    FIsManual   : Boolean;                           //手动过磅
     FHardMonURL : string;                            //硬件守护
+
+    FPoundDaiZ  : Double;                            //袋装正误差
+    FPoundDaiF  : Double;                            //袋装负误差
+    FPoundSanF  : Double;                            //散装负误差
   end;
   //系统参数
 
@@ -273,8 +279,7 @@ begin
   AddMenuModuleItem('MAIN_D06', cFI_FrameBill);
   AddMenuModuleItem('MAIN_D08', cFI_FormSaleAdjust, mtForm);
 
-  AddMenuModuleItem('MAIN_E01', cFI_FormBangFangP, mtForm);
-  AddMenuModuleItem('MAIN_E02', cFI_FormBangFangM, mtForm);
+  AddMenuModuleItem('MAIN_E01', cFI_FramePoundManual);
   AddMenuModuleItem('MAIN_E03', cFI_FramePoundQuery);
 
   AddMenuModuleItem('MAIN_F01', cFI_FormLadDai, mtForm);
