@@ -1,6 +1,9 @@
 {$DEFINE debug}
 //调试模式
 
+{$DEFINE HardMon}
+//编译硬件守护
+
 {.$DEFINE GenRODL}
 //生成RODL资源
 

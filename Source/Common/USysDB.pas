@@ -141,8 +141,6 @@ ResourceString
   sFlag_EnableBakdb   = 'Uses_BackDB';               //备用库
   sFlag_ValidDate     = 'SysValidDate';              //有效期
   sFlag_ZhiKaVerify   = 'ZhiKaVerify';               //纸卡审核
-  sFlag_AutoIn        = 'AutoI_Truck';               //自动进厂
-  sFlag_AutoOut       = 'AutoO_Truck';               //自动出厂
   sFlag_PrintZK       = 'PrintZK';                   //打印纸卡
   sFlag_BillPrice     = 'Bill_Price';                //开单显单价
   sFlag_PrintBill     = 'PrintStockBill';            //需打印订单
@@ -154,10 +152,6 @@ ResourceString
   sFlag_PoundWuCha    = 'PoundWuCha';                //过磅误差分组
   sFlag_PoundIfDai    = 'PoundIFDai';                //袋装是否过磅
   sFlag_NFStock       = 'NoFaHuoStock';              //现场无需发货
-
-  sFlag_ProPreTruckP  = 'ProPreTruckP';              //预置皮重
-  sFlag_ProCardOpt    = 'ProCardOpt';                //供应磁卡
-  sFlag_ProDoorOpt    = 'ProDoorOpt';                //供应门卫
 
   sFlag_CommonItem    = 'CommonItem';                //公共信息
   sFlag_CardItem      = 'CardItem';                  //磁卡信息项
@@ -181,6 +175,14 @@ ResourceString
 
   sFlag_HardSrvURL    = 'HardMonURL';
   sFlag_MITSrvURL     = 'MITServiceURL';             //服务地址
+
+  sFlag_AutoIn        = 'Truck_AutoIn';              //自动进厂
+  sFlag_AutoOut       = 'Truck_AutoOut';             //自动出厂
+  sFlag_InTimeout     = 'InFactTimeOut';             //进厂超时(队列)
+  sFlag_NoDaiQueue    = 'NoDaiQueue';                //袋装禁用队列
+  sFlag_NoSanQueue    = 'NoSanQueue';                //散装禁用队列
+  sFlag_DelayQueue    = 'DelayQueue';                //延迟排队(厂内)
+  sFlag_PoundQueue    = 'PoundQueue';                //延迟排队(厂内依据过皮时间)
 
   sFlag_BusGroup      = 'BusFunction';               //业务编码组
   sFlag_BillNo        = 'Bus_Bill';                  //交货单号
