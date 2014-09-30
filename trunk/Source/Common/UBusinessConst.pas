@@ -119,6 +119,9 @@ resourcestring
   {*plug module id*}
   sPlug_ModuleBus             = '{DF261765-48DC-411D-B6F2-0B37B14E014E}';
                                                         //业务模块
+  sPlug_ModuleHD              = '{B584DCD6-40E5-413C-B9F3-6DD75AEF1C62}';
+                                                        //硬件守护
+                                                                                                   
   {*common function*}  
   sSys_BasePacker             = 'Sys_BasePacker';       //基本封包器
 
