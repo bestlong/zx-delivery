@@ -125,10 +125,8 @@ end;
 
 procedure THardwareWorker.BeforeStartServer;
 begin
-  gTruckQueueManager.StartQueue(gParamManager.ActiveParam.FDB.FID); exit;
+  gTruckQueueManager.StartQueue(gParamManager.ActiveParam.FDB.FID);
   //truck queue
-  gCardManager.StartSender;
-  //led display
 
   gHardwareHelper.OnProce := WhenReaderCardArrived;
   gHardwareHelper.StartRead;
@@ -152,6 +150,8 @@ begin
 
   gDisplayManager.StartDisplay;
   //small led
+  gCardManager.StartSender;
+  //led display
 end;
 
 procedure THardwareWorker.AfterStopServer;

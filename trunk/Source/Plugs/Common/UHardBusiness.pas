@@ -33,141 +33,99 @@ const
   sPost_In   = 'in';
   sPost_Out  = 'out';
 
-type
-  TLadingTruckItem = record
-    FCard     : string;      //磁卡号
-    FTruck    : string;      //车牌号
-    FStatus   : string;      //当前
-    FNext     : string;      //下一
+//Date: 2014-09-15
+//Parm: 命令;数据;参数;输出
+//Desc: 本地调用业务对象
+function CallBusinessCommand(const nCmd: Integer;
+  const nData, nExt: string; const nOut: PWorkerBusinessCommand): Boolean;
+var nStr: string;
+    nIn: TWorkerBusinessCommand;
+    nPacker: TBusinessPackerBase;
+    nWorker: TBusinessWorkerBase;
+begin
+  nPacker := nil;
+  nWorker := nil;
+  try
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nExt;
 
-    FOrder    : string;      //订单号
-    FOrderTy  : string;      //类型
-    FCusName  : string;      //客户名称
+    nPacker := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
+    nStr := nPacker.PackIn(@nIn);
+    nWorker := gBusinessWorkerManager.LockWorker(sBus_BusinessCommand);
+    //get worker
 
-    FBill     : string;      //交货单
-    FType     : string;      //类型
-    FStock    : string;      //品种
-    FValue    : Double;      //提货量
+    Result := nWorker.WorkActive(nStr);
+    if Result then
+         nPacker.UnPackOut(nStr, nOut)
+    else nOut.FData := nStr;
+  finally
+    gBusinessPackerManager.RelasePacker(nPacker);
+    gBusinessWorkerManager.RelaseWorker(nWorker);
   end;
+end;
 
-  TLadingTruckItems = array of TLadingTruckItem;
-  //交货单列表
+//Date: 2014-09-05
+//Parm: 命令;数据;参数;输出
+//Desc: 调用中间件上的销售单据对象
+function CallBusinessSaleBill(const nCmd: Integer;
+  const nData, nExt: string; const nOut: PWorkerBusinessCommand): Boolean;
+var nStr: string;
+    nIn: TWorkerBusinessCommand;
+    nPacker: TBusinessPackerBase;
+    nWorker: TBusinessWorkerBase;
+begin
+  nPacker := nil;
+  nWorker := nil;
+  try
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nExt;
 
-//------------------------------------------------------------------------------
+    nPacker := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
+    nStr := nPacker.PackIn(@nIn);
+    nWorker := gBusinessWorkerManager.LockWorker(sBus_BusinessSaleBill);
+    //get worker
+
+    Result := nWorker.WorkActive(nStr);
+    if Result then
+         nPacker.UnPackOut(nStr, nOut)
+    else nOut.FData := nStr;
+  finally
+    gBusinessPackerManager.RelasePacker(nPacker);
+    gBusinessWorkerManager.RelaseWorker(nWorker);
+  end;
+end;
+
 //Date: 2012-3-23
 //Parm: 磁卡号;岗位;交货单列表
 //Desc: 获取nPost岗位上磁卡为nCard的交货单列表
 function GetLadingBills(const nCard,nPost: string;
- var nData: TLadingTruckItems): Boolean;
-var nIdx: Integer;
-    nListA,nListB: TStrings;
-    nIn: TWorkerBusinessCommand;
-    nOut: TWorkerBusinessCommand;
-    nWorker: TBusinessWorkerBase;
+ var nData: TLadingBillItems): Boolean;
+var nOut: TWorkerBusinessCommand;
 begin
-  nListA := nil;
-  nListB := nil;
-  nWorker := nil;
-  try
-    nListA := TStringList.Create;
-    nListA.Values['Card'] := nCard;
-    nListA.Values['Post'] := nPost;
-
-    nIn.FBase.FParam := sParam_NoHintOnError;
-    nIn.FCommand := cBC_GetPostBills;
-    nIn.FData := PackerEncodeStr(nListA.Text);
-    nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessCommand);
-
-    SetLength(nData, 0);
-    Result := nWorker.WorkActive(@nIn, @nOut);
-    if not Result then Exit;
-    
-    nListA.Text := PackerDecodeStr(nOut.FData);
-    SetLength(nData, nListA.Count);
-    nListB := TStringList.Create;
-
-    for nIdx:=Low(nData) to High(nData) do
-    with nData[nIdx],nListB do
-    begin
-      nListB.Text := PackerDecodeStr(nListA[nIdx]);
-
-      FCard     := Values['Card'];
-      FTruck    := Values['Truck'];
-      FStatus   := Values['Status'];
-      FNext     := Values['Next'];
-
-      FOrder    := Values['Order'];
-      FOrderTy  := Values['OrderTy'];
-      FCusName  := Values['CusName'];
-
-      FBill     := Values['Bill'];
-      FType     := Values['Type'];
-      FStock    := Values['Stock'];
-
-      if IsNumber(Values['Value'], True) then
-           FValue := StrToFloat(Values['Value'])
-      else FValue := 0;
-    end;
-  finally
-    nListA.Free;
-    nListB.Free;
-    gBusinessWorkerManager.RelaseWorker(nWorker);
-  end;
+  Result := CallBusinessSaleBill(cBC_GetPostBills, nCard, nPost, @nOut);
+  if Result then
+       AnalyseBillItems(nOut.FData, nData)
+  else gSysLoger.AddLog(TBusinessWorkerManager, '业务对象', nOut.FData);
 end;
 
-//Date: 2012-3-25
+//Date: 2014-09-18
 //Parm: 岗位;交货单列表
-//Desc: 保存nPost岗位的交货单数据
-function SaveLadingBills(const nPost: string; nData: TLadingTruckItems): Boolean;
-var nIdx: Integer;
-    nListA,nListB: TStrings;
-    nIn: TWorkerBusinessCommand;
+//Desc: 保存nPost岗位上的交货单数据
+function SaveLadingBills(const nPost: string; nData: TLadingBillItems): Boolean;
+var nStr: string;
     nOut: TWorkerBusinessCommand;
-    nWorker: TBusinessWorkerBase;
 begin
-  Result := False;
-  if Length(nData) < 1 then Exit;
+  nStr := CombineBillItmes(nData);
+  Result := CallBusinessSaleBill(cBC_SavePostBills, nStr, nPost, @nOut);
 
-  nListA := nil;
-  nListB := nil;
-  nWorker := nil;
-  try
-    nListA := TStringList.Create;
-    nListB := TStringList.Create;
-
-    for nIdx:=Low(nData) to High(nData) do
-    with nData[nIdx],nListA do
-    begin
-      Values['Bill'] := FBill;
-      Values['Stock'] := FStock;
-      Values['Value'] := FloatToStr(FValue);
-      nListB.Add(PackerEncodeStr(nListA.Text));
-    end;
-
-    with nListA do
-    begin
-      Clear; 
-      Values['Post'] := nPost;
-      Values['Card'] := nData[0].FCard;
-      Values['Type'] := nData[0].FType;
-      Values['Truck'] := nData[0].FTruck;
-      Values['Bills'] := PackerEncodeStr(nListB.Text);
-    end;
-
-    nIn.FBase.FParam := sParam_NoHintOnError;
-    nIn.FCommand := cBC_SavePostBills;
-    nIn.FData := PackerEncodeStr(nListA.Text);
-    nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessCommand);
-
-    SetLength(nData, 0);
-    Result := nWorker.WorkActive(@nIn, @nOut);
-  finally
-    nListA.Free;
-    nListB.Free;
-    gBusinessWorkerManager.RelaseWorker(nWorker);
-  end;
+  if not Result then
+    gSysLoger.AddLog(TBusinessWorkerManager, '业务对象', nOut.FData);
+  //xxxxx
 end;
-
+                                                             
+//------------------------------------------------------------------------------
 //Date: 2013-07-21
 //Parm: 事件描述;岗位标识
 //Desc:
@@ -185,7 +143,7 @@ var nStr,nTruck: string;
     nIdx,nInt: Integer;
     nPLine: PLineItem;
     nPTruck: PTruckItem;
-    nTrucks: TLadingTruckItems;
+    nTrucks: TLadingBillItems;
 begin
   if gTruckQueueManager.IsTruckAutoIn and (GetTickCount -
      gHardwareHelper.GetCardLastDone(nCard, nReader) < 2 * 60 * 1000) then
@@ -212,6 +170,19 @@ begin
     Exit;
   end;
 
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
+  begin
+    if (FStatus = sFlag_TruckNone) or (FStatus = sFlag_TruckIn) then Continue;
+    //未进长,或已进厂
+
+    nStr := '车辆[ %s ]下一状态为:[ %s ],进厂刷卡无效.';
+    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
+    
+    WriteHardHelperLog(nStr, sPost_In);
+    Exit;
+  end;
+
   if nTrucks[0].FStatus = sFlag_TruckIn then
   begin
     if gTruckQueueManager.IsTruckAutoIn then
@@ -231,15 +202,6 @@ begin
       end;
     end;
 
-    Exit;
-  end;
-
-  if nTrucks[0].FStatus <> sFlag_TruckNone then
-  begin
-    nStr := '车辆[ %s ]下一状态为:[ %s ],进厂刷卡无效.';
-    nStr := Format(nStr, [nTrucks[0].FTruck, TruckStatusToStr(nTrucks[0].FNext)]);
-
-    WriteHardHelperLog(nStr, sPost_In);
     Exit;
   end;
 
@@ -327,7 +289,7 @@ end;
 procedure MakeTruckOut(const nCard,nReader,nPrinter: string);
 var nStr: string;
     nIdx: Integer;
-    nTrucks: TLadingTruckItems;
+    nTrucks: TLadingBillItems;
 begin
   if not GetLadingBills(nCard, sFlag_TruckOut, nTrucks) then
   begin
@@ -347,11 +309,13 @@ begin
     Exit;
   end;
 
-  if nTrucks[0].FNext <> sFlag_TruckOut then
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
   begin
-    nStr := '车辆[ %s ]下一状态为:[ %s ].';
-    nStr := Format(nStr, [nTrucks[0].FTruck, TruckStatusToStr(nTrucks[0].FNext)]);
-
+    if FNextStatus = sFlag_TruckOut then Continue;
+    nStr := '车辆[ %s ]下一状态为:[ %s ],无法出厂.';
+    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
+    
     WriteHardHelperLog(nStr, sPost_Out);
     Exit;
   end;
@@ -367,8 +331,8 @@ begin
 
   for nIdx:=Low(nTrucks) to High(nTrucks) do
    if nPrinter = '' then
-        gRemotePrinter.PrintBill(nTrucks[nIdx].FBill)
-   else gRemotePrinter.PrintBill(nTrucks[nIdx].FBill + #9 + nPrinter);
+        gRemotePrinter.PrintBill(nTrucks[nIdx].FID)
+   else gRemotePrinter.PrintBill(nTrucks[nIdx].FID + #9 + nPrinter);
   //打印报表
 
   if nReader <> '' then
@@ -382,7 +346,7 @@ end;
 procedure MakeTruckPassGate(const nCard,nReader: string; const nDB: PDBWorker);
 var nStr: string;
     nIdx: Integer;
-    nTrucks: TLadingTruckItems;
+    nTrucks: TLadingBillItems;
 begin
   if not GetLadingBills(nCard, sFlag_TruckOut, nTrucks) then
   begin
@@ -417,7 +381,7 @@ begin
   for nIdx:=Low(nTrucks) to High(nTrucks) do
   begin
     nStr := 'Update %s Set T_InLade=%s Where T_Bill=''%s'' And T_InLade Is Null';
-    nStr := Format(nStr, [sTable_ZTTrucks, sField_SQLServer_Now, nTrucks[nIdx].FBill]);
+    nStr := Format(nStr, [sTable_ZTTrucks, sField_SQLServer_Now, nTrucks[nIdx].FID]);
 
     gDBConnManager.WorkerExec(nDB, nStr);
     //更新提货时间,语音程序将不再叫号.
@@ -569,33 +533,10 @@ begin
       Exit;
     end;
 
-    {$IFDEF CombineBill}
-    nHint := 'Update %s Set T_IsPound=''%s'' ' +
-             'Where T_Truck=''%s'' And T_Line=''%s''';
-    nHint := Format(nHint, [sTable_ZTTrucks, sFlag_Yes, nTruck, nPLine.FLineID]);
-
-    gTruckQueueManager.AddExecuteSQL(nHint);
-    //通道刷卡,更新过磅标记
-    {$ENDIF}
-    
     nPTruck := nPLine.FTrucks[nIdx];
     nPTruck.FStockName := nPLine.FName;
     //同步物料名
     Result := True;
-
-    {Result := (not nQueued) or (nIdx = 0);
-    if Result then Exit;
-    //不查先后顺序,或队首车辆
-
-    Result := PTruckItem(nPLine.FTrucks[nIdx]).FIsBuCha;
-    //补袋车辆
-
-    if not Result then
-    begin
-      nHint := '车辆[ %s ]需要排队等候.';
-      nHint := Format(nHint, [nTruck]);
-      Exit;
-    end;}  
   finally
     SyncLock.Leave;
   end;
@@ -605,55 +546,11 @@ end;
 //Parm: 通道号;交货单;
 //Desc: 在nTunnel上打印nBill防伪码
 function PrintBillCode(const nTunnel,nBill: string; var nHint: string): Boolean;
-var nStr: string;
-    nTask: Int64;
-    nList: TStrings;
-    nData: TWorkerBusinessCommand;
-    nPacker: TBusinessPackerBase;
-    nWorker: TBusinessWorkerBase;
 begin
   Result := True;
   if not gMultiJSManager.CountEnable then Exit;
 
-  nList := nil;
-  nWorker := nil;
-  nPacker := nil;
-  try
-    nTask := gTaskMonitor.AddTask('UHardBusiness.PrintBillCode', cTaskTimeoutLong);
-    //to mon
-
-    nList := TStringList.Create;
-    nList.Values['Bill'] := nBill;
-    nList.Values['Tunnel'] := nTunnel;
-
-    nData.FCommand := cBC_PrintCode;
-    nData.FBase.FParam := sParam_NoHintOnError;
-    nData.FData := PackerEncodeStr(nList.Text);
-
-    //nWorker := gBusinessWorkerManager.LockWorker(sHM_BusinessCommand);
-    //nPacker := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
-
-    nStr := nPacker.PackIn(@nData);
-    Result := nWorker.WorkActive(nStr);
-    //do work
-
-    if not Result then
-    begin
-      nStr := '向通道[ %s ]发送防违流码失败,描述: %s';
-      nPacker.UnPackOut(nStr, @nData);
-      nStr := Format(nStr, [nTunnel, nData.FBase.FErrDesc]);
-
-      WriteNearReaderLog(nStr);
-      //loged
-    end;
-
-    gTaskMonitor.DelTask(nTask, True);
-    //task done
-  finally
-    nList.Free;
-    gBusinessPackerManager.RelasePacker(nPacker);
-    gBusinessWorkerManager.RelaseWorker(nWorker);
-  end;
+  Exit;
 end;
 
 //Date: 2012-4-24
@@ -758,7 +655,7 @@ procedure MakeTruckLadingDai(const nCard: string; nTunnel: string);
 var nStr: string;
     nPLine: PLineItem;
     nPTruck: PTruckItem;
-    nTrucks: TLadingTruckItems;
+    nTrucks: TLadingBillItems;
 
     function IsJSRun: Boolean;
     begin
@@ -825,14 +722,17 @@ begin
     Exit;
   end;
 
-  if nTrucks[0].FNext <> sFlag_TruckZT then
+     {
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
   begin
-    nStr := '车辆[ %s ]下一状态为:[ %s ].';
-    nStr := Format(nStr, [nTrucks[0].FTruck, TruckStatusToStr(nTrucks[0].FNext)]);
-
-    WriteNearReaderLog(nStr);
+    if FNextStatus = sFlag_TruckZT then Continue;
+    nStr := '车辆[ %s ]下一状态为:[ %s ],无法栈台提货.';
+    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
+    
+    WriteHardHelperLog(nStr);
     Exit;
-  end;
+  end;   }
 
   if not SaveLadingBills(sFlag_TruckZT, nTrucks) then
   begin
@@ -875,7 +775,7 @@ var nStr: string;
     nIdx: Integer;
     nPLine: PLineItem;
     nPTruck: PTruckItem;
-    nTrucks: TLadingTruckItems;
+    nTrucks: TLadingBillItems;
 begin
   {$IFDEF DEBUG}
   WriteNearReaderLog('MakeTruckLadingSan进入.');
@@ -899,6 +799,19 @@ begin
     Exit;
   end;
 
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
+  begin
+    if (FStatus = sFlag_TruckFH) or (FNextStatus = sFlag_TruckFH) then Continue;
+    //未装或已装
+
+    nStr := '车辆[ %s ]下一状态为:[ %s ],无法放灰.';
+    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
+    
+    WriteHardHelperLog(nStr);
+    Exit;
+  end;
+
   if not IsTruckInQueue(nTrucks[0].FTruck, nTunnel, False, nStr,
          nPTruck, nPLine, sFlag_San) then
   begin 
@@ -918,15 +831,6 @@ begin
     WriteNearReaderLog(nStr);
     
     TruckStartFH(nPTruck, nTunnel);
-    Exit;
-  end;
-
-  if nTrucks[0].FNext <> sFlag_TruckFH then
-  begin
-    nStr := '车辆[ %s ]下一状态为:[ %s ].';
-    nStr := Format(nStr, [nTrucks[0].FTruck, TruckStatusToStr(nTrucks[0].FNext)]);
-
-    WriteNearReaderLog(nStr);
     Exit;
   end;
 
@@ -972,7 +876,7 @@ begin
 
   gERelayManager.LineClose(nHost.FTunnel);
   Sleep(100);
-  gERelayManager.ShowTxt(nHost.FTunnel, '  华新水泥  ' + '  百年品质  ');
+  gERelayManager.ShowTxt(nHost.FTunnel, '  海鑫水泥  ' + '  值得信赖  ');
   Sleep(100);
 end;
 

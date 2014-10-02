@@ -29,15 +29,6 @@ type
     FIndex      : Integer;
     FTrucks     : TList;
     FRealCount  : Integer;     //实位车数
-
-    FReaderID   : string;
-    FReaderIP   : string;
-    FReaderPort : Integer;
-
-    FCtrlID     : string;
-    FCtrlIP     : string;
-    FCtrlPort   : Integer;
-    FCtrlLine   : Integer;
   end;//装车线
 
   PTruckItem = ^TTruckItem;
@@ -849,7 +840,7 @@ begin
         FParam.FDelayQueue := Fields[0].AsString = sFlag_Yes;
 
       if CompareText(Fields[1].AsString, sFlag_PoundQueue) = 0 then
-        FParam.FPoundQueue := Fields[0].AsString = sFlag_Yes;         //20131114
+        FParam.FPoundQueue := Fields[0].AsString = sFlag_Yes;
       Next;
     end;
   end;
@@ -909,15 +900,6 @@ begin
         FIsVIP      := FieldByName('Z_VIPLine').AsString;
         FIsValid    := FieldByName('Z_Valid').AsString <> sFlag_No;
         FIndex      := FieldByName('Z_Index').AsInteger;
-
-        FReaderID   := FieldByName('Z_RdID').AsString;
-        FReaderIP   := FieldByName('Z_RdIP').AsString;
-        FReaderPort := FieldByName('Z_RdPort').AsInteger;
-
-        FCtrlID     := FieldByName('Z_CtrlID').AsString;
-        FCtrlIP     := FieldByName('Z_CtrlIP').AsString;
-        FCtrlPort   := FieldByName('Z_CtrlPort').AsInteger;
-        FCtrlLine   := FieldByName('Z_CtrlLine').AsInteger;
       end;
 
       Next;

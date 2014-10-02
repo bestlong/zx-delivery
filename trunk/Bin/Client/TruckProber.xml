@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="gb2312"?>
 <probers>
-  <prober id="N1" name="一期1号磅">
-    <ip>192.168.200.45</ip>
+  <prober id="N1" name="海鑫1号磅">
+    <ip>192.168.0.243</ip>
     <port>6000</port>
     <enable>1</enable>
+    <signal_in on="0" off="1" />
+    <signal_out on="1" off="2" />
     <tunnels>
-      <tunnel id="T1" name="1号进">
-        <in>1</in>
-        <out>1</out>
+      <tunnel id="HX01" name="进出">
+        <in>1,2</in>
+        <out></out>
       </tunnel>
     </tunnels>
   </prober>

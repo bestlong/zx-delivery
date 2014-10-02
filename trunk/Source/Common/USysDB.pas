@@ -146,6 +146,8 @@ ResourceString
   sFlag_PrintBill     = 'PrintStockBill';            //需打印订单
   sFlag_ViaBillCard   = 'ViaBillCard';               //直接制卡
   sFlag_PayCredit     = 'Pay_Credit';                //回款冲信用
+  sFlag_HYValue       = 'HYMaxValue';                //化验批次量
+  
   sFlag_PDaiWuChaZ    = 'PoundDaiWuChaZ';            //袋装正误差
   sFlag_PDaiWuChaF    = 'PoundDaiWuChaF';            //袋装负误差
   sFlag_PSanWuChaF    = 'PoundSanWuChaF';            //散装负误差
@@ -164,6 +166,7 @@ ResourceString
   sFlag_ContractItem  = 'ContractItem';              //合同信息项
   sFlag_SalesmanItem  = 'SalesmanItem';              //业务员信息项
   sFlag_ZhiKaItem     = 'ZhiKaItem';                 //纸卡信息项
+  sFlag_BillItem      = 'BillItem';                  //提单信息项
   sFlag_TruckQueue    = 'TruckQueue';                //车辆队列
                                                                
   sFlag_PaymentItem   = 'PaymentItem';               //付款方式信息项
@@ -190,6 +193,7 @@ ResourceString
   sFlag_Customer      = 'Bus_Customer';              //客户编号
   sFlag_SaleMan       = 'Bus_SaleMan';               //业务员编号
   sFlag_ZhiKa         = 'Bus_ZhiKa';                 //纸卡编号
+  sFlag_HYDan         = 'Bus_HYDan';                 //化验单号
   sFlag_ForceHint     = 'Bus_HintMsg';               //强制提示
   
   {*数据表*}
@@ -236,6 +240,11 @@ ResourceString
   sTable_PoundLog     = 'Sys_PoundLog';              //过磅数据
   sTable_PoundBak     = 'Sys_PoundBak';              //过磅作废
   sTable_Picture      = 'Sys_Picture';               //存放图片
+
+  sTable_StockParam   = 'S_StockParam';              //品种参数
+  sTable_StockParamExt= 'S_StockParamExt';           //参数扩展
+  sTable_StockRecord  = 'S_StockRecord';             //检验记录
+  sTable_StockHuaYan  = 'S_StockHuaYan';             //开化验单
 
   {*新建表*}
   sSQL_NewSysDict = 'Create Table $Table(D_ID $Inc, D_Name varChar(15),' +
@@ -578,7 +587,7 @@ ResourceString
   -----------------------------------------------------------------------------}
 
   sSQL_NewBill = 'Create Table $Table(R_ID $Inc, L_ID varChar(20),' +
-       'L_Card varChar(16), L_ZhiKa varChar(15), Z_Project varChar(100),' +
+       'L_Card varChar(16), L_ZhiKa varChar(15), L_Project varChar(100),' +
        'L_Area varChar(50),' +
        'L_CusID varChar(15), L_CusName varChar(80), L_CusPY varChar(80),' +
        'L_SaleID varChar(15), L_SaleMan varChar(32),' +
@@ -593,7 +602,7 @@ ResourceString
        'L_DaiTotal Integer , L_DaiNormal Integer, L_DaiBuCha Integer,' +
        'L_OutFact DateTime, L_OutMan varChar(32),' +
        'L_Lading Char(1), L_IsVIP varChar(1), L_Seal varChar(100),' +
-       'L_Man varChar(32), L_Date DateTime,' +
+       'L_HYDan varChar(15), L_Man varChar(32), L_Date DateTime,' +
        'L_DelMan varChar(8), L_DelDate DateTime)';
   {-----------------------------------------------------------------------------
    交货单表: Bill
@@ -622,6 +631,7 @@ ResourceString
    *.L_Lading: 提货方式(自提,送货)
    *.L_IsVIP:VIP单
    *.L_Seal: 封签号
+   *.L_HYDan: 化验单
    *.L_Man:操作人
    *.L_Date:创建时间
    *.L_DelMan: 交货单删除人员
@@ -795,6 +805,122 @@ ResourceString
    *.M_Memo: 备注
   -----------------------------------------------------------------------------}
 
+  sSQL_NewStockParam = 'Create Table $Table(P_ID varChar(15), P_Stock varChar(30),' +
+       'P_Type Char(1), P_Name varChar(50), P_QLevel varChar(20), P_Memo varChar(50),' +
+       'P_MgO varChar(20), P_SO3 varChar(20), P_ShaoShi varChar(20),' +
+       'P_CL varChar(20), P_BiBiao varChar(20), P_ChuNing varChar(20),' +
+       'P_ZhongNing varChar(20), P_AnDing varChar(20), P_XiDu varChar(20),' +
+       'P_Jian varChar(20), P_ChouDu varChar(20), P_BuRong varChar(20),' +
+       'P_YLiGai varChar(20), P_Water varChar(20), P_KuangWu varChar(20),' +
+       'P_GaiGui varChar(20), P_3DZhe varChar(20), P_28Zhe varChar(20),' +
+       'P_3DYa varChar(20), P_28Ya varChar(20))';
+  {-----------------------------------------------------------------------------
+   品种参数:StockParam
+   *.P_ID:记录编号
+   *.P_Stock:品名
+   *.P_Type:类型(袋,散)
+   *.P_Name:等级名
+   *.P_QLevel:强度等级
+   *.P_Memo:备注
+   *.P_MgO:氧化镁
+   *.P_SO3:三氧化硫
+   *.P_ShaoShi:烧失量
+   *.P_CL:氯离子
+   *.P_BiBiao:比表面积
+   *.P_ChuNing:初凝时间
+   *.P_ZhongNing:终凝时间
+   *.P_AnDing:安定性
+   *.P_XiDu:细度
+   *.P_Jian:碱含量
+   *.P_ChouDu:稠度
+   *.P_BuRong:不溶物
+   *.P_YLiGai:游离钙
+   *.P_Water:保水率
+   *.P_KuangWu:硅酸盐矿物
+   *.P_GaiGui:钙硅比
+   *.P_3DZhe:3天抗折强度
+   *.P_28DZhe:28抗折强度
+   *.P_3DYa:3天抗压强度
+   *.P_28DYa:28抗压强度
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewStockRecord = 'Create Table $Table(R_ID $Inc, R_SerialNo varChar(15),' +
+       'R_PID varChar(15),' +
+       'R_MgO varChar(20), R_SO3 varChar(20), R_ShaoShi varChar(20),' +
+       'R_CL varChar(20), R_BiBiao varChar(20), R_ChuNing varChar(20),' +
+       'R_ZhongNing varChar(20), R_AnDing varChar(20), R_XiDu varChar(20),' +
+       'R_Jian varChar(20), R_ChouDu varChar(20), R_BuRong varChar(20),' +
+       'R_YLiGai varChar(20), R_Water varChar(20), R_KuangWu varChar(20),' +
+       'R_GaiGui varChar(20),' +
+       'R_3DZhe1 varChar(20), R_3DZhe2 varChar(20), R_3DZhe3 varChar(20),' +
+       'R_28Zhe1 varChar(20), R_28Zhe2 varChar(20), R_28Zhe3 varChar(20),' +
+       'R_3DYa1 varChar(20), R_3DYa2 varChar(20), R_3DYa3 varChar(20),' +
+       'R_3DYa4 varChar(20), R_3DYa5 varChar(20), R_3DYa6 varChar(20),' +
+       'R_28Ya1 varChar(20), R_28Ya2 varChar(20), R_28Ya3 varChar(20),' +
+       'R_28Ya4 varChar(20), R_28Ya5 varChar(20), R_28Ya6 varChar(20),' +
+       'R_Date DateTime, R_Man varChar(32))';
+  {-----------------------------------------------------------------------------
+   检验记录:StockRecord
+   *.R_ID:记录编号
+   *.R_SerialNo:水泥编号
+   *.R_PID:品种参数
+   *.R_MgO:氧化镁
+   *.R_SO3:三氧化硫
+   *.R_ShaoShi:烧失量
+   *.R_CL:氯离子
+   *.R_BiBiao:比表面积
+   *.R_ChuNing:初凝时间
+   *.R_ZhongNing:终凝时间
+   *.R_AnDing:安定性
+   *.R_XiDu:细度
+   *.R_Jian:碱含量
+   *.R_ChouDu:稠度
+   *.R_BuRong:不溶物
+   *.R_YLiGai:游离钙
+   *.R_Water:保水率
+   *.R_KuangWu:硅酸盐矿物
+   *.R_GaiGui:钙硅比
+   *.R_3DZhe1:3天抗折强度1
+   *.R_3DZhe2:3天抗折强度2
+   *.R_3DZhe3:3天抗折强度3
+   *.R_28Zhe1:28抗折强度1
+   *.R_28Zhe2:28抗折强度2
+   *.R_28Zhe3:28抗折强度3
+   *.R_3DYa1:3天抗压强度1
+   *.R_3DYa2:3天抗压强度2
+   *.R_3DYa3:3天抗压强度3
+   *.R_3DYa4:3天抗压强度4
+   *.R_3DYa5:3天抗压强度5
+   *.R_3DYa6:3天抗压强度6
+   *.R_28Ya1:28抗压强度1
+   *.R_28Ya2:28抗压强度2
+   *.R_28Ya3:28抗压强度3
+   *.R_28Ya4:28抗压强度4
+   *.R_28Ya5:28抗压强度5
+   *.R_28Ya6:28抗压强度6
+   *.R_Date:取样日期
+   *.R_Man:录入人
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewStockHuaYan = 'Create Table $Table(H_ID $Inc, H_No varChar(15),' +
+       'H_Custom varChar(15), H_CusName varChar(80), H_SerialNo varChar(15),' +
+       'H_Truck varChar(15), H_Value $Float, H_BillDate DateTime,' +
+       'H_EachTruck Char(1), H_ReportDate DateTime, H_Reporter varChar(32))';
+  {-----------------------------------------------------------------------------
+   开化验单:StockHuaYan
+   *.H_ID:记录编号
+   *.H_No:化验单号
+   *.H_Custom:客户编号
+   *.H_CusName:客户名称
+   *.H_SerialNo:水泥编号
+   *.H_Truck:提货车辆
+   *.H_Value:提货量
+   *.H_BillDate:提货日期
+   *.H_EachTruck: 随车开单
+   *.H_ReportDate:报告日期
+   *.H_Reporter:报告人
+  -----------------------------------------------------------------------------}
+
 //------------------------------------------------------------------------------
 // 数据查询
 //------------------------------------------------------------------------------
@@ -918,6 +1044,11 @@ begin
   AddSysTableItem(sTable_Picture, sSQL_NewPicture);
   AddSysTableItem(sTable_Provider, ssql_NewProvider);
   AddSysTableItem(sTable_Materails, sSQL_NewMaterails);
+
+  AddSysTableItem(sTable_StockParam, sSQL_NewStockParam);
+  AddSysTableItem(sTable_StockParamExt, sSQL_NewStockRecord);
+  AddSysTableItem(sTable_StockRecord, sSQL_NewStockRecord);
+  AddSysTableItem(sTable_StockHuaYan, sSQL_NewStockHuaYan);
 end;
 
 //Desc: 清理系统表
