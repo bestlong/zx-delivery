@@ -2,15 +2,15 @@
   作者: dmzn@163.com 2013-12-04
   描述: 模块业务对象
 *******************************************************************************}
-unit UModuleWorker;
+unit UWorkerBusiness;
 
 {$I Link.Inc}
 interface
 
 uses
   Windows, Classes, Controls, DB, SysUtils, UBusinessWorker, UBusinessPacker,
-  UBusinessConst, UPlugWorker, UEventWorker, UMgrDBConn, UMgrParam, ZnMD5,
-  ULibFun, UFormCtrl, USysLoger, USysDB;
+  UBusinessConst, UMgrDBConn, UMgrParam, ZnMD5, ULibFun, UFormCtrl, USysLoger,
+  USysDB, UMITConst;
 
 type
   TBusWorkerQueryField = class(TBusinessWorkerBase)
@@ -70,6 +70,8 @@ type
     //获取纸卡可用金
     function CustomerHasMoney(var nData: string): Boolean;
     //验证客户是否有钱
+    function SaveTruck(var nData: string): Boolean;
+    //保存车辆到Truck表
     function GetTruckPoundData(var nData: string): Boolean;
     function SaveTruckPoundData(var nData: string): Boolean;
     //存取车辆称重数据
@@ -115,6 +117,8 @@ type
     //删除交货单
     function ChangeBillTruck(var nData: string): Boolean;
     //修改车牌号
+    function BillSaleAdjust(var nData: string): Boolean;
+    //销售调拨
     function SaveBillCard(var nData: string): Boolean;
     //绑定磁卡
     function LogoffCard(var nData: string): Boolean;
@@ -193,9 +197,9 @@ begin
 
     with FDataIn.FVia do
     begin
-      FUser   := gPlugRunParam.FAppFlag;
-      FIP     := gPlugRunParam.FLocalIP;
-      FMAC    := gPlugRunParam.FLocalMAC;
+      FUser   := gSysParam.FAppFlag;
+      FIP     := gSysParam.FLocalIP;
+      FMAC    := gSysParam.FLocalMAC;
       FTime   := FWorkTime;
       FKpLong := FWorkTimeInit;
     end;
@@ -346,6 +350,7 @@ begin
    cBC_GetCustomerMoney    : Result := GetCustomerValidMoney(nData);
    cBC_GetZhiKaMoney       : Result := GetZhiKaValidMoney(nData);
    cBC_CustomerHasMoney    : Result := CustomerHasMoney(nData);
+   cBC_SaveTruckInfo       : Result := SaveTruck(nData);
    cBC_GetTruckPoundData   : Result := GetTruckPoundData(nData);
    cBC_SaveTruckPoundData  : Result := SaveTruckPoundData(nData);
    else
@@ -619,6 +624,28 @@ begin
   end;
 end;
 
+//Date: 2014-10-02
+//Parm: 车牌号[FIn.FData];
+//Desc: 保存车辆到sTable_Truck表
+function TWorkerBusinessCommander.SaveTruck(var nData: string): Boolean;
+var nStr: string;
+begin
+  Result := True;
+  FIn.FData := UpperCase(FIn.FData);
+  
+  nStr := 'Select Count(*) From %s Where T_Truck=''%s''';
+  nStr := Format(nStr, [sTable_Truck, FIn.FData]);
+  //xxxxx
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  if Fields[0].AsInteger < 1 then
+  begin
+    nStr := 'Insert Into %s(T_Truck, T_PY) Values(''%s'', ''%s'')';
+    nStr := Format(nStr, [sTable_Truck, FIn.FData, GetPinYinOfStr(FIn.FData)]);
+    gDBConnManager.WorkerExec(FDBConn, nStr);
+  end;
+end;
+
 //Date: 2014-09-25
 //Parm: 车牌号[FIn.FData]
 //Desc: 获取指定车牌号的称皮数据(使用配对模式,未称重)
@@ -691,6 +718,9 @@ begin
   begin
     if FPoundID = '' then
     begin
+      TWorkerBusinessCommander.CallMe(cBC_SaveTruckInfo, FTruck, '', @nOut);
+      //保存车牌号
+
       FListC.Clear;
       FListC.Values['Group'] := sFlag_BusGroup;
       FListC.Values['Object'] := sFlag_PoundID;
@@ -749,7 +779,7 @@ begin
       end else
       begin
         nSQL := MakeSQLByStr([
-                SF('P_MValue', FPData.FValue, sfVal),
+                SF('P_MValue', FMData.FValue, sfVal),
                 SF('P_MDate', sField_SQLServer_Now, sfVal),
                 SF('P_MMan', FIn.FBase.FFrom.FUser),
                 SF('P_MStation', FMData.FStation)
@@ -819,6 +849,7 @@ begin
    cBC_SaveBills           : Result := SaveBills(nData);
    cBC_DeleteBill          : Result := DeleteBill(nData);
    cBC_ModifyBillTruck     : Result := ChangeBillTruck(nData);
+   cBC_SaleAdjust          : Result := BillSaleAdjust(nData);
    cBC_SaveBillCard        : Result := SaveBillCard(nData);
    cBC_LogoffCard          : Result := LogoffCard(nData);
    cBC_GetPostBills        : Result := GetPostBillItems(nData);
@@ -919,6 +950,7 @@ end;
 function TWorkerBusinessBills.VerifyBeforSave(var nData: string): Boolean;
 var nIdx: Integer;
     nStr,nTruck: string;
+    nOut: TWorkerBusinessCommand;
 begin
   Result := False;
   nTruck := FListA.Values['Truck'];
@@ -998,18 +1030,8 @@ begin
     end;
   end;
 
-  //----------------------------------------------------------------------------
-  nStr := 'Select Count(*) From %s Where T_Truck=''%s''';
-  nStr := Format(nStr, [sTable_Truck, nTruck]);
-  //xxxxx
-
-  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
-  if Fields[0].AsInteger < 1 then
-  begin
-    nStr := 'Insert Into %s(T_Truck, T_PY) Values(''%s'', ''%s'')';
-    nStr := Format(nStr, [sTable_Truck, nTruck, GetPinYinOfStr(nTruck)]);
-    gDBConnManager.WorkerExec(FDBConn, nStr);
-  end;
+  TWorkerBusinessCommander.CallMe(cBC_SaveTruckInfo, nTruck, '', @nOut);
+  //保存车牌号
                         
   //----------------------------------------------------------------------------
   nStr := 'Select zk.*,ht.C_Area,cus.C_Name,cus.C_PY,sm.S_Name From $ZK zk ' +
@@ -1143,7 +1165,7 @@ begin
 
       nStr := MakeSQLByStr([SF('L_ID', nOut.FData),
               SF('L_ZhiKa', FListA.Values['ZhiKa']),
-              SF('Z_Project', FListA.Values['Project']),
+              SF('L_Project', FListA.Values['Project']),
               SF('L_Area', FListA.Values['Area']),
               SF('L_CusID', FListA.Values['CusID']),
               SF('L_CusName', FListA.Values['CusName']),
@@ -1312,6 +1334,196 @@ begin
         //同步合单车牌号
       end;
     end;
+
+    FDBConn.FConn.CommitTrans;
+    Result := True;
+  except
+    FDBConn.FConn.RollbackTrans;
+    raise;
+  end;
+end;
+
+//Date: 2014-09-30
+//Parm: 交货单号[FIn.FData];新纸卡[FIn.FExtParam]
+//Desc: 将交货单调拨给新纸卡的客户
+function TWorkerBusinessBills.BillSaleAdjust(var nData: string): Boolean;
+var nStr: string;
+    nIdx: Integer;
+    nVal,nMon: Double;
+    nOut: TWorkerBusinessCommand;
+begin
+  Result := False;
+  //init
+
+  //----------------------------------------------------------------------------
+  nStr := 'Select L_CusID,L_StockNo,L_StockName,L_Value,L_Price,L_ZhiKa,' +
+          'L_ZKMoney,L_OutFact From %s Where L_ID=''%s''';
+  nStr := Format(nStr, [sTable_Bill, FIn.FData]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  begin
+    if RecordCount < 1 then
+    begin
+      nData := Format('交货单[ %s ]已丢失.', [FIn.FData]);
+      Exit;
+    end;
+
+    if FieldByName('L_OutFact').AsString = '' then
+    begin
+      nData := '车辆出厂后(提货完毕)才能调拨.';
+      Exit;
+    end;
+
+    FListB.Clear;
+    with FListB do
+    begin
+      Values['CusID'] := FieldByName('L_CusID').AsString;
+      Values['StockNo'] := FieldByName('L_StockNo').AsString;
+      Values['StockName'] := FieldByName('L_StockName').AsString;
+      Values['ZhiKa'] := FieldByName('L_ZhiKa').AsString;
+      Values['ZKMoney'] := FieldByName('L_ZKMoney').AsString;
+    end;
+    
+    nVal := FieldByName('L_Value').AsFloat;
+    nMon := nVal * FieldByName('L_Price').AsFloat;
+    nMon := Float2Float(nMon, cPrecision, True);
+  end;
+
+  //----------------------------------------------------------------------------
+  nStr := 'Select zk.*,ht.C_Area,cus.C_Name,cus.C_PY,sm.S_Name From $ZK zk ' +
+          ' Left Join $HT ht On ht.C_ID=zk.Z_CID ' +
+          ' Left Join $Cus cus On cus.C_ID=zk.Z_Customer ' +
+          ' Left Join $SM sm On sm.S_ID=Z_SaleMan ' +
+          'Where Z_ID=''$ZID''';
+  nStr := MacroValue(nStr, [MI('$ZK', sTable_ZhiKa),
+          MI('$HT', sTable_SaleContract),
+          MI('$Cus', sTable_Customer),
+          MI('$SM', sTable_Salesman),
+          MI('$ZID', FIn.FExtParam)]);
+  //纸卡信息
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  begin
+    if RecordCount < 1 then
+    begin
+      nData := Format('纸卡[ %s ]已丢失.', [FIn.FExtParam]);
+      Exit;
+    end;
+
+    if FieldByName('Z_Freeze').AsString = sFlag_Yes then
+    begin
+      nData := Format('纸卡[ %s ]已被管理员冻结.', [FIn.FExtParam]);
+      Exit;
+    end;
+
+    if FieldByName('Z_InValid').AsString = sFlag_Yes then
+    begin
+      nData := Format('纸卡[ %s ]已被管理员作废.', [FIn.FExtParam]);
+      Exit;
+    end;
+
+    if FieldByName('Z_ValidDays').AsDateTime <= Date() then
+    begin
+      nData := Format('纸卡[ %s ]已在[ %s ]过期.', [FIn.FExtParam,
+               Date2Str(FieldByName('Z_ValidDays').AsDateTime)]);
+      Exit;
+    end;
+
+    FListA.Clear;
+    with FListA do
+    begin
+      Values['Project'] := FieldByName('Z_Project').AsString;
+      Values['Area'] := FieldByName('C_Area').AsString;
+      Values['CusID'] := FieldByName('Z_Customer').AsString;
+      Values['CusName'] := FieldByName('C_Name').AsString;
+      Values['CusPY'] := FieldByName('C_PY').AsString;
+      Values['SaleID'] := FieldByName('Z_SaleMan').AsString;
+      Values['SaleMan'] := FieldByName('S_Name').AsString;
+      Values['ZKMoney'] := FieldByName('Z_OnlyMoney').AsString;
+    end;
+  end;
+
+  //----------------------------------------------------------------------------
+  nStr := 'Select D_Price From %s Where D_ZID=''%s'' And D_StockNo=''%s''';
+  nStr := Format(nStr, [sTable_ZhiKaDtl, FIn.FExtParam, FListB.Values['StockNo']]);
+
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  begin
+    if RecordCount < 1 then
+    begin
+      nData := '纸卡[ %s ]上没有名称为[ %s ]的品种.';
+      nData := Format(nData, [FIn.FExtParam, FListB.Values['StockName']]);
+      Exit;
+    end;
+
+    FListC.Clear;
+    nStr := 'Update %s Set A_OutMoney=A_OutMoney-(%.2f) Where A_CID=''%s''';
+    nStr := Format(nStr, [sTable_CusAccount, nMon, FListB.Values['CusID']]);
+    FListC.Add(nStr); //还原提货方出金
+
+    if FListB.Values['ZKMoney'] = sFlag_Yes then
+    begin
+      nStr := 'Update %s Set Z_FixedMoney=Z_FixedMoney+(%.2f) ' +
+              'Where Z_ID=''%s'' And Z_OnlyMoney=''%s''';
+      nStr := Format(nStr, [sTable_ZhiKa, nMon,
+              FListB.Values['ZhiKa'], sFlag_Yes]);
+      FListC.Add(nStr); //还原提货方限提金额
+    end;
+
+    nMon := nVal * FieldByName('D_Price').AsFloat;
+    nMon := Float2Float(nMon, cPrecision, True);
+
+    if not TWorkerBusinessCommander.CallMe(cBC_GetZhiKaMoney,
+            FIn.FExtParam, '', @nOut) then
+    begin
+      nData := nOut.FData;
+      Exit;
+    end;
+
+    if FloatRelation(nMon, StrToFloat(nOut.FData), rtGreater, cPrecision) then
+    begin
+      nData := '客户[ %s.%s ]余额不足,详情如下:' + #13#10#13#10 +
+               '※.可用余额: %.2f元' + #13#10 +
+               '※.调拨所需: %.2f元' + #13#10 +
+               '※.需 补 交: %.2f元' + #13#10#13#10 +
+               '请到财务室办理"补交货款"手续,然后再次调拨.';
+      nData := Format(nData, [FListA.Values['CusID'], FListA.Values['CusName'],
+               StrToFloat(nOut.FData), nMon,
+               Float2Float(nMon - StrToFloat(nOut.FData), cPrecision, True)]);
+      Exit;
+    end;
+
+    nStr := 'Update %s Set A_OutMoney=A_OutMoney+(%.2f) Where A_CID=''%s''';
+    nStr := Format(nStr, [sTable_CusAccount, nMon, FListA.Values['CusID']]);
+    FListC.Add(nStr); //增加调拨方出金
+
+    if FListA.Values['ZKMoney'] = sFlag_Yes then
+    begin
+      nStr := 'Update %s Set Z_FixedMoney=Z_FixedMoney+(%.2f) Where Z_ID=''%s''';
+      nStr := Format(nStr, [sTable_ZhiKa, nMon, FIn.FExtParam]);
+      FListC.Add(nStr); //扣减调拨方限提金额
+    end;
+
+    nStr := MakeSQLByStr([SF('L_ZhiKa', FIn.FExtParam),
+            SF('L_Project', FListA.Values['Project']),
+            SF('L_Area', FListA.Values['Area']),
+            SF('L_CusID', FListA.Values['CusID']),
+            SF('L_CusName', FListA.Values['CusName']),
+            SF('L_CusPY', FListA.Values['CusPY']),
+            SF('L_SaleID', FListA.Values['SaleID']),
+            SF('L_SaleMan', FListA.Values['SaleMan']),
+            SF('L_Price', FieldByName('D_Price').AsFloat, sfVal),
+            SF('L_ZKMoney', FListA.Values['ZKMoney'])
+            ], sTable_Bill, SF('L_ID', FIn.FData), False);
+    FListC.Add(nStr); //增加调拨方出金
+  end;
+
+  //----------------------------------------------------------------------------
+  FDBConn.FConn.BeginTrans;
+  try
+    for nIdx:=0 to FListC.Count - 1 do
+      gDBConnManager.WorkerExec(FDBConn, FListC[nIdx]);
+    //xxxxx
 
     FDBConn.FConn.CommitTrans;
     Result := True;
@@ -1906,6 +2118,9 @@ begin
         raise Exception.Create(nOut.FData);
       //xxxxx
 
+      FOut.FData := nOut.FData;
+      //返回榜单号,用于拍照绑定
+
       nSQL := MakeSQLByStr([
               SF('P_ID', nOut.FData),
               SF('P_Type', sFlag_Sale),
@@ -2202,7 +2417,7 @@ begin
   except
     FDBConn.FConn.RollbackTrans;
     raise;
-  end;  
+  end;
 end;
 
 initialization

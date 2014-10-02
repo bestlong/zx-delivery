@@ -37,27 +37,27 @@
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 <pounds>
   <ports>
-	<item id="P1" name="一期1号磅">
+	<item id="P1" name="1号磅">
 		<type>T800</type>
-		<port>com14</port>
-		<rate>2400</rate>
-		<databit>7</databit>
+		<port>com4</port>
+		<rate>9600</rate>
+		<databit>8</databit>
 		<stopbit>1</stopbit>
 		<paritybit>None</paritybit>
 		<paritycheck>N</paritycheck>
-		<charbegin>$20</charbegin>
-		<charend>$0D</charend>
-		<packlen>16</packlen>
+		<charbegin>$02</charbegin>
+		<charend>$03</charend>
+		<packlen>11</packlen>
 		<splittag>$20</splittag>
 		<splitpos>0</splitpos>
 		<invalidlen>2</invalidlen>
 		<datamirror>0</datamirror>
-		<dataenlarge>0.001</dataenlarge>
+		<dataenlarge>0.0001</dataenlarge>
 	</item>
   </ports>
   <cameras>
-    <item id="C1" name="一期DVR">
-		<host>192.168.200.43</host>
+    <item id="C1" name="1号">
+		<host>192.168.0.80</host>
 		<port>8000</port>
 		<user>admin</user>
 		<password>12345</password>
@@ -66,13 +66,13 @@
     </item>
   </cameras>
   <tunnels>
-	<item id="B1" name="一期1号磅 - 出">
+	<item id="HX01" name="海鑫1号磅">
 		<port>P1</port>
-		<prober>T1</prober>
+		<prober>HX01</prober>
 		<reader>R1</reader>
 		<camera id="C1">1,2</camera>
 		<userinput>Y</userinput>
-		<factory>YXGL</factory>
+		<factory>HX</factory>
 		<cardInterval>300</cardInterval>
 		<sampleNum>10</sampleNum>
 		<sampleFloat>20</sampleFloat>

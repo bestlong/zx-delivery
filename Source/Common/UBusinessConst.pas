@@ -29,26 +29,31 @@ const
   cBC_GetZhiKaMoney           = $0011;   //获取纸卡可用金
   cBC_CustomerHasMoney        = $0012;   //客户是否有余额
 
+  cBC_SaveTruckInfo           = $0013;   //保存车辆信息
   cBC_GetTruckPoundData       = $0015;   //获取车辆称重数据
   cBC_SaveTruckPoundData      = $0016;   //保存车辆称重数据
 
   cBC_SaveBills               = $0020;   //保存交货单列表
   cBC_DeleteBill              = $0021;   //删除交货单
   cBC_ModifyBillTruck         = $0022;   //修改车牌号
-  cBC_SaveBillCard            = $0023;   //绑定交货单磁卡
-  cBC_LogoffCard              = $0024;   //注销磁卡
+  cBC_SaleAdjust              = $0023;   //销售调拨
+  cBC_SaveBillCard            = $0024;   //绑定交货单磁卡
+  cBC_LogoffCard              = $0025;   //注销磁卡
 
   cBC_GetPostBills            = $0030;   //获取岗位交货单
   cBC_SavePostBills           = $0031;   //保存岗位交货单
 
+  cBC_GetPoundCard            = $0054;   //获取磅站卡号
+  cBC_GetQueueData            = $0055;   //获取队列数据
   cBC_PrintCode               = $0056;
-  cBC_PrinterEnable           = $0057;
-  cBC_PrintFixCode            = $0058;
+  cBC_PrintFixCode            = $0057;   //喷码
+  cBC_PrinterEnable           = $0058;   //喷码机启停
 
   cBC_JSStart                 = $0060;
   cBC_JSStop                  = $0061;
   cBC_JSPause                 = $0062;
   cBC_JSGetStatus             = $0063;
+  cBC_SaveCountData           = $0053;   //保存计数结果
 
   cBC_IsTunnelOK              = $0065;
   cBC_TunnelOC                = $0066;
@@ -129,8 +134,9 @@ resourcestring
   sBus_ServiceStatus          = 'Bus_ServiceStatus';    //服务状态
   sBus_GetQueryField          = 'Bus_GetQueryField';    //查询的字段
 
-  sBus_BusinessSaleBill       = 'sBus_BusinessSaleBill';//交货单相关
+  sBus_BusinessSaleBill       = 'Bus_BusinessSaleBill'; //交货单相关
   sBus_BusinessCommand        = 'Bus_BusinessCommand';  //业务指令
+  sBus_HardwareCommand        = 'Bus_HardwareCommand';  //硬件指令
 
   {*client function name*}
   sCLI_ServiceStatus          = 'CLI_ServiceStatus';    //服务状态
@@ -138,6 +144,7 @@ resourcestring
 
   sCLI_BusinessSaleBill       = 'CLI_BusinessSaleBill'; //交货单业务
   sCLI_BusinessCommand        = 'CLI_BusinessCommand';  //业务指令
+  sCLI_HardwareCommand        = 'CLI_HardwareCommand';  //硬件指令
 
 implementation
 

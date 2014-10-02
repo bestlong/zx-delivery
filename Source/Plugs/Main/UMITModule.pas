@@ -11,8 +11,8 @@ interface
 
 uses
   Forms, Classes, SysUtils, ULibFun, UBusinessWorker, UBusinessPacker,
-  UTaskMonitor, USysShareMem, USysLoger, UMITConst,
-  {$IFDEF HardMon}UEventHardware,{$ENDIF}
+  UTaskMonitor, USysShareMem, USysLoger, UMITConst, UMITPacker,
+  {$IFDEF HardMon}UEventHardware, UWorkerHardware,{$ENDIF} UWorkerBusiness,
   UMgrDBConn, UMgrParam, UMgrPlug, UMgrChannel, UChannelChooser, USAPConnection;
 
 procedure InitSystemObject(const nMainForm: THandle);
