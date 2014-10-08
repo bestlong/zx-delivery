@@ -358,6 +358,8 @@ begin
   if FCustomerID = '' then
   begin
     nID := GetSerialNo(sFlag_BusGroup, sFlag_Customer, False);
+    if nID = '' then Exit;
+    
     nList.Add(SF('C_ID', nID));
     nSQL := MakeSQLByForm(Self, sTable_Customer, '', True, GetData, nList);
   end else

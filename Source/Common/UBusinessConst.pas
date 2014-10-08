@@ -43,6 +43,7 @@ const
   cBC_GetPostBills            = $0030;   //获取岗位交货单
   cBC_SavePostBills           = $0031;   //保存岗位交货单
 
+  cBC_ChangeDispatchMode      = $0053;   //切换调度模式
   cBC_GetPoundCard            = $0054;   //获取磅站卡号
   cBC_GetQueueData            = $0055;   //获取队列数据
   cBC_PrintCode               = $0056;
@@ -53,10 +54,10 @@ const
   cBC_JSStop                  = $0061;
   cBC_JSPause                 = $0062;
   cBC_JSGetStatus             = $0063;
-  cBC_SaveCountData           = $0053;   //保存计数结果
+  cBC_SaveCountData           = $0064;   //保存计数结果
 
-  cBC_IsTunnelOK              = $0065;
-  cBC_TunnelOC                = $0066;
+  cBC_IsTunnelOK              = $0075;
+  cBC_TunnelOC                = $0076;
 
 type
   PWorkerQueryFieldData = ^TWorkerQueryFieldData;

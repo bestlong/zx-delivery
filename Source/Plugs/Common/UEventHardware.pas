@@ -148,10 +148,10 @@ begin
   gVoiceHelper.StartVoice;
   //voice
 
-  gDisplayManager.StartDisplay;
-  //small led
   gCardManager.StartSender;
   //led display
+  gDisplayManager.StartDisplay;
+  //small led 
 end;
 
 procedure THardwareWorker.AfterStopServer;

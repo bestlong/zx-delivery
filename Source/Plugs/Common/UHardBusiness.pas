@@ -653,6 +653,7 @@ end;
 //Desc: 对nCard执行袋装装车操作
 procedure MakeTruckLadingDai(const nCard: string; nTunnel: string);
 var nStr: string;
+    nIdx,nInt: Integer;
     nPLine: PLineItem;
     nPTruck: PTruckItem;
     nTrucks: TLadingBillItems;
@@ -710,8 +711,36 @@ begin
     Exit;
   end; //检查通道
 
-  if nTrucks[0].FStatus = sFlag_TruckZT then
+  nStr := '';
+  nInt := 0;
+
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
   begin
+    if (FStatus = sFlag_TruckZT) or (FNextStatus = sFlag_TruckZT) then
+    begin
+      FSelected := Pos(FID, nPTruck.FHKBills) > 0;
+      if FSelected then Inc(nInt); //刷卡通道对应的交货单
+      Continue;
+    end;
+
+    FSelected := False;
+    nStr := '车辆[ %s ]下一状态为:[ %s ],无法栈台提货.';
+    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
+  end;
+
+  if nInt < 1 then
+  begin
+    WriteHardHelperLog(nStr);
+    Exit;
+  end;
+
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  with nTrucks[nIdx] do
+  begin
+    if not FSelected then Continue;
+    if FStatus <> sFlag_TruckZT then Continue;
+
     nStr := '袋装车辆[ %s ]再次刷卡装车.';
     nStr := Format(nStr, [nPTruck.FTruck]);
     WriteNearReaderLog(nStr);
@@ -721,18 +750,6 @@ begin
       WriteNearReaderLog(nStr);
     Exit;
   end;
-
-     {
-  for nIdx:=Low(nTrucks) to High(nTrucks) do
-  with nTrucks[nIdx] do
-  begin
-    if FNextStatus = sFlag_TruckZT then Continue;
-    nStr := '车辆[ %s ]下一状态为:[ %s ],无法栈台提货.';
-    nStr := Format(nStr, [FTruck, TruckStatusToStr(FNextStatus)]);
-    
-    WriteHardHelperLog(nStr);
-    Exit;
-  end;   }
 
   if not SaveLadingBills(sFlag_TruckZT, nTrucks) then
   begin

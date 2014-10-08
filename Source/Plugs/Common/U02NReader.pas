@@ -114,7 +114,6 @@ begin
   FWaiter.Interval := INFINITE;
   FSyncLock := TCriticalSection.Create;
 
-  FSrvPort := 1234;
   FServer := TIdUDPServer.Create;
   FServer.OnUDPRead := OnUDPRead;
 end;
@@ -199,6 +198,11 @@ begin
   try
     ClearReader(False);
     nXML.LoadFromFile(nFile);
+
+    nTmp := nXML.Root.NodeByName('local_udp');
+    if Assigned(nTmp) then
+         FSrvPort := nTmp.ValueAsInteger
+    else FSrvPort := 1234;
 
     nTmp := nXML.Root.NodeByName('readone');
     if Assigned(nTmp) then

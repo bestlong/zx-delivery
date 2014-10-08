@@ -55,7 +55,7 @@ inherited fFrameBill: TfFrameBill
     end
     object cxTextEdit1: TcxTextEdit [2]
       Left = 81
-      Top = 96
+      Top = 93
       Hint = 'T.L_ID'
       ParentFont = False
       TabOrder = 4
@@ -63,7 +63,7 @@ inherited fFrameBill: TfFrameBill
     end
     object cxTextEdit2: TcxTextEdit [3]
       Left = 244
-      Top = 96
+      Top = 93
       Hint = 'T.L_CusName'
       ParentFont = False
       TabOrder = 5
@@ -71,7 +71,7 @@ inherited fFrameBill: TfFrameBill
     end
     object cxTextEdit4: TcxTextEdit [4]
       Left = 620
-      Top = 96
+      Top = 93
       Hint = 'T.L_Truck'
       ParentFont = False
       TabOrder = 7
@@ -79,7 +79,7 @@ inherited fFrameBill: TfFrameBill
     end
     object cxTextEdit3: TcxTextEdit [5]
       Left = 795
-      Top = 96
+      Top = 93
       Hint = 'T.L_Value'
       ParentFont = False
       TabOrder = 8
@@ -114,7 +114,7 @@ inherited fFrameBill: TfFrameBill
     end
     object Edit1: TcxTextEdit [8]
       Left = 432
-      Top = 96
+      Top = 93
       Hint = 'T.L_StockName'
       ParentFont = False
       TabOrder = 6
@@ -210,11 +210,18 @@ inherited fFrameBill: TfFrameBill
       Caption = #20462#25913#36710#29260#21495
       OnClick = N5Click
     end
+    object N7: TMenuItem
+      Caption = #20462#25913#23553#31614#21495
+      OnClick = N7Click
+    end
+    object N6: TMenuItem
+      Caption = '-'
+    end
     object N3: TMenuItem
       Caption = #35843#25320#25552#36135#21333
       OnClick = N3Click
     end
-    object N6: TMenuItem
+    object N8: TMenuItem
       Caption = '-'
     end
     object N4: TMenuItem

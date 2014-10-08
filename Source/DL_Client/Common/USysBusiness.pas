@@ -98,8 +98,6 @@ function SaveCustomerCredit(const nCusID,nMemo: string; const nCredit: Double;
 function IsCustomerCreditValid(const nCusID: string): Boolean;
 //客户信用是否有效
 
-function ShowPriceWhenBill: Boolean;
-//开单时显单价
 function SaveBill(const nBillData: string): string;
 //保存交货单
 function DeleteBill(const nBill: string): Boolean;
@@ -141,6 +139,8 @@ function LoadTruckQueue(var nLines: TZTLineItems; var nTrucks: TZTTruckItems;
 //读取车辆队列
 procedure PrinterEnable(const nTunnel: string; const nEnable: Boolean);
 //启停喷码机
+function ChangeDispatchMode(const nMode: Byte): Boolean;
+//切换调度模式
 
 function GetHYMaxValue: Double;
 function GetHYValueByStockNo(const nNo: string): Double;
@@ -903,6 +903,17 @@ begin
   CallBusinessHardware(cBC_PrinterEnable, nTunnel, nStr, @nOut);
 end;
 
+//Date: 2014-10-07
+//Parm: 调度模式
+//Desc: 切换系统调度模式为nMode
+function ChangeDispatchMode(const nMode: Byte): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessHardware(cBC_ChangeDispatchMode, IntToStr(nMode), '',
+            @nOut);
+  //xxxxx
+end;
+
 //------------------------------------------------------------------------------
 //Desc: 纸卡是否需要审核
 function IsZhiKaNeedVerify: Boolean;
@@ -1024,21 +1035,6 @@ begin
   if CallBusinessCommand(cBC_GetCustomerMoney, nCID, nStr, @nOut) then
        Result := StrToFloat(nOut.FData)
   else Result := 0;
-end;
-
-//Desc: 开提货单时显单价
-function ShowPriceWhenBill: Boolean;
-var nStr: string;
-begin
-  nStr := 'Select D_Value From $T Where D_Name=''$N'' and D_Memo=''$M''';
-  nStr := MacroValue(nStr, [MI('$T', sTable_SysDict), MI('$N', sFlag_SysParam),
-                           MI('$M', sFlag_BillPrice)]);
-  //xxxxx
-
-  with FDM.QueryTemp(nStr) do
-  if RecordCount > 0 then
-       Result := Fields[0].AsString = sFlag_Yes
-  else Result := False;
 end;
 
 //Date: 2014-09-15

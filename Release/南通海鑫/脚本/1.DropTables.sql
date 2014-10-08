@@ -27,3 +27,7 @@ Drop Table dbo.Sys_SerialBase
 Drop Table dbo.Sys_SerialStatus
 Drop Table dbo.Sys_ShouJu
 Drop Table dbo.Sys_WorkePC
+Drop Table dbo.S_StockHuaYan
+Drop Table dbo.S_StockParam
+Drop Table dbo.S_StockParamExt
+Drop Table dbo.S_StockRecord

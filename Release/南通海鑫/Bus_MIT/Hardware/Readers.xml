@@ -10,67 +10,37 @@
 +++++++++++++++++++++++++++++++++++ -->
 <readers>
   <readone>
-    <item>
-      <id>zt001</id>
-      <ip>192.168.76.31</ip>
-      <port>8000</port>
-      <tunnel>ZT001</tunnel>
-    </item>
-    <item>
-      <id>zt002</id>
-      <ip>192.168.76.32</ip>
-      <port>8000</port>
-      <tunnel>ZT002</tunnel>
-    </item>
-    <item>
-      <id>zt003</id>
-      <ip>192.168.76.33</ip>
-      <port>8000</port>
-      <tunnel>ZT003</tunnel>
-    </item>
-    <item>
-      <id>zt004</id>
-      <ip>192.168.76.34</ip>
-      <port>8000</port>
-      <tunnel>ZT004</tunnel>
-    </item>
   </readone>
   <readkeep>
     <item>
       <id>fh001</id>
-      <ip>192.168.76.51</ip>
+      <ip>192.168.0.231</ip>
       <port>8000</port>
       <tunnel>FH001</tunnel>
     </item>
     <item>
       <id>fh002</id>
-      <ip>192.168.76.52</ip>
+      <ip>192.168.0.232</ip>
       <port>8000</port>
       <tunnel>FH002</tunnel>
     </item>
     <item>
       <id>fh003</id>
-      <ip>192.168.76.53</ip>
+      <ip>192.168.0.233</ip>
       <port>8000</port>
       <tunnel>FH003</tunnel>
     </item>
     <item>
       <id>fh004</id>
-      <ip>192.168.76.54</ip>
+      <ip>192.168.0.234</ip>
       <port>8000</port>
       <tunnel>FH004</tunnel>
     </item>
     <item>
       <id>fh005</id>
-      <ip>192.168.76.55</ip>
+      <ip>192.168.0.235</ip>
       <port>8000</port>
       <tunnel>FH005</tunnel>
-    </item>
-    <item>
-      <id>fh006</id>
-      <ip>192.168.76.56</ip>
-      <port>8000</port>
-      <tunnel>FH006</tunnel>
     </item>
   </readkeep>
 </readers>

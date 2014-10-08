@@ -40,6 +40,7 @@ type
     FStockGroup : string;      //品种分组
     FLine       : string;      //装车线
     FBill       : string;      //交货单
+    FHKBills    : string;      //合卡单
     FInTime     : Int64;       //进队时间
     FInFact     : Boolean;     //是否进厂
     FInLade     : Boolean;     //是否提货
@@ -166,6 +167,7 @@ type
     function IsSanQueueClosed: Boolean;
     function IsDelayQueue: Boolean;
     //队列参数
+    procedure RefreshParam;
     procedure RefreshTrucks(const nLoadLine: Boolean);
     //刷新队列
     function GetLine(const nLineID: string): Integer;
@@ -359,6 +361,16 @@ begin
     FSQLList.Add(nSQL);
   finally
     FSyncLock.Leave;
+  end;
+end;
+
+procedure TTruckQueueManager.RefreshParam;
+begin
+  if Assigned(FDBReader) then
+  begin
+    FDBReader.FParam.FLoaded := False;
+    //修改载入标记
+    FDBReader.Wakup;
   end;
 end;
 
@@ -1015,6 +1027,7 @@ begin
 
         FLine       := FieldByName('T_Line').AsString;
         FBill       := FieldByName('T_Bill').AsString;
+        FHKBills    := FieldByName('T_HKBills').AsString;
         FIsVIP      := FieldByName('T_VIP').AsString;
 
         FInFact     := FieldByName('T_InFact').AsString <> '';
@@ -1089,8 +1102,8 @@ begin
   end;
   //5.将缓冲车辆加入符合条件的队列
 
-  for nIdx:=FOwner.FLines.Count - 1 downto 0 do
-    SortTruckList(PLineItem(FOwner.FLines[nIdx]).FTrucks);
+  //for nIdx:=FOwner.FLines.Count - 1 downto 0 do
+  //  SortTruckList(PLineItem(FOwner.FLines[nIdx]).FTrucks);
   //6.车辆排序
 end;
 

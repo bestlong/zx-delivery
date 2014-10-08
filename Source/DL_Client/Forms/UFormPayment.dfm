@@ -1,73 +1,73 @@
 inherited fFormPayment: TfFormPayment
   Left = 715
   Top = 285
-  ClientHeight = 500
-  ClientWidth = 485
+  ClientHeight = 400
+  ClientWidth = 388
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 485
-    Height = 500
+    Width = 388
+    Height = 400
     inherited BtnOK: TButton
-      Left = 303
-      Top = 458
+      Left = 242
+      Top = 367
       TabOrder = 12
     end
     inherited BtnExit: TButton
-      Left = 390
-      Top = 458
+      Left = 312
+      Top = 367
       TabOrder = 13
     end
     object EditType: TcxComboBox [2]
-      Left = 87
-      Top = 358
+      Left = 81
+      Top = 285
       ParentFont = False
       Properties.IncrementalSearch = False
       Properties.ItemHeight = 18
       Properties.MaxLength = 20
       TabOrder = 8
-      Width = 132
+      Width = 105
     end
     object EditMoney: TcxTextEdit [3]
-      Left = 282
-      Top = 358
+      Left = 249
+      Top = 285
       ParentFont = False
       TabOrder = 9
       Text = '0'
-      Width = 157
+      Width = 125
     end
     object EditDesc: TcxMemo [4]
-      Left = 87
-      Top = 388
+      Left = 81
+      Top = 310
       Lines.Strings = (
         #38144#21806#22238#27454#25110#39044#20184#27454)
       ParentFont = False
       Properties.MaxLength = 200
       Properties.ScrollBars = ssVertical
       TabOrder = 11
-      Height = 56
-      Width = 462
+      Height = 45
+      Width = 369
     end
     object cxLabel2: TcxLabel [5]
-      Left = 425
-      Top = 358
+      Left = 340
+      Top = 285
       AutoSize = False
       Caption = #20803
       ParentFont = False
       Properties.Alignment.Horz = taLeftJustify
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 31
-      AnchorY = 371
+      Height = 20
+      Width = 25
+      AnchorY = 295
     end
     object ListInfo: TcxMCListBox [6]
-      Left = 29
-      Top = 45
-      Width = 534
-      Height = 138
+      Left = 23
+      Top = 36
+      Width = 427
+      Height = 110
       HeaderSections = <
         item
           Text = #20449#24687#39033
@@ -76,15 +76,15 @@ inherited fFormPayment: TfFormPayment
         item
           AutoSize = True
           Text = #20449#24687#20869#23481
-          Width = 445
+          Width = 338
         end>
       ParentFont = False
       Style.Edges = [bLeft, bTop, bRight, bBottom]
       TabOrder = 0
     end
     object EditID: TcxButtonEdit [7]
-      Left = 87
-      Top = 192
+      Left = 81
+      Top = 146
       ParentFont = False
       Properties.Buttons = <
         item
@@ -94,11 +94,11 @@ inherited fFormPayment: TfFormPayment
       Properties.OnButtonClick = EditIDPropertiesButtonClick
       TabOrder = 1
       OnKeyPress = OnCtrlKeyPress
-      Width = 156
+      Width = 124
     end
     object EditSalesMan: TcxComboBox [8]
-      Left = 306
-      Top = 192
+      Left = 268
+      Top = 146
       ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       Properties.DropDownRows = 20
@@ -106,11 +106,11 @@ inherited fFormPayment: TfFormPayment
       Properties.ItemHeight = 18
       Properties.OnChange = EditSalesManPropertiesChange
       TabOrder = 2
-      Width = 152
+      Width = 121
     end
     object EditName: TcxComboBox [9]
-      Left = 87
-      Top = 220
+      Left = 81
+      Top = 171
       ParentFont = False
       Properties.DropDownRows = 20
       Properties.ImmediateDropDown = False
@@ -119,50 +119,50 @@ inherited fFormPayment: TfFormPayment
       Properties.OnEditValueChanged = EditNamePropertiesEditValueChanged
       TabOrder = 3
       OnKeyPress = EditNameKeyPress
-      Width = 232
+      Width = 185
     end
     object EditIn: TcxTextEdit [10]
-      Left = 87
-      Top = 288
+      Left = 81
+      Top = 228
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 4
       Text = '0'
-      Width = 113
+      Width = 90
     end
     object EditOut: TcxTextEdit [11]
-      Left = 299
-      Top = 288
+      Left = 264
+      Top = 228
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 6
       Text = '0'
-      Width = 94
+      Width = 75
     end
     object cxLabel1: TcxLabel [12]
-      Left = 205
-      Top = 288
+      Left = 176
+      Top = 228
       AutoSize = False
       Caption = #20803
       ParentFont = False
       Properties.Alignment.Horz = taLeftJustify
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 31
-      AnchorY = 301
+      Height = 20
+      Width = 25
+      AnchorY = 238
     end
     object cxLabel3: TcxLabel [13]
-      Left = 425
-      Top = 288
+      Left = 340
+      Top = 228
       AutoSize = False
       Caption = #20803
       ParentFont = False
       Properties.Alignment.Vert = taVCenter
       Transparent = True
-      Height = 25
-      Width = 31
-      AnchorY = 301
+      Height = 20
+      Width = 25
+      AnchorY = 238
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup

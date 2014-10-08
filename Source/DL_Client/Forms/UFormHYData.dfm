@@ -1,9 +1,8 @@
 inherited fFormHYData: TfFormHYData
   Left = 323
   Top = 208
-  Width = 480
-  Height = 291
-  BorderStyle = bsSizeable
+  ClientHeight = 263
+  ClientWidth = 473
   Constraints.MinHeight = 245
   Constraints.MinWidth = 460
   OnClose = FormClose
@@ -11,17 +10,17 @@ inherited fFormHYData: TfFormHYData
   PixelsPerInch = 96
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 472
-    Height = 264
+    Width = 473
+    Height = 263
     inherited BtnOK: TButton
-      Left = 326
-      Top = 231
+      Left = 327
+      Top = 230
       Caption = #30830#23450
       TabOrder = 8
     end
     inherited BtnExit: TButton
-      Left = 396
-      Top = 231
+      Left = 397
+      Top = 230
       TabOrder = 9
     end
     object EditTruck: TcxTextEdit [2]
@@ -30,6 +29,7 @@ inherited fFormHYData: TfFormHYData
       ParentFont = False
       Properties.MaxLength = 100
       TabOrder = 6
+      OnKeyPress = EditTruckKeyPress
       Width = 147
     end
     object EditValue: TcxTextEdit [3]

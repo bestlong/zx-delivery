@@ -135,8 +135,7 @@ end;
 
 //Desc: 修改
 procedure TfFrameZhiKa.BtnEditClick(Sender: TObject);
-var nStr: string;
-    nParam: TFormCommandParam;
+var nParam: TFormCommandParam;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
   begin
@@ -144,15 +143,6 @@ begin
   end;        
 
   nParam.FParamA := SQLQuery.FieldByName('Z_ID').AsString;
-  nStr := 'Select Count(*) From %s Where L_ZhiKa=''%s''';
-  nStr := Format(nStr, [sTable_Bill, nParam.FParamA]);
-
-  with FDM.QueryTemp(nStr) do
-  if Fields[0].AsInteger > 0 then
-  begin
-    ShowMsg('该纸卡不能删除', '已提货'); Exit;
-  end;
-
   nParam.FCommand := cCmd_EditData;
   CreateBaseFormItem(cFI_FormZhiKa, PopedomItem, @nParam);
 

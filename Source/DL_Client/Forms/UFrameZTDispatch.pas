@@ -45,6 +45,7 @@ type
     procedure BtnAddClick(Sender: TObject);
     procedure N3Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
+    procedure BtnPrintClick(Sender: TObject);
   private
     { Private declarations }
     FLastRefresh: Int64;
@@ -74,8 +75,8 @@ implementation
 
 {$R *.dfm}
 uses
-  IniFiles, ULibFun, UMgrControl, UFormWait, UFormZTLine, USysDB, USysConst,
-  USysFun, USysPopedom, UDataModule, USysLoger;
+  IniFiles, ULibFun, UMgrControl, UFormWait, UFormZTLine, UFormZTMode,
+  USysDB, USysConst, USysFun, USysPopedom, UDataModule, USysLoger;
 
 class function TfFrameZTDispatch.FrameID: integer;
 begin
@@ -180,6 +181,12 @@ begin
   if ShowEditZTLineForm(nStr) then
     RefreshData(True);
   //xxxxx
+end;
+
+//Desc: 模式调度
+procedure TfFrameZTDispatch.BtnPrintClick(Sender: TObject);
+begin
+  ShowZTModeForm;
 end;
 
 //Desc: 权限控制

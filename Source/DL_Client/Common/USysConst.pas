@@ -94,7 +94,7 @@ const
   cFI_FormJiShuQi       = $1029;                     //计数管理
   cFI_FormBFWuCha       = $1030;                     //净重误差
   cFI_FormZhiKaQuery    = $1031;                     //卡片信息
-  cFI_FormPayCustom     = $1032;                     //销售退购
+  cFI_FormBuDan         = $1032;                     //销售补单
   cFI_FormZhiKaInfoExt1 = $1033;                     //纸卡扩展
   cFI_FormZhiKaInfoExt2 = $1034;                     //纸卡扩展
   cFI_FormZhiKaAdjust   = $1035;                     //纸卡调整
@@ -278,7 +278,7 @@ begin
   AddMenuModuleItem('MAIN_D01', cFI_FormZhiKa, mtForm);
   AddMenuModuleItem('MAIN_D02', cFI_FrameMakeCard);
   AddMenuModuleItem('MAIN_D03', cFI_FormBill, mtForm);
-  AddMenuModuleItem('MAIN_D04', cFI_FormPayCustom, mtForm);
+  AddMenuModuleItem('MAIN_D04', cFI_FormBill, mtForm);
   AddMenuModuleItem('MAIN_D05', cFI_FrameZhiKa);
   AddMenuModuleItem('MAIN_D06', cFI_FrameBill);
 
