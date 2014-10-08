@@ -51,6 +51,7 @@ type
     //交班条件 
     procedure OnCreateFrame; override;
     procedure OnDestroyFrame; override;
+    function FilterColumnField: string; override;
     function InitFormDataSQL(const nWhere: string): string; override;
     //查询SQL
   public
@@ -62,7 +63,7 @@ implementation
 
 {$R *.dfm}
 uses
-  IniFiles, ULibFun, UMgrControl, UFormDateFilter, USysBusiness,
+  IniFiles, ULibFun, UMgrControl, UFormDateFilter, USysPopedom, USysBusiness,
   UBusinessConst, USysConst, USysDB;
 
 class function TfFrameSaleDetailQuery.FrameID: integer;
@@ -106,6 +107,14 @@ begin
   Result := MacroValue(Result, [MI('$Bill', sTable_Bill),
             MI('$S', Date2Str(FStart)), MI('$End', Date2Str(FEnd + 1))]);
   //xxxxx
+end;
+
+//Desc: 过滤字段
+function TfFrameSaleDetailQuery.FilterColumnField: string;
+begin
+  if gPopedomManager.HasPopedom(PopedomItem, sPopedom_ViewPrice) then
+       Result := ''
+  else Result := 'L_Price;L_Money';
 end;
 
 //Desc: 日期筛选

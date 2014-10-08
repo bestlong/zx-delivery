@@ -10,7 +10,7 @@ unit UMITModule;
 interface
 
 uses
-  Forms, Classes, SysUtils, ULibFun, UBusinessWorker, UBusinessPacker,
+  Windows, Forms, Classes, SysUtils, ULibFun, UBusinessWorker, UBusinessPacker,
   UTaskMonitor, USysShareMem, USysLoger, UMITConst, UMITPacker,
   {$IFDEF HardMon}UEventHardware, UWorkerHardware,{$ENDIF} UWorkerBusiness,
   UMgrDBConn, UMgrParam, UMgrPlug, UMgrChannel, UChannelChooser, USAPConnection;
@@ -126,6 +126,9 @@ begin
     gParamManager.GetParamPack(gSysParam.FParam, True);
   //参数管理器
 
+  TBusinessWorkerSweetHeart.RegWorker(gParamManager.URLLocal.Text);
+  //for channel manager
+
   {$IFDEF DBPool}
   gDBConnManager := TDBConnManager.Create;
   {$ENDIF}
@@ -174,7 +177,7 @@ end;
 
 //Desc: 运行系统对象
 procedure RunSystemObject;
-
+var nStr: string;
 begin
   {$IFDEF ClientMon}
   if Assigned(gParamManager.ActiveParam) and
@@ -183,8 +186,16 @@ begin
   begin
     if Assigned(gProcessMonitorSapMITClient) then
     begin
-      gProcessMonitorSapMITClient.UpdateHandle(nFormHandle, GetCurrentProcessId, nStr);
+      gProcessMonitorSapMITClient.UpdateHandle(gPlugManager.RunParam.FMainForm,
+                                               GetCurrentProcessId, nStr);
       gProcessMonitorSapMITClient.StartMonitor(nStr, FMonInterval);
+    end;
+
+    if Assigned(gProcessMonitorClient) then
+    begin
+      gProcessMonitorClient.UpdateHandle(gPlugManager.RunParam.FMainForm,
+                                               GetCurrentProcessId, nStr);
+      gProcessMonitorClient.StartMonitor(nStr, FMonInterval);
     end;
   end;
   {$ENDIF}

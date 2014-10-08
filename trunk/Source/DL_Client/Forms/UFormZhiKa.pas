@@ -458,7 +458,7 @@ begin
                      FieldByName('C_ZKDays').AsInteger;
     //当前 + 时长
     
-    EditPName.Properties.ReadOnly := not FZhiKa.FIsXuNi;
+    //EditPName.Properties.ReadOnly := not FZhiKa.FIsXuNi;
     EditSMan.Properties.ReadOnly := not FZhiKa.FIsXuNi;
     EditCustom.Properties.ReadOnly := not FZhiKa.FIsXuNi;
 
@@ -776,9 +776,11 @@ begin
     if FRecordID = '' then
     begin
       nZID := GetSerialNo(sFlag_BusGroup, sFlag_ZhiKa, True);
-      if nZID = '' then Exit;
-      nList.Add(Format('Z_ID=''%s''', [nZID]));
+      if nZID = '' then
+        raise Exception.Create('获取纸卡号失败');
+      //xxxxx
 
+      nList.Add(Format('Z_ID=''%s''', [nZID]));
       if IsZhiKaNeedVerify then
            nStr := sFlag_No
       else nStr := sFlag_Yes;

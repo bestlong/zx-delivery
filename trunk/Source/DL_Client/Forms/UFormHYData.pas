@@ -39,6 +39,7 @@ type
     procedure EditSManPropertiesEditValueChanged(Sender: TObject);
     procedure EditNoPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure EditTruckKeyPress(Sender: TObject; var Key: Char);
   protected
     { Protected declarations }
     FSelectVal: Double;
@@ -118,10 +119,10 @@ end;
 //------------------------------------------------------------------------------
 //Desc: 初始化解面
 procedure TfFormHYData.InitFormData(const nID: string);
-var nStr: string;
 begin
   EditDate.Date := Now;
   EditValue.Text := '0';
+  LoadSaleMan(EditSMan.Properties.Items);
 end;
 
 //Desc: 选择客户
@@ -129,7 +130,7 @@ procedure TfFormHYData.EditCustomKeyPress(Sender: TObject; var Key: Char);
 var nStr: string;
     nP: TFormCommandParam;
 begin
-  if Key = #13 then
+  if Key = Char(VK_SPACE) then
   begin
     Key := #0;
     nP.FParamA := GetCtrlData(EditCustom);
@@ -149,6 +150,22 @@ begin
       nStr := Format('%s=%s.%s', [nP.FParamB, nP.FParamB, nP.FParamC]);
       EditCustom.ItemIndex := InsertStringsItem(EditCustom.Properties.Items, nStr);
     end;
+  end;
+end;
+
+//Desc: 选择车辆
+procedure TfFormHYData.EditTruckKeyPress(Sender: TObject; var Key: Char);
+var nP: TFormCommandParam;
+begin
+  if Key = Char(VK_SPACE) then
+  begin
+    Key := #0;
+    nP.FParamA := EditTruck.Text;
+    CreateBaseFormItem(cFI_FormGetTruck, '', @nP);
+
+    if (nP.FCommand = cCmd_ModalResult) and(nP.FParamA = mrOk) then
+      EditTruck.Text := nP.FParamB;
+    EditTruck.SelectAll;
   end;
 end;
 

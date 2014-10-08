@@ -105,8 +105,9 @@ end;
 procedure TfFormTruckOut.FormCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
-  dxGroup1.AlignVert := avTop;
-  //top align
+  dxGroup1.AlignVert := avClient;
+  dxLayout1Item3.AlignVert := avClient;
+  //client align
   
   nIni := TIniFile.Create(gPath + sFormConfig);
   try

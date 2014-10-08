@@ -88,10 +88,10 @@ var
 class function TfFormPayment.CreateForm(const nPopedom: string;
   const nParam: Pointer): TWinControl;
 var nP: PFormCommandParam;
-begin
-  nP := nParam;
+begin 
   Result := nil;
   if not WorkPCHasPopedom then Exit;
+  nP := nParam;
 
   with TfFormPayment.Create(Application) do
   try

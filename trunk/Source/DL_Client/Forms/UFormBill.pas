@@ -35,7 +35,7 @@ type
     dxLayout1Group5: TdxLayoutGroup;
     dxLayout1Group8: TdxLayoutGroup;
     dxLayout1Group7: TdxLayoutGroup;
-    EditZK: TcxTextEdit;
+    EditFQ: TcxTextEdit;
     dxLayout1Item5: TdxLayoutItem;
     dxLayout1Group2: TdxLayoutGroup;
     dxLayout1Item6: TdxLayoutItem;
@@ -50,6 +50,8 @@ type
     procedure EditLadingKeyPress(Sender: TObject; var Key: Char);
   protected
     { Protected declarations }
+    FBuDanFlag: string;
+    //补单标记
     procedure LoadFormData;
     procedure LoadStockList;
     //载入数据
@@ -108,7 +110,7 @@ begin
   end else nP := nParam;
 
   try
-    CreateBaseFormItem(cFI_FormGetZhika, '', nP);
+    CreateBaseFormItem(cFI_FormGetZhika, nPopedom, nP);
     if (nP.FCommand <> cCmd_ModalResult) or (nP.FParamA <> mrOK) then Exit;
     gInfo.FZhiKa := nP.FParamB;
   finally
@@ -120,25 +122,27 @@ begin
     LoadFormData;
     //try load data
 
-    if BtnOK.Enabled then
+    if not BtnOK.Enabled then Exit;
+    gInfo.FShowPrice := gPopedomManager.HasPopedom(nPopedom, sPopedom_ViewPrice);
+
+    Caption := '开提货单';
+    nBool := not gPopedomManager.HasPopedom(nPopedom, sPopedom_Edit);
+    EditLading.Properties.ReadOnly := nBool;
+
+    if nPopedom = 'MAIN_D04' then //补单
+         FBuDanFlag := sFlag_Yes
+    else FBuDanFlag := sFlag_No;
+
+    if Assigned(nParam) then
+    with PFormCommandParam(nParam)^ do
     begin
-      Caption := '开提货单';
-      EditZK.Text := gInfo.FZhiKa;
+      FCommand := cCmd_ModalResult;
+      FParamA := ShowModal;
 
-      nBool := not gPopedomManager.HasPopedom(nPopedom, sPopedom_Edit);
-      EditLading.Properties.ReadOnly := nBool;
-
-      if Assigned(nParam) then
-      with PFormCommandParam(nParam)^ do
-      begin
-        FCommand := cCmd_ModalResult;
-        FParamA := ShowModal;
-
-        if FParamA = mrOK then
-             FParamB := gInfo.FIDList
-        else FParamB := '';
-      end else ShowModal;
-    end; //may be data invalid
+      if FParamA = mrOK then
+           FParamB := gInfo.FIDList
+      else FParamB := '';
+    end else ShowModal;
   finally
     Free;
   end;
@@ -291,7 +295,6 @@ begin
   LoadStockList;
   //load stock into window
 
-  gInfo.FShowPrice := ShowPriceWhenBill;
   EditType.ItemIndex := 0;
   ActiveControl := EditTruck;
 end;
@@ -492,7 +495,7 @@ begin
       nList.Add(PackerEncodeStr(nTmp.Text));
       //new bill
 
-      if not nPrint then
+      if (not nPrint) and (FBuDanFlag <> sFlag_Yes) then
         nPrint := nStocks.IndexOf(FStockNO) >= 0;
       //xxxxx
     end;
@@ -504,6 +507,8 @@ begin
       Values['Truck'] := EditTruck.Text;
       Values['Lading'] := GetCtrlData(EditLading);
       Values['IsVIP'] := GetCtrlData(EditType);
+      Values['Seal'] := EditFQ.Text;
+      Values['BuDan'] := FBuDanFlag;
     end;
 
     gInfo.FIDList := SaveBill(PackerEncodeStr(nList.Text));

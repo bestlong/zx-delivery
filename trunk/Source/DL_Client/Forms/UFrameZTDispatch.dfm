@@ -26,7 +26,7 @@ inherited fFrameZTDispatch: TfFrameZTDispatch
     object BtnAdd: TToolButton
       Left = 0
       Top = 0
-      Caption = '  '#35013#36710#32447'  '
+      Caption = #35013#36710#32447
       ImageIndex = 20
       OnClick = BtnAddClick
     end
@@ -41,8 +41,9 @@ inherited fFrameZTDispatch: TfFrameZTDispatch
     object BtnPrint: TToolButton
       Left = 75
       Top = 0
-      Caption = #22270#20363
-      ImageIndex = 21
+      Caption = ' '#35843#24230#27169#24335' '
+      ImageIndex = 19
+      OnClick = BtnPrintClick
     end
     object BtnRefresh: TToolButton
       Left = 142

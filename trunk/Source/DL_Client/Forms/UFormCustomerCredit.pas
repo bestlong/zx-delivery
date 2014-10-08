@@ -61,8 +61,9 @@ class function TfFormCustomerCredit.CreateForm(const nPopedom: string;
   const nParam: Pointer): TWinControl;
 var nP: PFormCommandParam;
 begin
-  nP := nParam;
   Result := nil;
+  if not WorkPCHasPopedom then Exit;
+  nP := nParam;
 
   with TfFormCustomerCredit.Create(Application) do
   begin

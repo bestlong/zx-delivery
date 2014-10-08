@@ -67,6 +67,7 @@ ResourceString
   sPopedom_Preview    = 'E';                         //预览
   sPopedom_Print      = 'F';                         //打印
   sPopedom_Export     = 'G';                         //导出
+  sPopedom_ViewPrice  = 'H';                         //查看单价
 
   {*相关标记*}
   sFlag_Yes           = 'Y';                         //是
@@ -142,7 +143,6 @@ ResourceString
   sFlag_ValidDate     = 'SysValidDate';              //有效期
   sFlag_ZhiKaVerify   = 'ZhiKaVerify';               //纸卡审核
   sFlag_PrintZK       = 'PrintZK';                   //打印纸卡
-  sFlag_BillPrice     = 'Bill_Price';                //开单显单价
   sFlag_PrintBill     = 'PrintStockBill';            //需打印订单
   sFlag_ViaBillCard   = 'ViaBillCard';               //直接制卡
   sFlag_PayCredit     = 'Pay_Credit';                //回款冲信用
@@ -182,6 +182,7 @@ ResourceString
   sFlag_AutoIn        = 'Truck_AutoIn';              //自动进厂
   sFlag_AutoOut       = 'Truck_AutoOut';             //自动出厂
   sFlag_InTimeout     = 'InFactTimeOut';             //进厂超时(队列)
+  sFlag_SanMultiBill  = 'SanMultiBill';              //散装预开多单
   sFlag_NoDaiQueue    = 'NoDaiQueue';                //袋装禁用队列
   sFlag_NoSanQueue    = 'NoSanQueue';                //散装禁用队列
   sFlag_DelayQueue    = 'DelayQueue';                //延迟排队(厂内)

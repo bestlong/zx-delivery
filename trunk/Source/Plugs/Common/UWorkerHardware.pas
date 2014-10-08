@@ -47,6 +47,8 @@ type
     procedure GetInOutData(var nIn,nOut: PBWDataBase); override;
     function DoDBWork(var nData: string): Boolean; override;
     //base funciton
+    function ChangeDispatchMode(var nData: string): Boolean;
+    //切换调度模式
     function PoundCardNo(var nData: string): Boolean;
     //读取磅站卡号
     function LoadQueue(var nData: string): Boolean;
@@ -223,6 +225,7 @@ begin
   end;
 
   case FIn.FCommand of
+   cBC_ChangeDispatchMode   : Result := ChangeDispatchMode(nData);
    cBC_GetPoundCard         : Result := PoundCardNo(nData);
    cBC_GetQueueData         : Result := LoadQueue(nData);
    cBC_SaveCountData        : Result := SaveDaiNum(nData);
@@ -242,6 +245,44 @@ begin
       Result := False;
       nData := '无效的业务代码(Invalid Command).';
     end;
+  end;
+end;
+
+//Date: 2014-10-07
+//Parm: 调度模式[FIn.FData]
+//Desc: 切换系统调度模式
+function THardwareCommander.ChangeDispatchMode(var nData: string): Boolean;
+var nStr,nSQL: string;
+begin
+  Result := True;
+  nSQL := 'Update %s Set D_Value=''%s'' Where D_Name=''%s'' And D_Memo=''%s''';
+
+  if FIn.FData = '1' then
+  begin
+    nStr := Format(nSQL, [sTable_SysDict, sFlag_No, sFlag_SysParam,
+            sFlag_SanMultiBill]);
+    gDBConnManager.WorkerExec(FDBConn, nStr); //关闭散装预开
+
+    nStr := Format(nSQL, [sTable_SysDict, '20', sFlag_SysParam,
+            sFlag_InTimeout]);
+    gDBConnManager.WorkerExec(FDBConn, nStr); //缩短进厂超时
+
+    gTruckQueueManager.RefreshParam;
+    //使用新调度参数
+  end else
+
+  if FIn.FData = '2' then
+  begin
+    nStr := Format(nSQL, [sTable_SysDict, sFlag_Yes, sFlag_SysParam,
+            sFlag_SanMultiBill]);
+    gDBConnManager.WorkerExec(FDBConn, nStr); //启用散装预开
+
+    nStr := Format(nSQL, [sTable_SysDict, '720', sFlag_SysParam,
+            sFlag_InTimeout]);
+    gDBConnManager.WorkerExec(FDBConn, nStr); //延长进厂超时
+
+    gTruckQueueManager.RefreshParam;
+    //使用新调度参数
   end;
 end;
 

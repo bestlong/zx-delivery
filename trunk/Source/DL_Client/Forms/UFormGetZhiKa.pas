@@ -40,6 +40,8 @@ type
     procedure BtnOKClick(Sender: TObject);
   protected
     { Private declarations }
+    FShowPrice: Boolean;
+    //显示单价
     procedure InitFormData(const nID: string);
     //载入数据
     procedure ClearCustomerInfo;
@@ -57,7 +59,7 @@ implementation
 {$R *.dfm}
 uses
   DB, IniFiles, ULibFun, UFormBase, UMgrControl, UAdjustForm, UDataModule,
-  USysGrid, USysDB, USysConst, USysBusiness;
+  USysPopedom, USysGrid, USysDB, USysConst, USysBusiness;
 
 var
   gParam: PFormCommandParam = nil;
@@ -74,6 +76,7 @@ begin
   try
     Caption := '选择纸卡';
     InitFormData('');
+    FShowPrice := gPopedomManager.HasPopedom(nPopedom, sPopedom_ViewPrice);
     
     gParam.FCommand := cCmd_ModalResult;
     gParam.FParamA := ShowModal;
@@ -155,8 +158,9 @@ begin
 
   //----------------------------------------------------------------------------
   nStr := 'Z_ID=Select Z_ID, Z_Name From %s ' +
-          'Where Z_Customer=''%s'' And Z_ValidDays>%s Order By Z_ID';
-  nStr := Format(nStr, [sTable_ZhiKa, nID, sField_SQLServer_Now]);
+          'Where Z_Customer=''%s'' And Z_ValidDays>%s And ' +
+          'IsNull(Z_InValid, '''')<>''%s'' Order By Z_ID';
+  nStr := Format(nStr, [sTable_ZhiKa, nID, sField_SQLServer_Now, sFlag_Yes]);
 
   with EditZK.Properties do
   begin
@@ -222,7 +226,12 @@ begin
       begin
         Checked := True;
         Caption := Fields[0].AsString;
-        SubItems.Add(Format('%.2f',[Fields[1].AsFloat]));
+
+        if FShowPrice then
+             nStr := Format('%.2f',[Fields[1].AsFloat])
+        else nStr := '---';
+
+        SubItems.Add(nStr);
         SubItems.Add(Format('%.2f',[Fields[2].AsFloat]));
       end;
 

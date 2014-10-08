@@ -84,6 +84,7 @@ type
   private
     FHostIP: string;
     FHostPort: Integer;
+    FUDPPort: Integer;
     //服务主机
     FItems: array of THHReaderItem;
     //读头列表
@@ -330,6 +331,11 @@ begin
     FHostIP := nNode.NodeByName('ip').ValueAsString;
     FHostPort := nNode.NodeByName('port').ValueAsInteger;
 
+    nTP := nNode.FindNode('local_udp');
+    if Assigned(nTP) then
+         FUDPPort := nTP.ValueAsInteger
+    else FUDPPort := 5005;
+
     nNode := nXML.Root.NodeByName('readers');
     nInt := 0;
     SetLength(FItems, nNode.NodeCount);
@@ -398,7 +404,7 @@ begin
 
   FServer := TIdUDPServer.Create;
   FServer.OnUDPRead := OnUDPRead;
-  FServer.DefaultPort := 5005;
+  FServer.DefaultPort := FOwner.FUDPPort;
 
   FServer.Active := True;
   //udp server

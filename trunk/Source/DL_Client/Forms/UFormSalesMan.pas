@@ -341,6 +341,8 @@ begin
   if FSalesManID = '' then
   begin
     nID := GetSerialNo(sFlag_BusGroup, sFlag_SaleMan, False);
+    if nID = '' then Exit;
+    
     nList.Add(SF('S_ID', nID));
     nSQL := MakeSQLByForm(Self, sTable_Salesman, '', True, GetData, nList);
   end else

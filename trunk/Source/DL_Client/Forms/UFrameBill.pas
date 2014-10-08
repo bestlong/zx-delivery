@@ -42,6 +42,8 @@ type
     N6: TMenuItem;
     Edit1: TcxTextEdit;
     dxLayout1Item9: TdxLayoutItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure BtnDelClick(Sender: TObject);
@@ -52,6 +54,7 @@ type
     procedure N3Click(Sender: TObject);
     procedure N4Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
+    procedure N7Click(Sender: TObject);
   protected
     FStart,FEnd: TDate;
     //时间区间
@@ -59,6 +62,7 @@ type
     //使用区间
     procedure OnCreateFrame; override;
     procedure OnDestroyFrame; override;
+    function FilterColumnField: string; override;
     function InitFormDataSQL(const nWhere: string): string; override;
     procedure AfterInitFormData; override;
     {*查询SQL*}
@@ -71,8 +75,8 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, UMgrControl, UDataModule, UFormBase, UFormInputbox, USysConst,
-  USysDB, USysBusiness, UFormDateFilter;
+  ULibFun, UMgrControl, UDataModule, UFormBase, UFormInputbox, USysPopedom,
+  USysConst, USysDB, USysBusiness, UFormDateFilter;
 
 //------------------------------------------------------------------------------
 class function TfFrameBill.FrameID: integer;
@@ -120,6 +124,13 @@ end;
 procedure TfFrameBill.AfterInitFormData;
 begin
   FUseDate := True;
+end;
+
+function TfFrameBill.FilterColumnField: string;
+begin
+  if gPopedomManager.HasPopedom(PopedomItem, sPopedom_ViewPrice) then
+       Result := ''
+  else Result := 'L_Price';
 end;
 
 //Desc: 执行查询
@@ -177,7 +188,7 @@ end;
 procedure TfFrameBill.BtnAddClick(Sender: TObject);
 var nP: TFormCommandParam;
 begin
-  CreateBaseFormItem(cFI_FormBill, '', @nP);
+  CreateBaseFormItem(cFI_FormBill, PopedomItem, @nP);
   if (nP.FCommand = cCmd_ModalResult) and (nP.FParamA = mrOK) then
   begin
     InitFormData('');
@@ -237,6 +248,37 @@ begin
   end;
 end;
 
+//Desc: 修改封签号
+procedure TfFrameBill.N7Click(Sender: TObject);
+var nStr,nID,nSeal: string;
+begin
+  if cxView1.DataController.GetSelectedCount > 0 then
+  begin
+    nStr := SQLQuery.FieldByName('L_Seal').AsString;
+    nSeal := nStr;
+    if not ShowInputBox('请输入新的封签编号:', '修改', nSeal, 100) then Exit;
+
+    if (nSeal = '') or (nStr = nSeal) then Exit;
+    //无效或一致
+    nID := SQLQuery.FieldByName('L_ID').AsString;
+
+    nStr := '确定要将交货单[ %s ]的封签号该为[ %s ]吗?';
+    nStr := Format(nStr, [nID, nSeal]);
+    if not QueryDlg(nStr, sAsk) then Exit;
+
+    nStr := 'Update %s Set L_Seal=''%s'' Where L_ID=''%s''';
+    nStr := Format(nStr, [sTable_Bill, nSeal, nID]);
+    FDM.ExecuteSQL(nStr);
+
+    nStr := '修改封签号[ %s -> %s ].';
+    nStr := Format(nStr, [SQLQuery.FieldByName('L_Seal').AsString, nSeal]);
+    FDM.WriteSysLog(sFlag_BillItem, nID, nStr, False);
+
+    InitFormData(FWhere);
+    ShowMsg('封签号修改成功', sHint);
+  end;
+end;
+
 //Desc: 调拨提货单
 procedure TfFrameBill.N3Click(Sender: TObject);
 var nStr,nTmp: string;
@@ -245,7 +287,7 @@ begin
   if cxView1.DataController.GetSelectedCount > 0 then
   begin
     nP.FCommand := cCmd_AddData;
-    CreateBaseFormItem(cFI_FormGetZhika, '', @nP);
+    CreateBaseFormItem(cFI_FormGetZhika, PopedomItem, @nP);
     if (nP.FCommand <> cCmd_ModalResult) or (nP.FParamA <> mrOK) then Exit;
 
     nStr := SQLQuery.FieldByName('L_ZhiKa').AsString;
@@ -267,11 +309,19 @@ begin
         Exit;
       end;
 
-      nStr := '确定要将客户[ %s.%s ]的提货调拨给[ %s.%s ]吗?';
+      nStr := '系统将执行提货调拨操作,明细如下: ' + #13#10#13#10 +
+              '※.从客户: %s.%s' + #13#10 +
+              '※.到客户: %s.%s' + #13#10 +
+              '※.品  种: %s.%s' + #13#10 +
+              '※.调拨量: %.2f吨' + #13#10#13#10 +
+              '确定要执行请点击"是".';
       nStr := Format(nStr, [SQLQuery.FieldByName('L_CusID').AsString,
               SQLQuery.FieldByName('L_CusName').AsString,
               FieldByName('C_ID').AsString,
-              FieldByName('C_Name').AsString]);
+              FieldByName('C_Name').AsString,
+              SQLQuery.FieldByName('L_StockNo').AsString,
+              SQLQuery.FieldByName('L_StockName').AsString,
+              SQLQuery.FieldByName('L_Value').AsFloat]);
       if not QueryDlg(nStr, sAsk) then Exit;
     end;
 

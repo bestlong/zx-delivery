@@ -7,27 +7,27 @@ inherited fFormTruckIn: TfFormTruckIn
   Caption = #36710#36742#36827#21378
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
     Width = 478
-    Height = 534
+    Height = 539
     inherited BtnOK: TButton
-      Left = 296
-      Top = 492
+      Left = 332
+      Top = 506
       Caption = #25918#34892
       TabOrder = 4
     end
     inherited BtnExit: TButton
-      Left = 383
-      Top = 492
+      Left = 402
+      Top = 506
       TabOrder = 5
     end
     object ListInfo: TcxMCListBox [2]
-      Left = 29
-      Top = 45
-      Width = 420
-      Height = 215
+      Left = 23
+      Top = 36
+      Width = 336
+      Height = 172
       HeaderSections = <
         item
           Text = #20449#24687#39033
@@ -36,7 +36,7 @@ inherited fFormTruckIn: TfFormTruckIn
         item
           AutoSize = True
           Text = #20449#24687#20869#23481
-          Width = 342
+          Width = 258
         end>
       ParentFont = False
       Style.Edges = [bLeft, bTop, bRight, bBottom]
@@ -44,23 +44,23 @@ inherited fFormTruckIn: TfFormTruckIn
       OnClick = ListInfoClick
     end
     object ListBill: TcxListView [3]
-      Left = 29
-      Top = 361
-      Width = 437
-      Height = 144
+      Left = 23
+      Top = 348
+      Width = 350
+      Height = 115
       Columns = <
         item
           Caption = #20132#36135#21333#21495
-          Width = 100
+          Width = 80
         end
         item
           Alignment = taCenter
           Caption = #20132#36135#37327'('#21544')'
-          Width = 125
+          Width = 100
         end
         item
           Caption = #27700#27877#31867#22411
-          Width = 100
+          Width = 80
         end>
       HideSelection = False
       ParentFont = False
@@ -73,20 +73,20 @@ inherited fFormTruckIn: TfFormTruckIn
       OnSelectItem = ListBillSelectItem
     end
     object EditCus: TcxTextEdit [4]
-      Left = 87
-      Top = 293
+      Left = 81
+      Top = 238
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 2
-      Width = 138
+      Width = 110
     end
     object EditBill: TcxTextEdit [5]
-      Left = 87
-      Top = 265
+      Left = 81
+      Top = 213
       ParentFont = False
       Properties.ReadOnly = True
       TabOrder = 1
-      Width = 132
+      Width = 105
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
