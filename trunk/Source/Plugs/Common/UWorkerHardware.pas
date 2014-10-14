@@ -277,7 +277,7 @@ begin
             sFlag_SanMultiBill]);
     gDBConnManager.WorkerExec(FDBConn, nStr); //启用散装预开
 
-    nStr := Format(nSQL, [sTable_SysDict, '720', sFlag_SysParam,
+    nStr := Format(nSQL, [sTable_SysDict, '1440', sFlag_SysParam,
             sFlag_InTimeout]);
     gDBConnManager.WorkerExec(FDBConn, nStr); //延长进厂超时
 

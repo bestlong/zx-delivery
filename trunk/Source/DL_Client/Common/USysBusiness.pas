@@ -84,6 +84,10 @@ function GetZhikaValidMoney(nZhiKa: string; var nFixMoney: Boolean): Double;
 function GetCustomerValidMoney(nCID: string; const nLimit: Boolean = True): Double;
 //客户可用金额
 
+function SyncRemoteCustomer: Boolean;
+//同步远程用户
+function SyncRemoteSaleMan: Boolean;
+//同步远程业务员
 function SaveXuNiCustomer(const nName,nSaleMan: string): string;
 //存临时客户
 function IsAutoPayCredit: Boolean;
@@ -760,6 +764,22 @@ begin
   if CallBusinessCommand(cBC_CustomerHasMoney, nCusID, '', @nOut) then
        Result := nOut.FData = sFlag_Yes
   else Result := False;
+end;
+
+//Date: 2014-10-13
+//Desc: 同步业务员到DL系统
+function SyncRemoteSaleMan: Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessCommand(cBC_SyncSaleMan, '', '', @nOut);
+end;
+
+//Date: 2014-10-13
+//Desc: 同步用户到DL系统
+function SyncRemoteCustomer: Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessCommand(cBC_SyncCustomer, '', '', @nOut);
 end;
 
 //Date: 2014-09-25

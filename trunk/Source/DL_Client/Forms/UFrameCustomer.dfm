@@ -146,6 +146,7 @@ inherited fFrameCustomer: TfFrameCustomer
   end
   object PMenu1: TPopupMenu
     AutoHotkeys = maManual
+    OnPopup = PMenu1Popup
     Left = 4
     Top = 264
     object N1: TMenuItem
@@ -157,6 +158,13 @@ inherited fFrameCustomer: TfFrameCustomer
       Tag = 20
       Caption = #26597#35810#20840#37096#23458#25143
       OnClick = N2Click
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object N4: TMenuItem
+      Caption = #21516#27493#36828#31243#23458#25143
+      OnClick = N4Click
     end
   end
 end

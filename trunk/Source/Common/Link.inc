@@ -45,3 +45,15 @@
   {.$DEFINE ClientMon}
   //支持守护服务
 {$ENDIF}
+
+//--------------------------------- 特定系统 -----------------------------------
+{$DEFINE COMMON}
+//通用版本
+
+{.$DEFINE XAZL}
+//新安中联
+
+{$IFDEF XAZL}
+  {$DEFINE SyncRemote}
+  //远程同步
+{$ENDIF}

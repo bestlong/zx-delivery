@@ -66,7 +66,7 @@ begin
   {$IFDEF DBPool}
   with gParamManager do
   begin
-    gDBConnManager.AddParam(ActiveParam.FDB^);
+    gDBConnManager.DefaultConnection := ActiveParam.FDB.FID;
     gDBConnManager.MaxConn := ActiveParam.FDB.FNumWorker;
   end;
   {$ENDIF} //db
@@ -112,6 +112,22 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+//Desc: 填充数据库参数
+procedure FillAllDBParam;
+var nIdx: Integer;
+    nList: TStrings;
+begin
+  nList := TStringList.Create;
+  try
+    gParamManager.LoadParam(nList, ptDB);
+    for nIdx:=0 to nList.Count - 1 do
+      gDBConnManager.AddParam(gParamManager.GetDB(nList[nIdx])^);
+    //xxxxx
+  finally
+    nList.Free;
+  end;
+end;
+
 //Desc: 初始化系统对象
 procedure InitSystemObject(const nMainForm: THandle);
 var nParam: TPlugRunParameter;
@@ -131,6 +147,7 @@ begin
 
   {$IFDEF DBPool}
   gDBConnManager := TDBConnManager.Create;
+  FillAllDBParam;
   {$ENDIF}
 
   {$IFDEF SAP}

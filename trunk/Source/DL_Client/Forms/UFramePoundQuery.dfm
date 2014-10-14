@@ -1,8 +1,8 @@
 inherited fFramePoundQuery: TfFramePoundQuery
-  Width = 816
-  Height = 485
+  Width = 976
+  Height = 582
   inherited ToolBar1: TToolBar
-    Width = 816
+    Width = 976
     inherited BtnAdd: TToolButton
       Visible = False
     end
@@ -10,7 +10,6 @@ inherited fFramePoundQuery: TfFramePoundQuery
       Visible = False
     end
     inherited BtnDel: TToolButton
-      Visible = False
       OnClick = BtnDelClick
     end
     inherited S1: TToolButton
@@ -19,39 +18,25 @@ inherited fFramePoundQuery: TfFramePoundQuery
   end
   inherited cxGrid1: TcxGrid
     Top = 205
-    Width = 816
-    Height = 280
+    Width = 976
+    Height = 377
     inherited cxView1: TcxGridDBTableView
       PopupMenu = PMenu1
     end
   end
   inherited dxLayout1: TdxLayoutControl
-    Width = 816
+    Width = 976
     Height = 138
     object cxTextEdit1: TcxTextEdit [0]
-      Left = 81
+      Left = 269
       Top = 94
       Hint = 'T.P_Truck'
       ParentFont = False
-      TabOrder = 4
-      Width = 90
+      TabOrder = 6
+      Width = 125
     end
     object EditTruck: TcxButtonEdit [1]
-      Left = 81
-      Top = 36
-      ParentFont = False
-      Properties.Buttons = <
-        item
-          Default = True
-          Kind = bkEllipsis
-        end>
-      Properties.OnButtonClick = EditTruckPropertiesButtonClick
-      TabOrder = 0
-      OnKeyPress = OnCtrlKeyPress
-      Width = 90
-    end
-    object EditCus: TcxButtonEdit [2]
-      Left = 234
+      Left = 269
       Top = 36
       ParentFont = False
       Properties.Buttons = <
@@ -62,26 +47,40 @@ inherited fFramePoundQuery: TfFramePoundQuery
       Properties.OnButtonClick = EditTruckPropertiesButtonClick
       TabOrder = 1
       OnKeyPress = OnCtrlKeyPress
-      Width = 115
+      Width = 125
+    end
+    object EditCus: TcxButtonEdit [2]
+      Left = 457
+      Top = 36
+      ParentFont = False
+      Properties.Buttons = <
+        item
+          Default = True
+          Kind = bkEllipsis
+        end>
+      Properties.OnButtonClick = EditTruckPropertiesButtonClick
+      TabOrder = 2
+      OnKeyPress = OnCtrlKeyPress
+      Width = 125
     end
     object cxTextEdit2: TcxTextEdit [3]
-      Left = 234
+      Left = 81
       Top = 94
-      Hint = 'T.P_Bill'
+      Hint = 'T.P_ID'
       ParentFont = False
       TabOrder = 5
-      Width = 115
+      Width = 125
     end
     object cxTextEdit3: TcxTextEdit [4]
-      Left = 412
+      Left = 457
       Top = 94
       Hint = 'T.P_PDate'
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 7
       Width = 125
     end
     object EditDate: TcxButtonEdit [5]
-      Left = 412
+      Left = 645
       Top = 36
       ParentFont = False
       Properties.Buttons = <
@@ -91,29 +90,47 @@ inherited fFramePoundQuery: TfFramePoundQuery
         end>
       Properties.ReadOnly = True
       Properties.OnButtonClick = EditDatePropertiesButtonClick
-      TabOrder = 2
+      TabOrder = 3
       Width = 185
     end
     object cxTextEdit4: TcxTextEdit [6]
-      Left = 600
+      Left = 645
       Top = 94
       Hint = 'T.P_MDate'
       ParentFont = False
-      TabOrder = 7
+      TabOrder = 8
       Width = 125
     end
     object Check1: TcxCheckBox [7]
-      Left = 602
+      Left = 835
       Top = 36
       Caption = #26597#35810#24050#21024#38500
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       Transparent = True
       OnClick = Check1Click
       Width = 110
     end
+    object EditPID: TcxButtonEdit [8]
+      Left = 81
+      Top = 36
+      Properties.Buttons = <
+        item
+          Default = True
+          Kind = bkEllipsis
+        end>
+      Properties.OnButtonClick = EditTruckPropertiesButtonClick
+      TabOrder = 0
+      OnKeyPress = OnCtrlKeyPress
+      Width = 125
+    end
     inherited dxGroup1: TdxLayoutGroup
       inherited GroupSearch1: TdxLayoutGroup
+        object dxLayout1Item9: TdxLayoutItem
+          Caption = #30917#21333#32534#21495':'
+          Control = EditPID
+          ControlOptions.ShowBorder = False
+        end
         object dxLayout1Item2: TdxLayoutItem
           Caption = #36710#29260#21495#30721':'
           Control = EditTruck
@@ -137,14 +154,14 @@ inherited fFramePoundQuery: TfFramePoundQuery
         end
       end
       inherited GroupDetail1: TdxLayoutGroup
+        object dxLayout1Item4: TdxLayoutItem
+          Caption = #30917#21333#32534#21495':'
+          Control = cxTextEdit2
+          ControlOptions.ShowBorder = False
+        end
         object dxLayout1Item1: TdxLayoutItem
           Caption = #36710#29260#21495#30721':'
           Control = cxTextEdit1
-          ControlOptions.ShowBorder = False
-        end
-        object dxLayout1Item4: TdxLayoutItem
-          Caption = #20132#36135#21333#21495':'
-          Control = cxTextEdit2
           ControlOptions.ShowBorder = False
         end
         object dxLayout1Item5: TdxLayoutItem
@@ -162,15 +179,15 @@ inherited fFramePoundQuery: TfFramePoundQuery
   end
   inherited cxSplitter1: TcxSplitter
     Top = 197
-    Width = 816
+    Width = 976
   end
   inherited TitlePanel1: TZnBitmapPanel
-    Width = 816
+    Width = 976
     inherited TitleBar: TcxLabel
       Caption = #30917#25151#31216#37327#26597#35810
       Style.IsFontAssigned = True
-      Width = 816
-      AnchorX = 408
+      Width = 976
+      AnchorX = 488
       AnchorY = 11
     end
   end

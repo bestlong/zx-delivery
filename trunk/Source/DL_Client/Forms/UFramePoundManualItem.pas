@@ -847,7 +847,7 @@ begin
       gPoundTunnelManager.ClosePort(FPoundTunnel.FID);
       //关闭表头
 
-      if (FUIData.FPoundID <> '') and ((FUIData.FID = '') or RadioCC.Checked ) then
+      if (FUIData.FPoundID <> '') or RadioCC.Checked then
         PrintPoundReport(FUIData.FPoundID, True);
       //原料或出厂模式
 
