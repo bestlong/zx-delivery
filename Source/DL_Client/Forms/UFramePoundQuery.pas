@@ -40,6 +40,8 @@ type
     dxLayout1Item8: TdxLayoutItem;
     N4: TMenuItem;
     N5: TMenuItem;
+    EditPID: TcxButtonEdit;
+    dxLayout1Item9: TdxLayoutItem;
     procedure EditDatePropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure EditTruckPropertiesButtonClick(Sender: TObject;
@@ -60,6 +62,7 @@ type
     //交班查询
     procedure OnCreateFrame; override;
     procedure OnDestroyFrame; override;
+    procedure AfterInitFormData; override;
     function InitFormDataSQL(const nWhere: string): string; override;
     {*查询SQL*}
   public
@@ -125,6 +128,11 @@ begin
   //xxxxx
 end;
 
+procedure TfFramePoundQuery.AfterInitFormData;
+begin
+  FJBWhere := '';
+end;
+
 //Desc: 日期筛选
 procedure TfFramePoundQuery.EditDatePropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
@@ -136,6 +144,24 @@ end;
 procedure TfFramePoundQuery.EditTruckPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 begin
+  if Sender = EditPID then
+  begin
+    EditPID.Text := Trim(EditPID.Text);
+    if EditPID.Text = '' then Exit;
+
+    if Length(EditPID.Text) <= 3 then
+    begin
+      FWhere := 'P_ID like ''%%%s%%''';
+      FWhere := Format(FWhere, [EditPID.Text]);
+    end else
+    begin
+      FWhere := '';
+      FJBWhere := 'P_ID like ''%%%s%%''';
+      FJBWhere := Format(FJBWhere, [EditPID.Text]);
+    end;
+    InitFormData(FWhere);
+  end else
+
   if Sender = EditTruck then
   begin
     EditTruck.Text := Trim(EditTruck.Text);
@@ -201,21 +227,11 @@ end;
 //Desc: 删除榜单
 procedure TfFramePoundQuery.BtnDelClick(Sender: TObject);
 var nIdx: Integer;
-    nStr,nID,nP,nM: string;
+    nStr,nID,nP: string;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
   begin
     ShowMsg('请选择要删除的记录', sHint);
-    Exit;
-  end;
-
-  nP := DateTime2Str(SQLQuery.FieldByName('P_PDate').AsDateTime);
-  nM := DateTime2Str(SQLQuery.FieldByName('P_MDate').AsDateTime);
-  nStr := SQLQuery.FieldByName('P_Bill').AsString;
-
-  if (nStr <> '') and ((nP <> '') and (nM <> '')) then
-  begin
-    ShowMsg('发货称重已完毕', '不允许删除');
     Exit;
   end;
 

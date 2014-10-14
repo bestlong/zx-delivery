@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFrameCustomer;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -33,6 +34,8 @@ type
     PMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure BtnAddClick(Sender: TObject);
@@ -41,6 +44,8 @@ type
     procedure BtnExitClick(Sender: TObject);
     procedure cxView1DblClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure PMenu1Popup(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -55,7 +60,8 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, UMgrControl, USysConst, USysDB, UDataModule, UFormBase;
+  ULibFun, UMgrControl, UDataModule, UFormBase, UFormWait, USysBusiness,
+  USysConst, USysDB;
 
 class function TfFrameCustomer.FrameID: integer;
 begin
@@ -208,6 +214,20 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
+
+procedure TfFrameCustomer.PMenu1Popup(Sender: TObject);
+begin
+  {$IFDEF SyncRemote}
+  N3.Visible := True;
+  N4.Visible := True;
+  {$ELSE}
+  N3.Visible := False;
+  N4.Visible := False;
+  {$ENDIF}
+end;
+
+
 //Desc: 快捷菜单
 procedure TfFrameCustomer.N2Click(Sender: TObject);
 begin
@@ -217,6 +237,16 @@ begin
   end;
 
   InitFormData(FWhere);
+end;
+
+procedure TfFrameCustomer.N4Click(Sender: TObject);
+begin
+  ShowWaitForm(ParentForm, '正在同步,请稍后');
+  try
+    if SyncRemoteCustomer then InitFormData(FWhere);
+  finally
+    CloseWaitForm;
+  end;   
 end;
 
 initialization

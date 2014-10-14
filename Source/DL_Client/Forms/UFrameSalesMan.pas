@@ -4,11 +4,12 @@
 *******************************************************************************}
 unit UFrameSalesMan;
 
+{$I Link.Inc}
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, UFrameNormal, cxGraphics, cxControls, cxLookAndFeels,
+  UFrameNormal, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxStyles, cxCustomData, cxFilter, cxData,
   cxDataStorage, cxEdit, DB, cxDBData, cxContainer, Menus, dxLayoutControl,
   cxTextEdit, cxMaskEdit, cxButtonEdit, ADODB, cxLabel, UBitmapPanel,
@@ -33,6 +34,8 @@ type
     PMenu1: TPopupMenu;
     N1: TMenuItem;
     N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure BtnAddClick(Sender: TObject);
@@ -41,6 +44,8 @@ type
     procedure BtnExitClick(Sender: TObject);
     procedure cxView1DblClick(Sender: TObject);
     procedure N2Click(Sender: TObject);
+    procedure PMenu1Popup(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -55,7 +60,8 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, UMgrControl, UFormBase, USysConst, USysDB, UDataModule;
+  ULibFun, UMgrControl, UFormBase, UFormWait, UDataModule, USysBusiness,
+  USysConst, USysDB;
 
 class function TfFrameSalesMan.FrameID: integer;
 begin
@@ -197,6 +203,18 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
+procedure TfFrameSalesMan.PMenu1Popup(Sender: TObject);
+begin
+  {$IFDEF SyncRemote}
+  N3.Visible := True;
+  N4.Visible := True;
+  {$ELSE}
+  N3.Visible := False;
+  N4.Visible := False;
+  {$ENDIF}
+end;
+
 //Desc: 快捷菜单
 procedure TfFrameSalesMan.N2Click(Sender: TObject);
 begin
@@ -206,6 +224,16 @@ begin
   end;
 
   InitFormData(FWhere);
+end;
+
+procedure TfFrameSalesMan.N4Click(Sender: TObject);
+begin
+  ShowWaitForm(ParentForm, '正在同步,请稍后');
+  try
+    if SyncRemoteSaleMan then InitFormData(FWhere);
+  finally
+    CloseWaitForm;
+  end; 
 end;
 
 initialization

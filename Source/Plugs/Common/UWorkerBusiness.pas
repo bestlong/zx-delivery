@@ -75,6 +75,11 @@ type
     function GetTruckPoundData(var nData: string): Boolean;
     function SaveTruckPoundData(var nData: string): Boolean;
     //存取车辆称重数据
+    {$IFDEF XAZL}
+    function SyncRemoteSaleMan(var nData: string): Boolean;
+    function SyncRemoteCustomer(var nData: string): Boolean;
+    //同步新安中联K3系统数据
+    {$ENDIF}
   public
     constructor Create; override;
     destructor destroy; override;
@@ -372,6 +377,10 @@ begin
    cBC_SaveTruckInfo       : Result := SaveTruck(nData);
    cBC_GetTruckPoundData   : Result := GetTruckPoundData(nData);
    cBC_SaveTruckPoundData  : Result := SaveTruckPoundData(nData);
+   {$IFDEF XAZL}
+   cBC_SyncCustomer        : Result := SyncRemoteCustomer(nData);
+   cBC_SyncSaleMan         : Result := SyncRemoteSaleMan(nData);
+   {$ENDIF}
    else
     begin
       Result := False;
@@ -518,6 +527,7 @@ begin
   end;
 end;
 
+{$IFDEF COMMON}
 //Date: 2014-09-05
 //Desc: 获取指定客户的可用金额
 function TWorkerBusinessCommander.GetCustomerValidMoney(var nData: string): Boolean;
@@ -556,7 +566,9 @@ begin
     Result := True;
   end;
 end;
+{$ENDIF}
 
+{$IFDEF COMMON}
 //Date: 2014-09-05
 //Desc: 获取指定纸卡的可用金额
 function TWorkerBusinessCommander.GetZhiKaValidMoney(var nData: string): Boolean;
@@ -601,6 +613,7 @@ begin
     Result := True;
   end;
 end;
+{$ENDIF}
 
 //Date: 2014-09-05
 //Desc: 验证客户是否有钱,以及信用是否过期
@@ -813,6 +826,71 @@ begin
     Result := True;
   end;
 end;
+
+{$IFDEF XAZL}
+//Date: 2014-10-14
+//Desc: 同步新安中联客户数据到DL系统
+function TWorkerBusinessCommander.SyncRemoteCustomer(var nData: string): Boolean;
+begin
+
+end;
+
+//Date: 2014-10-14
+//Desc: 同步新安中联业务员数据到DL系统
+function TWorkerBusinessCommander.SyncRemoteSaleMan(var nData: string): Boolean;
+var nStr: string;
+    nIdx: Integer;
+    nDBWorker: PDBWorker;
+begin
+  FListA.Clear;
+  Result := True;
+
+  nDBWorker := nil;
+  try
+    nStr := 'Select FItemID,FName,FDepartmentID From t_EMP';
+    //FDepartmentID='1356'为销售部门
+
+    with gDBConnManager.SQLQuery(nStr, nDBWorker, sFlag_DB_K3) do
+    if RecordCount > 0 then
+    begin
+      First;
+
+      while not Eof do
+      begin
+        if Fields[2].AsString = '1356' then
+             nStr := sFlag_No
+        else nStr := sFlag_Yes;
+        
+        nStr := MakeSQLByStr([SF('S_ID', Fields[0].AsString),
+                SF('S_Name', Fields[1].AsString),
+                SF('S_InValid', nStr)
+                ], sTable_Salesman, '', True);
+        //xxxxx
+        
+        FListA.Add(nStr);
+        Next;
+      end;
+    end;
+  finally
+    gDBConnManager.ReleaseConnection(nDBWorker);
+  end;
+
+  if FListA.Count > 0 then
+  try
+    FDBConn.FConn.BeginTrans;
+    nStr := 'Delete From ' + sTable_Salesman;
+    gDBConnManager.WorkerExec(FDBConn, nStr);
+
+    for nIdx:=0 to FListA.Count - 1 do
+      gDBConnManager.WorkerExec(FDBConn, FListA[nIdx]);
+    FDBConn.FConn.CommitTrans;
+  except
+    if FDBConn.FConn.InTransaction then
+      FDBConn.FConn.RollbackTrans;
+    raise;
+  end;  
+end;
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 class function TWorkerBusinessBills.FunctionName: string;
@@ -1616,6 +1694,7 @@ end;
 //Desc: 删除指定交货单
 function TWorkerBusinessBills.DeleteBill(var nData: string): Boolean;
 var nIdx: Integer;
+    nHasOut: Boolean;
     nVal,nMoney: Double;
     nStr,nP,nFix,nRID,nCus,nBill,nZK: string;
 begin
@@ -1635,13 +1714,16 @@ begin
       Exit;
     end;
 
-    if FieldByName('L_OutFact').AsString <> '' then
+    nHasOut := FieldByName('L_OutFact').AsString <> '';
+    //已出厂
+    {
+    if nHasOut then
     begin
       nData := '交货单[ %s ]已出厂,不允许删除.';
       nData := Format(nData, [FIn.FData]);
       Exit;
     end;
-
+    }
     nCus := FieldByName('L_CusID').AsString;
     nZK  := FieldByName('L_ZhiKa').AsString;
     nFix := FieldByName('L_ZKMoney').AsString;
@@ -1704,10 +1786,19 @@ begin
     end;
 
     //--------------------------------------------------------------------------
-    nStr := 'Update %s Set A_FreezeMoney=A_FreezeMoney-(%.2f) Where A_CID=''%s''';
-    nStr := Format(nStr, [sTable_CusAccount, nMoney, nCus]);
-    gDBConnManager.WorkerExec(FDBConn, nStr);
-    //释放冻结金
+    if nHasOut then
+    begin
+      nStr := 'Update %s Set A_OutMoney=A_OutMoney-(%.2f) Where A_CID=''%s''';
+      nStr := Format(nStr, [sTable_CusAccount, nMoney, nCus]);
+      gDBConnManager.WorkerExec(FDBConn, nStr);
+      //释放出金
+    end else
+    begin
+      nStr := 'Update %s Set A_FreezeMoney=A_FreezeMoney-(%.2f) Where A_CID=''%s''';
+      nStr := Format(nStr, [sTable_CusAccount, nMoney, nCus]);
+      gDBConnManager.WorkerExec(FDBConn, nStr);
+      //释放冻结金
+    end;
 
     if nFix = sFlag_Yes then
     begin

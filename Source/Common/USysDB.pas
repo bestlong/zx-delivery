@@ -69,6 +69,10 @@ ResourceString
   sPopedom_Export     = 'G';                         //导出
   sPopedom_ViewPrice  = 'H';                         //查看单价
 
+  {*数据库标识*}
+  sFlag_DB_K3         = 'King_K3';                   //金蝶数据库
+  sFlag_DB_NC         = 'YonYou_NC';                 //用友数据库
+
   {*相关标记*}
   sFlag_Yes           = 'Y';                         //是
   sFlag_No            = 'N';                         //否
@@ -247,6 +251,9 @@ ResourceString
   sTable_StockRecord  = 'S_StockRecord';             //检验记录
   sTable_StockHuaYan  = 'S_StockHuaYan';             //开化验单
 
+  sTable_K3_SyncItem  = 'DL_SyncItem';               //数据同步项
+  sTable_K3_Customer  = 'T_Organization';            //组织结构(客户)
+
   {*新建表*}
   sSQL_NewSysDict = 'Create Table $Table(D_ID $Inc, D_Name varChar(15),' +
        'D_Desc varChar(30), D_Value varChar(50), D_Memo varChar(20),' +
@@ -349,6 +356,19 @@ ResourceString
    *.W_ReqMan,W_ReqTime: 接入申请
    *.W_RatifyMan,W_RatifyTime: 批准
    *.W_Valid: 有效(Y/N)
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewSyncItem = 'Create Table $Table(R_ID $Inc, S_Table varChar(100),' +
+       'S_Action Char(1), S_Record varChar(32), S_Param1 varChar(100),' +
+       'S_Param2 $Float, S_Time DateTime)';
+  {-----------------------------------------------------------------------------
+   同步数据项: SyncItem
+   *.R_ID: 编号
+   *.S_Table: 表名称
+   *.S_Action: 增删改(A,E,D)
+   *.S_Record: 记录编号
+   *.S_Param1,S_Param2: 参数
+   *.S_Time: 时间
   -----------------------------------------------------------------------------}
 
   sSQL_NewStockMatch = 'Create Table $Table(R_ID $Inc, M_Group varChar(8),' +
@@ -847,6 +867,8 @@ ResourceString
 
   sSQL_NewStockRecord = 'Create Table $Table(R_ID $Inc, R_SerialNo varChar(15),' +
        'R_PID varChar(15),' +
+       'R_SGType varChar(20), R_SGValue varChar(20),' +
+       'R_HHCType varChar(20), R_HHCValue varChar(20),' +
        'R_MgO varChar(20), R_SO3 varChar(20), R_ShaoShi varChar(20),' +
        'R_CL varChar(20), R_BiBiao varChar(20), R_ChuNing varChar(20),' +
        'R_ZhongNing varChar(20), R_AnDing varChar(20), R_XiDu varChar(20),' +
@@ -865,6 +887,10 @@ ResourceString
    *.R_ID:记录编号
    *.R_SerialNo:水泥编号
    *.R_PID:品种参数
+   *.R_SGType: 石膏种类
+   *.R_SGValue: 石膏掺入量
+   *.R_HHCType: 混合材料类
+   *.R_HHCValue: 混合材掺入量
    *.R_MgO:氧化镁
    *.R_SO3:三氧化硫
    *.R_ShaoShi:烧失量

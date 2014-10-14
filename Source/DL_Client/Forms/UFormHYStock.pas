@@ -137,6 +137,14 @@ type
     cxTextEdit53: TcxTextEdit;
     Label40: TLabel;
     cxTextEdit54: TcxTextEdit;
+    Label41: TLabel;
+    cxTextEdit55: TcxTextEdit;
+    Label42: TLabel;
+    cxTextEdit56: TcxTextEdit;
+    Label43: TLabel;
+    cxTextEdit57: TcxTextEdit;
+    Label44: TLabel;
+    cxTextEdit58: TcxTextEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure EditIDPropertiesButtonClick(Sender: TObject;
