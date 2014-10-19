@@ -34,7 +34,7 @@ inherited fFrameZhiKaDetail: TfFrameZhiKaDetail
     Height = 138
     object cxTextEdit1: TcxTextEdit [0]
       Left = 81
-      Top = 96
+      Top = 93
       Hint = 'T.Z_ID'
       ParentFont = False
       TabOrder = 3
@@ -84,15 +84,15 @@ inherited fFrameZhiKaDetail: TfFrameZhiKaDetail
     end
     object cxTextEdit4: TcxTextEdit [4]
       Left = 256
-      Top = 96
-      Hint = 'T.D_Stock'
+      Top = 93
+      Hint = 'T.D_StockName'
       ParentFont = False
       TabOrder = 4
       Width = 135
     end
     object cxTextEdit2: TcxTextEdit [5]
       Left = 617
-      Top = 96
+      Top = 93
       Hint = 'T.C_Name'
       ParentFont = False
       TabOrder = 6
@@ -100,7 +100,7 @@ inherited fFrameZhiKaDetail: TfFrameZhiKaDetail
     end
     object cxTextEdit3: TcxTextEdit [6]
       Left = 454
-      Top = 96
+      Top = 93
       Hint = 'T.D_Value'
       ParentFont = False
       TabOrder = 5
@@ -209,6 +209,19 @@ inherited fFrameZhiKaDetail: TfFrameZhiKaDetail
     object N13: TMenuItem
       Caption = #35843#20215#35760#24405
       OnClick = N13Click
+    end
+    object N11: TMenuItem
+      Caption = #35843#20215#35774#32622
+      object N15: TMenuItem
+        Tag = 10
+        Caption = #21442#19982#35843#20215
+        OnClick = N15Click
+      end
+      object N16: TMenuItem
+        Tag = 20
+        Caption = #19981#21442#19982#35843#20215
+        OnClick = N15Click
+      end
     end
     object N5: TMenuItem
       Caption = '-'

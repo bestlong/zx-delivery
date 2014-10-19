@@ -402,7 +402,7 @@ ResourceString
        'C_FaRen varChar(50), C_LiXiRen varChar(50),' +
        'C_Phone varChar(15), C_Fax varChar(15), C_Tax varChar(32),' +
        'C_Bank varChar(35), C_Account varChar(18), C_SaleMan varChar(15),' +
-       'C_Memo varChar(50), C_XuNi Char(1))';
+       'C_Param varChar(32), C_Memo varChar(50), C_XuNi Char(1))';
   {-----------------------------------------------------------------------------
    客户信息表: Customer
    *.R_ID: 记录号
@@ -418,6 +418,7 @@ ResourceString
    *.C_Bank: 开户行
    *.C_Account: 帐号
    *.C_SaleMan: 业务员
+   *.C_Param: 备用参数
    *.C_Memo: 备注信息
    *.C_XuNi: 虚拟(临时)客户
   -----------------------------------------------------------------------------}
@@ -595,7 +596,8 @@ ResourceString
 
   sSQL_NewZhiKaDtl = 'Create Table $Table(R_ID $Inc, D_ZID varChar(15),' +
        'D_Type Char(1), D_StockNo varChar(20), D_StockName varChar(80),' +
-       'D_Price $Float, D_Value $Float, D_PPrice $Float)';
+       'D_Price $Float, D_Value $Float, D_PPrice $Float, ' +
+       'D_TPrice Char(1) Default ''Y'')';
   {-----------------------------------------------------------------------------
    纸卡明细:ZhiKaDtl
    *.R_ID:记录编号
@@ -605,6 +607,7 @@ ResourceString
    *.D_Price:单价
    *.D_Value:办理量
    *.D_PPrice:调价前单价
+   *.D_TPrice:允许调价
   -----------------------------------------------------------------------------}
 
   sSQL_NewBill = 'Create Table $Table(R_ID $Inc, L_ID varChar(20),' +

@@ -102,6 +102,8 @@ function SaveCustomerCredit(const nCusID,nMemo: string; const nCredit: Double;
 function IsCustomerCreditValid(const nCusID: string): Boolean;
 //客户信用是否有效
 
+function IsStockValid(const nStocks: string): Boolean;
+//品种是否可以发货
 function SaveBill(const nBillData: string): string;
 //保存交货单
 function DeleteBill(const nBill: string): Boolean;
@@ -1055,6 +1057,15 @@ begin
   if CallBusinessCommand(cBC_GetCustomerMoney, nCID, nStr, @nOut) then
        Result := StrToFloat(nOut.FData)
   else Result := 0;
+end;
+
+//Date: 2014-10-16
+//Parm: 品种列表(s1,s2..)
+//Desc: 验证nStocks是否可以发货
+function IsStockValid(const nStocks: string): Boolean;
+var nOut: TWorkerBusinessCommand;
+begin
+  Result := CallBusinessCommand(cBC_CheckStockValid, nStocks, '', @nOut);
 end;
 
 //Date: 2014-09-15

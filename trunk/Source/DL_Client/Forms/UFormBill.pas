@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFormBill;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -474,8 +475,17 @@ begin
   nList := TStringList.Create;
   nTmp := TStringList.Create;
   try
+    {$IFDEF XAZL} //新安中联: 验证品种能否发货
     nList.Clear;
-    //init
+    for nIdx:=Low(gStockList) to High(gStockList) do
+     with gStockList[nIdx],nTmp do
+      if FSelecte then nList.Add(FStockNO);
+    //xxxxx
+
+    if not IsStockValid(CombinStr(nList, ',')) then Exit;
+    {$ENDIF}
+
+    nList.Clear;
     nPrint := False;
     LoadSysDictItem(sFlag_PrintBill, nStocks);
     //需打印品种

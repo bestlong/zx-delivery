@@ -43,7 +43,7 @@ type
     dxLayout1Group10: TdxLayoutGroup;
     dxLayout1Group12: TdxLayoutGroup;
     procedure BtnOKClick(Sender: TObject);
-    procedure EditStockPropertiesChange(Sender: TObject);
+    procedure EditStockIDPropertiesChange(Sender: TObject);
   protected
     { Protected declarations }
     FID: string;
@@ -163,7 +163,7 @@ begin
       begin
         FID := Fields[1].AsString;
         FName := Fields[0].AsString;
-        EditStockID.Properties.Items.AddObject(FID, Pointer(nIdx));
+        EditStockID.Properties.Items.AddObject(FID + '.' + FName, Pointer(nIdx));
       end;
 
       Inc(nIdx);
@@ -172,28 +172,12 @@ begin
   end;
 end;
 
-procedure TfFormZTLine.EditStockPropertiesChange(Sender: TObject);
+procedure TfFormZTLine.EditStockIDPropertiesChange(Sender: TObject);
 var nIdx: Integer;
-    nStr,nStr1: string;
 begin
-  if EditStockID.ItemIndex > -1 then
-  begin
-    nStr := EditStockName.Text;
-
-    nIdx := Integer(EditStockID.Properties.Items.Objects[EditStockID.ItemIndex]);
-    EditStockName.Text := gStockItems[nIdx].FName;
-
-    nStr1 := '确定将车道物料由[%s]修改为[%s]吗？' +
-              #13#10#13#10 +
-              '确定请点"是",退出请点"否".';
-    nStr1 := Format(nStr1, [nStr,EditStockName.Text]);
-    if not QueryDlg(nStr1, sAsk) then Exit;
-
-    //xxxxx
-    nStr1 := '将车道[%s]物料由[%s]修改为[%s]';
-    nStr1 := Format(nStr1,[EditID.Text,nStr,EditStockName.Text]);
-    FDM.WriteSysLog(sFlag_TruckQueue, 'UFromZTline',nStr1);
-  end;
+  if (not EditStockID.Focused) or (EditStockID.ItemIndex < 0) then Exit;
+  nIdx := Integer(EditStockID.Properties.Items.Objects[EditStockID.ItemIndex]);
+  EditStockName.Text := gStockItems[nIdx].FName;
 end;
 
 function TfFormZTLine.SetData(Sender: TObject; const nData: string): Boolean;
@@ -264,6 +248,12 @@ begin
     nHint := '请填写有效名称';
   end else
 
+  if Sender = EditStockID then
+  begin
+    Result := EditStockID.ItemIndex >= 0;
+    nHint := '请选择品种';
+  end else
+
   if Sender = EditMax then
   begin
     Result := IsNumber(EditMax.Text, False);
@@ -284,14 +274,16 @@ begin
 end;
 
 procedure TfFormZTLine.BtnOKClick(Sender: TObject);
-var nStr,nEvent: string;
+var nIdx: Integer;
     nList: TStrings;
+    nStr,nEvent: string;
 begin
   if not IsDataValid then Exit;
 
   nList := TStringList.Create;
   try
-    nList.Add(Format('Z_StockNo=''%s''', [EditStockID.Text]));
+    nIdx := Integer(EditStockID.Properties.Items.Objects[EditStockID.ItemIndex]);
+    nList.Add(Format('Z_StockNo=''%s''', [gStockItems[nIdx].FID]));
     //ext fields
 
     if FID = '' then

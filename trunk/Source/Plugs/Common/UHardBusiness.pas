@@ -97,6 +97,38 @@ begin
   end;
 end;
 
+//Date: 2014-10-16
+//Parm: 命令;数据;参数;输出
+//Desc: 调用硬件守护上的业务对象
+function CallHardwareCommand(const nCmd: Integer;
+  const nData, nExt: string; const nOut: PWorkerBusinessCommand): Boolean;
+var nStr: string;
+    nIn: TWorkerBusinessCommand;
+    nPacker: TBusinessPackerBase;
+    nWorker: TBusinessWorkerBase;
+begin
+  nPacker := nil;
+  nWorker := nil;
+  try
+    nIn.FCommand := nCmd;
+    nIn.FData := nData;
+    nIn.FExtParam := nExt;
+
+    nPacker := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
+    nStr := nPacker.PackIn(@nIn);
+    nWorker := gBusinessWorkerManager.LockWorker(sBus_HardwareCommand);
+    //get worker
+
+    Result := nWorker.WorkActive(nStr);
+    if Result then
+         nPacker.UnPackOut(nStr, nOut)
+    else nOut.FData := nStr;
+  finally
+    gBusinessPackerManager.RelasePacker(nPacker);
+    gBusinessWorkerManager.RelaseWorker(nWorker);
+  end;
+end;
+
 //Date: 2012-3-23
 //Parm: 磁卡号;岗位;交货单列表
 //Desc: 获取nPost岗位上磁卡为nCard的交货单列表
@@ -893,7 +925,7 @@ begin
 
   gERelayManager.LineClose(nHost.FTunnel);
   Sleep(100);
-  gERelayManager.ShowTxt(nHost.FTunnel, '  海鑫水泥  ' + '  值得信赖  ');
+  gERelayManager.ShowTxt(nHost.FTunnel, nHost.FLEDText);
   Sleep(100);
 end;
 
@@ -933,9 +965,7 @@ procedure WhenSaveJS(const nTunnel: PMultiJSTunnel);
 var nStr: string;
     nDai: Word;
     nList: TStrings;
-    nIn: TWorkerBusinessCommand;
-    nWorker: TBusinessWorkerBase;
-    nPacker: TBusinessPackerBase;
+    nOut: TWorkerBusinessCommand;
 begin
   nDai := nTunnel.FHasDone - nTunnel.FLastSaveDai;
   if nDai <= 0 then Exit;
@@ -945,26 +975,15 @@ begin
   //invalid bill
 
   nList := nil;
-  nWorker := nil;
-  nPacker := nil;
   try
     nList := TStringList.Create;
     nList.Values['Bill'] := nTunnel.FLastBill;
     nList.Values['Dai'] := IntToStr(nDai);
 
-    //nIn.FCommand := cBC_SaveCountData;
-    nIn.FBase.FParam := sParam_NoHintOnError;
-    nIn.FData := PackerEncodeStr(nList.Text);
-
-    //nPacker := gBusinessPackerManager.LockPacker(sBus_BusinessCommand);
-    nStr := nPacker.PackIn(@nIn);
-
-    //nWorker := gBusinessWorkerManager.LockWorker(sHM_BusinessCommand);
-    nWorker.WorkActive(nStr);
+    nStr := PackerEncodeStr(nList.Text);
+    CallHardwareCommand(cBC_SaveCountData, nStr, '', @nOut)
   finally
     nList.Free;
-    gBusinessPackerManager.RelasePacker(nPacker);
-    gBusinessWorkerManager.RelaseWorker(nWorker);
   end;
 end;
 

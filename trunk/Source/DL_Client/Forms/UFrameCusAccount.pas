@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFrameCusAccount;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -34,9 +35,12 @@ type
     N3: TMenuItem;
     EditID: TcxButtonEdit;
     dxLayout1Item2: TdxLayoutItem;
+    N4: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
+    procedure PMenu1Popup(Sender: TObject);
+    procedure N4Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -51,7 +55,7 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, UMgrControl, USysConst, USysDB, UDataModule;
+  ULibFun, UMgrControl, USysConst, USysDB, UDataModule, USysBusiness;
 
 class function TfFrameCusAccount.FrameID: integer;
 begin
@@ -101,6 +105,16 @@ begin
   end
 end;
 
+//------------------------------------------------------------------------------
+procedure TfFrameCusAccount.PMenu1Popup(Sender: TObject);
+begin
+  {$IFDEF SyncRemote}
+  N4.Visible := True;
+  {$ELSE}
+  N4.Visible := False;
+  {$ENDIF}
+end;
+
 //Desc: 快捷菜单
 procedure TfFrameCusAccount.N3Click(Sender: TObject);
 begin
@@ -110,6 +124,23 @@ begin
   end;
 
   InitFormData(FWhere);
+end;
+
+procedure TfFrameCusAccount.N4Click(Sender: TObject);
+var nStr: string;
+    nVal: Double;
+begin
+  if cxView1.DataController.GetSelectedCount > 0 then
+  begin
+    nStr := SQLQuery.FieldByName('A_CID').AsString;
+    nVal := GetCustomerValidMoney(nStr, True);
+
+    nStr := '客户当前可用金额如下:' + #13#10#13#10 +
+            '*.客户名称: %s ' + #13#10 +
+            '*.资金余额: %.2f 元' + #13#10;
+    nStr := Format(nStr, [SQLQuery.FieldByName('C_Name').AsString, nVal]);
+    ShowDlg(nStr, sHint);
+  end;
 end;
 
 initialization

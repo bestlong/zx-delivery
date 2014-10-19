@@ -90,17 +90,17 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=../../../Bin/Bus_MIT
-UnitOutputDir=../../../Dcu/MIT
+OutputDir=../../Bin/DL_SelfHelp
+UnitOutputDir=../../Dcu/DL_SelfHelp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=../Common;../Forms;../../Common
-Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;dclOfficeXP
+SearchPath=../Common
+Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;RemObjects_WebBroker_D7;RemObjects_Indy_D7;RemObjects_RODX_D7;RemObjects_BPDX_D7;RemObjects_Synapse_D7;ZnVCL;Comm;frxDB7;frx7;frxTee7;fsADO7;fs7;fsTee7;dxBarD7;dxSkinsCoreD7;dxSkinsdxBarPainterD7
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=Bus_MIT_1
+RunParams=
 HostApplication=
 Launcher=
 UseLauncher=0
@@ -108,13 +108,13 @@ DebugCWD=
 [Language]
 ActiveLang=
 ProjectLang=
-RootDir=C:\Program Files (x86)\Borland\Delphi7\Bin\
+RootDir=C:\Program Files\Borland\Delphi7\Bin\
 [Version Info]
-IncludeVerInfo=1
+IncludeVerInfo=0
 AutoIncBuild=0
-MajorVer=2
+MajorVer=1
 MinorVer=0
-Release=1
+Release=0
 Build=0
 Debug=0
 PreRelease=0
@@ -124,16 +124,19 @@ DLL=0
 Locale=2052
 CodePage=936
 [Version Info Keys]
-CompanyName=Runsoft(润)工作室
-FileDescription=标准中间件框架
-FileVersion=2.0.1.0
-InternalName=MIT
-LegalCopyright=GPL公共许可
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=MIT中间件
+ProductName=
 ProductVersion=1.0.0.0
-Comments=支持插件扩展的标准中间件框架
+Comments=
+[Excluded Packages]
+C:\Program Files\Borland\Delphi7\Projects\Bpl\dcldxSkinsdxBarsPaintersD7.bpl=ExpressSkins Library Uses Clause Auto Fill Helper for Bars Painters by Developer Express Inc.
+C:\Program Files\Borland\Delphi7\Projects\Bpl\dcldxPSdxSkinsHelperD7.bpl=ExpressPrinting System 4 Uses Clause Auto Fill Helper for Skin Painters by Developer Express Inc.
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
