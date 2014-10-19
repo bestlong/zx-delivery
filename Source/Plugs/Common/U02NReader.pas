@@ -26,6 +26,7 @@ type
     FFun    : TReaderFunction;   //功能
     FTunnel : string;            //通道
     FPrinter: string;            //打印
+    FLEDText: string;            //LED
   end;
 
   PReaderCard = ^TReaderCard;
@@ -256,6 +257,11 @@ begin
           FIP := nNode.NodeByName('ip').ValueAsString;
           FPort := nNode.NodeByName('port').ValueAsInteger;
           FTunnel := nNode.NodeByName('tunnel').ValueAsString;
+
+          nTP := nNode.NodeByName('ledtext');
+          if Assigned(nTP) then
+               FLEDText := nTP.ValueAsString
+          else FLEDText := '  精品水泥  ' + '  值得信赖  ';
         end;
       end;
     end;

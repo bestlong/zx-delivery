@@ -173,8 +173,9 @@ begin
         nVal := StrToFloat(nList[1]) + nVal;
       nVal := Float2Float(nVal, cPrecision, True);
 
-      nStr := 'Update %s Set D_Price=%.2f,D_PPrice=%s Where R_ID=%s';
-      nStr := Format(nStr, [sTable_ZhiKaDtl, nVal, nList[1], nList[0]]);
+      nStr := 'Update %s Set D_Price=%.2f,D_PPrice=%s ' +
+              'Where R_ID=%s And D_TPrice<>''%s''';
+      nStr := Format(nStr, [sTable_ZhiKaDtl, nVal, nList[1], nList[0], sFlag_No]);
       FDM.ExecuteSQL(nStr);
 
       nStr := '水泥品种[ %s ]单价调整[ %s -> %.2f ]';

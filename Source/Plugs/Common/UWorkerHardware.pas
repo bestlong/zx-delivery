@@ -53,6 +53,8 @@ type
     //读取磅站卡号
     function LoadQueue(var nData: string): Boolean;
     //读取车辆队列
+    function ExecuteSQL(var nData: string): Boolean;
+    //执行SQL语句
     function SaveDaiNum(var nData: string): Boolean;
     //保存计数数据
     function PrintCode(var nData: string): Boolean;
@@ -229,6 +231,7 @@ begin
    cBC_GetPoundCard         : Result := PoundCardNo(nData);
    cBC_GetQueueData         : Result := LoadQueue(nData);
    cBC_SaveCountData        : Result := SaveDaiNum(nData);
+   cBC_RemoteExecSQL        : Result := ExecuteSQL(nData);
    cBC_PrintCode            : Result := PrintCode(nData);
    cBC_PrintFixCode         : Result := PrintFixCode(nData);
    cBC_PrinterEnable        : Result := PrinterEnable(nData);
@@ -547,6 +550,15 @@ begin
     SyncLock.Leave;
     gTaskMonitor.DelTask(nTask);
   end;
+end;
+
+//Desc: 执行SQL语句
+function THardwareCommander.ExecuteSQL(var nData: string): Boolean;
+var nInt: Integer;
+begin
+  Result := True;
+  nInt := gDBConnManager.WorkerExec(FDBConn, PackerDecodeStr(FIn.FData));
+  FOut.FData := IntToStr(nInt);
 end;
 
 //Desc: 启动计数器

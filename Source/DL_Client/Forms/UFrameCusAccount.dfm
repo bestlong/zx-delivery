@@ -150,6 +150,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
   end
   object PMenu1: TPopupMenu
     AutoHotkeys = maManual
+    OnPopup = PMenu1Popup
     Left = 8
     Top = 276
     object N1: TMenuItem
@@ -164,6 +165,10 @@ inherited fFrameCusAccount: TfFrameCusAccount
       Tag = 20
       Caption = #26597#35810#20840#37096
       OnClick = N3Click
+    end
+    object N4: TMenuItem
+      Caption = #26597#35810#36134#25143#20313#39069
+      OnClick = N4Click
     end
   end
 end

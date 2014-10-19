@@ -46,6 +46,9 @@ type
     N4: TMenuItem;
     N6: TMenuItem;
     N10: TMenuItem;
+    N11: TMenuItem;
+    N15: TMenuItem;
+    N16: TMenuItem;
     procedure EditZKPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure N1Click(Sender: TObject);
@@ -55,6 +58,7 @@ type
     procedure N6Click(Sender: TObject);
     procedure N13Click(Sender: TObject);
     procedure PMenu1Popup(Sender: TObject);
+    procedure N15Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -112,7 +116,7 @@ begin
   EditDate.Text := Format('%s 至 %s', [Date2Str(FStart), Date2Str(FEnd)]);
 
   Result := 'Select zk.*,zd.*,zd.R_ID as D_RID,S_PY,S_Name,' +
-            'C_PY,C_Name From $ZK zk ' +
+            'C_PY,C_Name,D_Price-D_PPrice As D_ZDPrice From $ZK zk ' +
             ' Left Join $SM sm on sm.S_ID=zk.Z_SaleMan' +
             ' Left Join $Cus cus on cus.C_ID=zk.Z_Customer' +
             ' Left Join $ZD zd on zd.D_ZID=zk.Z_ID ';
@@ -387,6 +391,32 @@ begin
     CreateBaseFrameItem(cFI_FrameSysLog, Parent, 'MAIN_A02');
     BroadcastFrameCommand(Self, Integer(@nParam));
   end;
+end;
+
+//Desc: 设置是否参与调价
+procedure TfFrameZhiKaDetail.N15Click(Sender: TObject);
+var nIdx,nLen: Integer;
+    nStr,nRID,nFlag: string;
+begin
+  nLen := cxView1.DataController.GetSelectedCount - 1;
+  if nLen < 0 then Exit;
+
+  if TComponent(Sender).Tag = 10 then
+       nFlag := sFlag_Yes
+  else nFlag := sFlag_No;
+
+  for nIdx:=0 to nLen do
+  begin
+    nRID := GetVal(nIdx, 'D_RID');
+    if nRID = '' then Continue;
+
+    nStr := 'Update %s Set D_TPrice=''%s'' Where R_ID=%s';
+    nStr := Format(nStr, [sTable_ZhiKaDtl, nFlag, nRID]);
+    FDM.ExecuteSQL(nStr)
+  end;
+
+  InitFormData(FWhere);
+  //xxxxx
 end;
 
 initialization
