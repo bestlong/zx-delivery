@@ -55,6 +55,7 @@ type
     procedure N4Click(Sender: TObject);
     procedure N5Click(Sender: TObject);
     procedure N7Click(Sender: TObject);
+    procedure PMenu1Popup(Sender: TObject);
   protected
     FStart,FEnd: TDate;
     //时间区间
@@ -224,6 +225,12 @@ begin
     nStr := SQLQuery.FieldByName('L_ID').AsString;
     PrintBillReport(nStr, False);
   end;
+end;
+
+procedure TfFrameBill.PMenu1Popup(Sender: TObject);
+begin
+  N3.Enabled := gPopedomManager.HasPopedom(PopedomItem, sPopedom_Edit);
+  //销售调拨
 end;
 
 //Desc: 修改未进厂车牌号

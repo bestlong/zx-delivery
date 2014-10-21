@@ -774,6 +774,13 @@ begin
 
     with gSysParam,FBillItems[0] do
     begin
+      if FDaiPercent and (FType = sFlag_Dai) then
+      begin
+        if nVal > 0 then
+             FPoundDaiZ := Float2Float(nNet * FPoundDaiZ_1, cPrecision, False)
+        else FPoundDaiF := Float2Float(-nNet * FPoundDaiF_1, cPrecision, False);
+      end;
+
       if ((FType = sFlag_Dai) and (
           ((nVal > 0) and (FPoundDaiZ > 0) and (nVal > FPoundDaiZ)) or
           ((nVal < 0) and (FPoundDaiF > 0) and (nVal < -FPoundDaiF)))) or
@@ -783,10 +790,21 @@ begin
         nStr := '车辆[ %s ]实际装车量误差较大,详情如下:' + #13#10#13#10 +
                 '※.开单量: %.2f吨' + #13#10 +
                 '※.装车量: %.2f吨' + #13#10 +
-                '※.误差量: %.2f公斤' + #13#10#13#10 +
-                '是否继续保存?';
-        nStr := Format(nStr, [FTruck, FInnerData.FValue, nNet, nVal]);
-        if not QueryDlg(nStr, sAsk) then Exit;
+                '※.误差量: %.2f公斤';
+
+        if FDaiWCStop and (FType = sFlag_Dai) then
+        begin
+          nStr := nStr + #13#10#13#10 + '请通知司机点验包数.';
+          nStr := Format(nStr, [FTruck, FInnerData.FValue, nNet, nVal]);
+
+          ShowDlg(nStr, sHint);
+          Exit;
+        end else
+        begin
+          nStr := nStr + #13#10#13#10 + '是否继续保存?';
+          nStr := Format(nStr, [FTruck, FInnerData.FValue, nNet, nVal]);
+          if not QueryDlg(nStr, sAsk) then Exit;
+        end;  
       end;
     end;
   end;

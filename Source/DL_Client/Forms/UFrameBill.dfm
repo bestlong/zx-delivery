@@ -197,6 +197,7 @@ inherited fFrameBill: TfFrameBill
   end
   object PMenu1: TPopupMenu
     AutoHotkeys = maManual
+    OnPopup = PMenu1Popup
     Left = 4
     Top = 264
     object N1: TMenuItem

@@ -22,8 +22,9 @@ uses
   UFormBill, UFormGetTruck, UFrameZhiKaDetail, UFormZhiKaFreeze,
   UFormZhiKaPrice, UFrameQueryDiapatch, UFrameTruckQuery, UFrameBillCard,
   UFormCard, UFormTruckIn, UFormTruckOut, UFormLadingDai, UFormLadingSan,
-  UFramePoundManual, UFramePMaterails, UFormPMaterails, UFramePProvider,
-  UFormPProvider, UFramePoundQuery, UFrameQuerySaleDetail, UFrameZTDispatch,
+  UFramePoundManual, UFramePoundAuto, UFramePMaterails, UFormPMaterails,
+  UFramePProvider, UFormPProvider, UFramePoundQuery, UFrameQuerySaleDetail,
+  UFrameZTDispatch,
   //----------------------------------------------------------------------------
   UFormHYStock, UFormHYData, UFormHYRecord, UFormGetStockNo,
   UFrameHYStock, UFrameHYData, UFrameHYRecord;
@@ -79,6 +80,8 @@ begin
     FPoundDaiZ := 0;
     FPoundDaiF := 0;
     FPoundSanF := 0;
+    FDaiWCStop := False;
+    FDaiPercent := False;
   end;
 
   nStr := 'Select D_Value,D_Memo From %s Where D_Name=''%s''';
@@ -93,16 +96,31 @@ begin
     begin
       nStr := Fields[1].AsString;
       if nStr = sFlag_PDaiWuChaZ then
-        gSysParam.FPoundDaiZ := Fields[0].AsInteger;
+        gSysParam.FPoundDaiZ := Fields[0].AsFloat;
       //xxxxx
 
       if nStr = sFlag_PDaiWuChaF then
-        gSysParam.FPoundDaiF := Fields[0].AsInteger;
+        gSysParam.FPoundDaiF := Fields[0].AsFloat;
+      //xxxxx
+
+      if nStr = sFlag_PDaiPercent then
+        gSysParam.FDaiPercent := Fields[0].AsString = sFlag_Yes;
+      //xxxxx
+
+      if nStr = sFlag_PDaiWuChaStop then
+        gSysParam.FDaiWCStop := Fields[0].AsString = sFlag_Yes;
       //xxxxx
 
       if nStr = sFlag_PSanWuChaF then
-        gSysParam.FPoundSanF := Fields[0].AsInteger;
+        gSysParam.FPoundSanF := Fields[0].AsFloat;
       Next;
+    end;
+
+    with gSysParam do
+    begin
+      FPoundDaiZ_1 := FPoundDaiZ;
+      FPoundDaiF_1 := FPoundDaiF;
+      //backup wucha value
     end;
   end;
 
