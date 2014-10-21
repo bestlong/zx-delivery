@@ -220,9 +220,17 @@ begin
          nIn.FBase.FParam := ''
     else nIn.FBase.FParam := sParam_NoHintOnError;
 
+    if gSysParam.FAutoPound and (not gSysParam.FIsManual) then
+      nIn.FBase.FParam := sParam_NoHintOnError;
+    //自动称重时不提示
+
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessCommand);
     //get worker
     Result := nWorker.WorkActive(@nIn, nOut);
+
+    if not Result then
+      WriteLog(nOut.FBase.FErrDesc);
+    //xxxxx
   finally
     gBusinessWorkerManager.RelaseWorker(nWorker);
   end;
@@ -246,9 +254,17 @@ begin
          nIn.FBase.FParam := ''
     else nIn.FBase.FParam := sParam_NoHintOnError;
 
+    if gSysParam.FAutoPound and (not gSysParam.FIsManual) then
+      nIn.FBase.FParam := sParam_NoHintOnError;
+    //自动称重时不提示
+
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_BusinessSaleBill);
     //get worker
     Result := nWorker.WorkActive(@nIn, nOut);
+
+    if not Result then
+      WriteLog(nOut.FBase.FErrDesc);
+    //xxxxx
   finally
     gBusinessWorkerManager.RelaseWorker(nWorker);
   end;
@@ -272,9 +288,17 @@ begin
          nIn.FBase.FParam := ''
     else nIn.FBase.FParam := sParam_NoHintOnError;
 
+    if gSysParam.FAutoPound and (not gSysParam.FIsManual) then
+      nIn.FBase.FParam := sParam_NoHintOnError;
+    //自动称重时不提示
+    
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_HardwareCommand);
     //get worker
     Result := nWorker.WorkActive(@nIn, nOut);
+
+    if not Result then
+      WriteLog(nOut.FBase.FErrDesc);
+    //xxxxx
   finally
     gBusinessWorkerManager.RelaseWorker(nWorker);
   end;

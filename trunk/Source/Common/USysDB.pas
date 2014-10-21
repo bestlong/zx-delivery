@@ -154,6 +154,8 @@ ResourceString
   
   sFlag_PDaiWuChaZ    = 'PoundDaiWuChaZ';            //袋装正误差
   sFlag_PDaiWuChaF    = 'PoundDaiWuChaF';            //袋装负误差
+  sFlag_PDaiPercent   = 'PoundDaiPercent';           //按比例计算误差
+  sFlag_PDaiWuChaStop = 'PoundDaiWuChaStop';         //误差时停止业务
   sFlag_PSanWuChaF    = 'PoundSanWuChaF';            //散装负误差
   sFlag_PoundWuCha    = 'PoundWuCha';                //过磅误差分组
   sFlag_PoundIfDai    = 'PoundIFDai';                //袋装是否过磅

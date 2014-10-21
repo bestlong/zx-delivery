@@ -41,7 +41,6 @@ type
       AButtonIndex: Integer);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnDelClick(Sender: TObject);
-    procedure BtnExitClick(Sender: TObject);
     procedure cxView1DblClick(Sender: TObject);
     procedure N1Click(Sender: TObject);
     procedure N2Click(Sender: TObject);
@@ -112,17 +111,6 @@ begin
             MI('$Cus', sTable_Customer), MI('$SR', nStr),
             MI('$Start', Date2Str(FStart)), MI('$End', Date2Str(FEnd + 1))]);
   //xxxxx
-end;
-
-//Desc: ¹Ø±Õ
-procedure TfFrameHYData.BtnExitClick(Sender: TObject);
-var nParam: TFormCommandParam;
-begin
-  if not IsBusy then
-  begin
-    nParam.FCommand := cCmd_FormClose;
-    CreateBaseFormItem(cFI_FormStockHuaYan, '', @nParam); Close;
-  end;
 end;
 
 //------------------------------------------------------------------------------

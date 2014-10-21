@@ -118,7 +118,7 @@ end;
 procedure TfFrameZTDispatch.OnLoadPopedom;
 begin
   BtnAdd.Enabled := gPopedomManager.HasPopedom(PopedomItem, sPopedom_Add);
-  //BtnPrint.Enabled := gPopedomManager.HasPopedom(PopedomItem, sPopedom_Edit);
+  BtnPrint.Enabled := gPopedomManager.HasPopedom(PopedomItem, sPopedom_Print);
 end;
 
 procedure TfFrameZTDispatch.BtnExitClick(Sender: TObject);

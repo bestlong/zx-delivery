@@ -45,6 +45,7 @@ const
   cFI_FrameZhanTaiQuery = $0033;                     //栈台查询
   cFI_FrameZTDispatch   = $0034;                     //栈台调度
   cFI_FramePoundManual  = $0035;                     //手动称重
+  cFI_FramePoundAuto    = $0036;                     //自动称重
 
   cFI_FrameStock        = $0042;                     //品种管理
   cFI_FrameStockRecord  = $0043;                     //检验记录
@@ -167,9 +168,14 @@ type
     FFactNum    : string;                            //工厂编号
     FSerialID   : string;                            //电脑编号
     FIsManual   : Boolean;                           //手动过磅
+    FAutoPound  : Boolean;                           //自动称重
 
-    FPoundDaiZ  : Double;                            //袋装正误差
-    FPoundDaiF  : Double;                            //袋装负误差
+    FPoundDaiZ  : Double;
+    FPoundDaiZ_1: Double;                            //袋装正误差
+    FPoundDaiF  : Double;
+    FPoundDaiF_1: Double;                            //袋装负误差
+    FDaiPercent : Boolean;                           //按比例计算偏差
+    FDaiWCStop  : Boolean;                           //不允许袋装偏差
     FPoundSanF  : Double;                            //散装负误差
     FPicBase    : Integer;                           //图片索引
     FPicPath    : string;                            //图片目录
@@ -283,6 +289,7 @@ begin
   AddMenuModuleItem('MAIN_D06', cFI_FrameBill);
 
   AddMenuModuleItem('MAIN_E01', cFI_FramePoundManual);
+  AddMenuModuleItem('MAIN_E02', cFI_FramePoundAuto);
   AddMenuModuleItem('MAIN_E03', cFI_FramePoundQuery);
 
   AddMenuModuleItem('MAIN_F01', cFI_FormLadDai, mtForm);
