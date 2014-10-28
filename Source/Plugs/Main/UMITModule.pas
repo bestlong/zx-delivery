@@ -145,6 +145,11 @@ begin
   TBusinessWorkerSweetHeart.RegWorker(gParamManager.URLLocal.Text);
   //for channel manager
 
+  {$IFDEF ClientMon}
+  gProcessMonitorClient := TProcessMonitorClient.Create(gSysParam.FParam);
+  //process monitor
+  {$ENDIF}
+  
   {$IFDEF DBPool}
   gDBConnManager := TDBConnManager.Create;
   FillAllDBParam;

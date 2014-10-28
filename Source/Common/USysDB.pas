@@ -151,6 +151,7 @@ ResourceString
   sFlag_ViaBillCard   = 'ViaBillCard';               //直接制卡
   sFlag_PayCredit     = 'Pay_Credit';                //回款冲信用
   sFlag_HYValue       = 'HYMaxValue';                //化验批次量
+  sFlag_SaleManDept   = 'SaleManDepartment';         //业务员部门编号
   
   sFlag_PDaiWuChaZ    = 'PoundDaiWuChaZ';            //袋装正误差
   sFlag_PDaiWuChaF    = 'PoundDaiWuChaF';            //袋装负误差
@@ -563,7 +564,8 @@ ResourceString
    *.E_Money: 金额
   -----------------------------------------------------------------------------}
 
-  sSQL_NewZhiKa = 'Create Table $Table(R_ID $Inc,Z_ID varChar(15),Z_Name varChar(100),' +
+  sSQL_NewZhiKa = 'Create Table $Table(R_ID $Inc,Z_ID varChar(15),' +
+       'Z_Name varChar(100),Z_Card varChar(16),' +
        'Z_CID varChar(15), Z_Project varChar(100), Z_Customer varChar(15),' +
        'Z_SaleMan varChar(15), Z_Payment varChar(20), Z_Lading Char(1),' +
        'Z_ValidDays DateTime, Z_Password varChar(16), Z_OnlyPwd Char(1),' +
@@ -575,6 +577,7 @@ ResourceString
    纸卡办理: ZhiKa
    *.R_ID:记录编号
    *.Z_ID:纸卡号
+   *.Z_Card:磁卡号
    *.Z_Name:纸卡名称
    *.Z_CID:销售合同
    *.Z_Project:项目名称

@@ -1,4 +1,4 @@
-inherited fFrameManualPoundItem: TfFrameManualPoundItem
+inherited fFrameAutoPoundItem: TfFrameAutoPoundItem
   Width = 1019
   Height = 309
   Font.Height = -15
@@ -210,7 +210,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     StyleFocused.LookAndFeel.NativeStyle = True
     StyleHot.LookAndFeel.NativeStyle = True
     TabOrder = 3
-    OnKeyPress = EditTruckKeyPress
     Width = 275
   end
   object EditMID: TcxComboBox
@@ -222,7 +221,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Properties.IncrementalSearch = False
     Properties.ItemHeight = 22
     Properties.ReadOnly = False
-    Properties.OnChange = EditMIDPropertiesChange
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clWindowText
     Style.Font.Height = -20
@@ -245,7 +243,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Properties.IncrementalSearch = False
     Properties.ItemHeight = 22
     Properties.ReadOnly = False
-    Properties.OnChange = EditMIDPropertiesChange
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clWindowText
     Style.Font.Height = -20
@@ -264,7 +261,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Top = 50
     ParentFont = False
     Properties.ReadOnly = True
-    Properties.OnEditValueChanged = EditMValuePropertiesEditValueChanged
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clWindowText
     Style.Font.Height = -20
@@ -284,7 +280,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Top = 90
     ParentFont = False
     Properties.ReadOnly = True
-    Properties.OnEditValueChanged = EditMValuePropertiesEditValueChanged
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clWindowText
     Style.Font.Height = -20
@@ -318,69 +313,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Text = '0'
     Width = 120
   end
-  object BtnReadNumber: TcxButton
-    Left = 385
-    Top = 258
-    Width = 111
-    Height = 35
-    Caption = #35835#25968
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -20
-    Font.Name = #23435#20307
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 9
-    OnClick = BtnReadNumberClick
-    LookAndFeel.NativeStyle = False
-  end
-  object BtnReadCard: TcxButton
-    Left = 752
-    Top = 258
-    Width = 111
-    Height = 35
-    Caption = #35835#21345
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -20
-    Font.Name = #23435#20307
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 10
-    OnClick = BtnReadCardClick
-  end
-  object BtnSave: TcxButton
-    Left = 510
-    Top = 258
-    Width = 111
-    Height = 35
-    Caption = #20445#23384#31216#37325
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -20
-    Font.Name = #23435#20307
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 11
-    OnClick = BtnSaveClick
-  end
-  object BtnNext: TcxButton
-    Left = 874
-    Top = 258
-    Width = 111
-    Height = 35
-    Caption = #32487#32493
-    Font.Charset = GB2312_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -20
-    Font.Name = #23435#20307
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 12
-    OnClick = BtnNextClick
-    DropDownMenu = PMenu1
-    Kind = cxbkDropDownButton
-  end
   object EditBill: TcxComboBox
     Left = 502
     Top = 50
@@ -388,7 +320,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Properties.ItemHeight = 22
     Properties.MaxLength = 15
     Properties.ReadOnly = True
-    Properties.OnEditValueChanged = EditBillPropertiesEditValueChanged
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clWindowText
     Style.Font.Height = -20
@@ -399,8 +330,7 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     StyleDisabled.LookAndFeel.NativeStyle = True
     StyleFocused.LookAndFeel.NativeStyle = True
     StyleHot.LookAndFeel.NativeStyle = True
-    TabOrder = 13
-    OnKeyPress = EditBillKeyPress
+    TabOrder = 9
     Width = 275
   end
   object EditZValue: TcxTextEdit
@@ -418,7 +348,7 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     StyleDisabled.LookAndFeel.NativeStyle = True
     StyleFocused.LookAndFeel.NativeStyle = True
     StyleHot.LookAndFeel.NativeStyle = True
-    TabOrder = 14
+    TabOrder = 10
     Text = '0'
     Width = 120
   end
@@ -428,7 +358,8 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Width = 360
     Height = 55
     Caption = #31216#37325#27169#24335
-    TabOrder = 15
+    Enabled = False
+    TabOrder = 11
     object RadioPD: TcxRadioButton
       Left = 12
       Top = 25
@@ -444,7 +375,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
       ParentFont = False
       TabOrder = 0
       TabStop = True
-      OnClick = RadioPDClick
       LookAndFeel.Kind = lfOffice11
       LookAndFeel.NativeStyle = False
     end
@@ -461,7 +391,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      OnClick = RadioPDClick
       LookAndFeel.Kind = lfOffice11
       LookAndFeel.NativeStyle = False
     end
@@ -478,7 +407,6 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
       Font.Style = []
       ParentFont = False
       TabOrder = 2
-      OnClick = RadioPDClick
       LookAndFeel.Kind = lfOffice11
       LookAndFeel.NativeStyle = False
     end
@@ -498,7 +426,7 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     StyleDisabled.LookAndFeel.NativeStyle = True
     StyleFocused.LookAndFeel.NativeStyle = True
     StyleHot.LookAndFeel.NativeStyle = True
-    TabOrder = 16
+    TabOrder = 12
     Width = 275
   end
   object EditWValue: TcxTextEdit
@@ -516,7 +444,7 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     StyleDisabled.LookAndFeel.NativeStyle = True
     StyleFocused.LookAndFeel.NativeStyle = True
     StyleHot.LookAndFeel.NativeStyle = True
-    TabOrder = 17
+    TabOrder = 13
     Text = '0'
     Width = 120
   end
@@ -575,7 +503,7 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
   object cxLabel5: TcxLabel
     Left = 385
     Top = 171
-    Caption = #23458#25143#21517#31216':'
+    Caption = #29289#26009#21517#31216':'
     ParentFont = False
     Style.Font.Charset = GB2312_CHARSET
     Style.Font.Color = clBlack
@@ -650,31 +578,42 @@ inherited fFrameManualPoundItem: TfFrameManualPoundItem
     Style.TextColor = clBlack
     Style.IsFontAssigned = True
   end
+  object MemoLog: TZnTransMemo
+    Left = 385
+    Top = 243
+    Width = 600
+    Height = 50
+    BorderStyle = bsNone
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clGreen
+    Font.Height = -15
+    Font.Name = #23435#20307
+    Font.Style = []
+    ParentFont = False
+    ScrollBars = ssVertical
+    TabOrder = 24
+  end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 654
-    Top = 258
-  end
-  object PMenu1: TPopupMenu
-    AutoHotkeys = maManual
-    Left = 682
-    Top = 258
-    object N1: TMenuItem
-      Caption = #25171#24320#32418#32511#28783
-      OnClick = N1Click
-    end
-    object N4: TMenuItem
-      Caption = '-'
-    end
-    object N3: TMenuItem
-      Caption = #20851#38381#25152#26377#36890#36947
-      OnClick = N3Click
-    end
+    Left = 420
+    Top = 256
   end
   object Timer2: TTimer
     Enabled = False
     OnTimer = Timer2Timer
-    Left = 626
-    Top = 258
+    Left = 392
+    Top = 256
+  end
+  object Timer_ReadCard: TTimer
+    OnTimer = Timer_ReadCardTimer
+    Left = 508
+    Top = 256
+  end
+  object TimerDelay: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = TimerDelayTimer
+    Left = 480
+    Top = 256
   end
 end

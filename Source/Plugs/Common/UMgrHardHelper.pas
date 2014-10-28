@@ -85,6 +85,7 @@ type
     FHostIP: string;
     FHostPort: Integer;
     FUDPPort: Integer;
+    FConnHelper: Boolean;
     //服务主机
     FItems: array of THHReaderItem;
     //读头列表
@@ -331,6 +332,11 @@ begin
     FHostIP := nNode.NodeByName('ip').ValueAsString;
     FHostPort := nNode.NodeByName('port').ValueAsInteger;
 
+    nTP := nNode.FindNode('enable');
+    if Assigned(nTP) then
+         FConnHelper := nTP.ValueAsString <> 'N'
+    else FConnHelper := True;
+
     nTP := nNode.FindNode('local_udp');
     if Assigned(nTP) then
          FUDPPort := nTP.ValueAsInteger
@@ -446,6 +452,12 @@ begin
   try
     FWaiter.EnterWait;
     if Terminated then Exit;
+
+    if not FOwner.FConnHelper then
+    begin
+      DoCardAction;
+      Continue;
+    end;
 
     try
       if not FClient.Connected then

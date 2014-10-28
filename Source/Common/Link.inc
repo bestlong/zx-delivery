@@ -50,10 +50,20 @@
 {$DEFINE COMMON}
 //通用版本
 
-{.$DEFINE XAZL}
-//新安中联
+{.$DEFINE JYZL}
+//特定系统
 
+//济源中联
+{$IFDEF JYZL}
+  {$DEFINE XAZL}
+  //使用新安
+  {$DEFINE HYRFID201}
+  //华益读头
+{$ENDIF}
+
+//新安中联
 {$IFDEF XAZL}
   {$DEFINE SyncRemote}
   //远程同步
 {$ENDIF}
+
