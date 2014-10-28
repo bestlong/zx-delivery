@@ -777,8 +777,10 @@ begin
       if FDaiPercent and (FType = sFlag_Dai) then
       begin
         if nVal > 0 then
-             FPoundDaiZ := Float2Float(nNet * FPoundDaiZ_1, cPrecision, False)
-        else FPoundDaiF := Float2Float(-nNet * FPoundDaiF_1, cPrecision, False);
+             FPoundDaiZ := Float2Float(FInnerData.FValue * FPoundDaiZ_1 * 1000,
+                                       cPrecision, False)
+        else FPoundDaiF := Float2Float(-FInnerData.FValue * FPoundDaiF_1 * 1000,
+                                       cPrecision, False);
       end;
 
       if ((FType = sFlag_Dai) and (

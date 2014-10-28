@@ -11,9 +11,10 @@ uses
   Windows, Classes, Controls, SysUtils, UMgrDBConn, UMgrParam,
   UBusinessWorker, UBusinessConst, UBusinessPacker, UMgrQueue,
   UMgrHardHelper, U02NReader, UMgrERelay, UMultiJS, UMgrRemotePrint,
-  UMgrLEDDisp;
+  UMgrLEDDisp, UMgrRFID102;
 
 procedure WhenReaderCardArrived(const nReader: THHReaderItem);
+procedure WhenHYReaderCardArrived(const nReader: PHYReaderItem);
 //有新卡号到达读头
 procedure WhenReaderCardIn(nHost: TReaderHost; nCard: TReaderCard);
 //现场读头有新卡号
@@ -494,6 +495,14 @@ begin
   finally
     gDBConnManager.ReleaseConnection(nDBConn);
   end;
+end;
+
+//Date: 2014-10-25
+//Parm: 读头数据
+//Desc: 华益读头磁卡动作
+procedure WhenHYReaderCardArrived(const nReader: PHYReaderItem);
+begin
+  gHardwareHelper.SetReaderCard(nReader.FID, 'H' + nReader.FCard, False);
 end;
 
 //------------------------------------------------------------------------------

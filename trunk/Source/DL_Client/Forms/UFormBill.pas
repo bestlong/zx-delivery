@@ -155,10 +155,16 @@ begin
 end;
 
 procedure TfFormBill.FormCreate(Sender: TObject);
-var nIni: TIniFile;
+var nStr: string;
+    nIni: TIniFile;
 begin
   nIni := TIniFile.Create(gPath + sFormConfig);
   try
+    nStr := nIni.ReadString(Name, 'FQLabel', '');
+    if nStr <> '' then
+      dxLayout1Item5.Caption := nStr;
+    //xxxxx
+
     LoadMCListBoxConfig(Name, ListInfo, nIni);
     LoadcxListViewConfig(Name, ListBill, nIni);
   finally

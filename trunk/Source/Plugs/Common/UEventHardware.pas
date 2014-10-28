@@ -35,7 +35,8 @@ implementation
 uses
   SysUtils, USysLoger, UHardBusiness, UMgrTruckProbe, UMgrParam,
   UMgrQueue, UMgrLEDCard, UMgrHardHelper, UMgrRemotePrint, U02NReader,
-  UMgrERelay, UMultiJS, UMgrRemoteVoice, UMgrCodePrinter, UMgrLEDDisp;
+  UMgrERelay, UMultiJS, UMgrRemoteVoice, UMgrCodePrinter, UMgrLEDDisp,
+  UMgrRFID102;
 
 class function THardwareWorker.ModuleInfo: TPlugModuleInfo;
 begin
@@ -85,6 +86,17 @@ begin
     nStr := '小屏显示';
     gDisplayManager.LoadConfig(nCfg + 'LEDDisp.xml');
 
+    {$IFDEF HYRFID201}
+    nStr := '华益RFID102';
+    nCfg := nCfg + 'RFID102.xml';
+
+    if not Assigned(gHYReaderManager) then
+    begin
+      gHYReaderManager := THYReaderManager.Create;
+      gHYReaderManager.LoadConfig(nCfg);
+    end;
+    {$ENDIF}
+
     nStr := '车辆检测器';
     nCfg := nCfg + 'TruckProber.xml';
     
@@ -132,6 +144,14 @@ begin
   gHardwareHelper.StartRead;
   //long reader
 
+  {$IFDEF HYRFID201}
+  if Assigned(gHYReaderManager) then
+  begin
+    gHYReaderManager.OnCardProc := WhenHYReaderCardArrived;
+    gHYReaderManager.StartReader;
+  end;
+  {$ENDIF}
+
   g02NReader.OnCardIn := WhenReaderCardIn;
   g02NReader.OnCardOut := WhenReaderCardOut;
   g02NReader.StartReader;
@@ -173,6 +193,14 @@ begin
   gHardwareHelper.StopRead;
   gHardwareHelper.OnProce := nil;
   //reader
+
+  {$IFDEF HYRFID201}
+  if Assigned(gHYReaderManager) then
+  begin
+    gHYReaderManager.StopReader;
+    gHYReaderManager.OnCardProc := nil;
+  end;
+  {$ENDIF}
 
   gDisplayManager.StopDisplay;
   //small led
