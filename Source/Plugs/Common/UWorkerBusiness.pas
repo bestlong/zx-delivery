@@ -1244,6 +1244,7 @@ begin
       nMoney := Float2Float(nMoney, cPrecision, True);
 
       {$IFDEF JYZL}
+        nStr := FieldByName('L_StockNo').AsString;
         if nStr = '6053' then  //熟料
              nStockID := '322'
         else nStockID := '326';
@@ -1818,13 +1819,6 @@ begin
                 SF('L_OutMan', FIn.FBase.FFrom.FUser)
                 ], sTable_Bill, SF('L_ID', nOut.FData), False);
         gDBConnManager.WorkerExec(FDBConn, nStr);
-
-        {$IFDEF XAZL}
-        if not TWorkerBusinessCommander.CallMe(cBC_SyncStockBill,
-           nOut.FData, '', @nOut) then
-          raise Exception.Create(nOut.FData);
-        //xxxxx
-        {$ENDIF}
       end else
       begin
         if FListC.Values['Type'] = sFlag_San then
@@ -1885,7 +1879,7 @@ begin
     begin
       nStr := 'Update %s Set Z_FixedMoney=Z_FixedMoney-%s Where Z_ID=''%s''';
       nStr := Format(nStr, [sTable_ZhiKa, FloatToStr(nVal),
-              FListA.Values['CusID']]);
+              FListA.Values['ZhiKa']]);
       //xxxxx
 
       gDBConnManager.WorkerExec(FDBConn, nStr);
@@ -1903,6 +1897,23 @@ begin
     FDBConn.FConn.RollbackTrans;
     raise;
   end;
+
+  {$IFDEF XAZL}
+  if FListA.Values['BuDan'] = sFlag_Yes then //补单
+  try
+    nSQL := AdjustListStrFormat(FOut.FData, '''', True, ',', False);
+    //bill list
+
+    if not TWorkerBusinessCommander.CallMe(cBC_SyncStockBill, nSQL, '', @nOut) then
+      raise Exception.Create(nOut.FData);
+    //xxxxx
+  except
+    nStr := 'Delete From %s Where L_ID In (%s)';
+    nStr := Format(nStr, [sTable_Bill, nSQL]);
+    gDBConnManager.WorkerExec(FDBConn, nStr);
+    raise;
+  end;
+  {$ENDIF}
 end;
 
 //------------------------------------------------------------------------------
@@ -2659,7 +2670,7 @@ end;
 //Desc: 保存指定岗位提交的交货单列表
 function TWorkerBusinessBills.SavePostBillItems(var nData: string): Boolean;
 var nStr,nSQL,nTmp: string;
-    f,m,nVal: Double;
+    f,m,nVal,nMVal: Double;
     i,nIdx,nInt: Integer;
     nBills: TLadingBillItems;
     nOut: TWorkerBusinessCommand;
@@ -2872,9 +2883,12 @@ begin
   if FIn.FExtParam = sFlag_TruckBFM then //称量毛重
   begin
     nInt := -1;
+    nMVal := 0;
+    
     for nIdx:=Low(nBills) to High(nBills) do
     if nBills[nIdx].FPoundID = sFlag_Yes then
     begin
+      nMVal := nBills[nIdx].FMData.FValue;
       nInt := nIdx;
       Break;
     end;
@@ -2901,7 +2915,7 @@ begin
       //纸卡可用金
 
       nVal := FValue;
-      FValue := nBills[nInt].FMData.FValue - FPData.FValue;
+      FValue := nMVal - FPData.FValue;
       //新净重,实际提货量
       f := Float2Float(FPrice * FValue, cPrecision, True) - m;
       //实际所需金额与可用金差额
@@ -2941,25 +2955,24 @@ begin
     begin
       if nIdx < High(nBills) then
       begin
+        FMData.FValue := FPData.FValue + FValue;
+        nVal := nVal + FValue;
+        //累计净重
+
         nSQL := MakeSQLByStr([
-                SF('P_MValue', FPData.FValue + FValue, sfVal),
+                SF('P_MValue', FMData.FValue, sfVal),
                 SF('P_MDate', sField_SQLServer_Now, sfVal),
                 SF('P_MMan', FIn.FBase.FFrom.FUser),
                 SF('P_MStation', nBills[nInt].FMData.FStation)
                 ], sTable_PoundLog, SF('P_Bill', FID), False);
         FListA.Add(nSQL);
-
-        FMData.FValue := FValue;
-        nVal := nVal + FValue;
-        //累计净重
       end else
       begin
-        nVal := nBills[nInt].FMData.FValue - nVal;
+        FMData.FValue := nMVal - nVal;
         //扣减已累计的净重
-        FMData.FValue := nVal;
-        
+
         nSQL := MakeSQLByStr([
-                SF('P_MValue', nVal, sfVal),
+                SF('P_MValue', FMData.FValue, sfVal),
                 SF('P_MDate', sField_SQLServer_Now, sfVal),
                 SF('P_MMan', FIn.FBase.FFrom.FUser),
                 SF('P_MStation', nBills[nInt].FMData.FStation)
@@ -3016,7 +3029,7 @@ begin
 
       nStr := Format('L_ID In (%s)', [nTmp]);
       nSQL := MakeSQLByStr([
-              SF('L_PValue', nBills[nInt].FMData.FValue, sfVal),
+              SF('L_PValue', nMVal, sfVal),
               SF('L_PDate', sField_SQLServer_Now, sfVal),
               SF('L_PMan', FIn.FBase.FFrom.FUser)
               ], sTable_Bill, nStr, False);
@@ -3025,7 +3038,7 @@ begin
 
       nStr := Format('P_Bill In (%s)', [nTmp]);
       nSQL := MakeSQLByStr([
-              SF('P_PValue', nBills[nInt].FMData.FValue, sfVal),
+              SF('P_PValue', nMVal, sfVal),
               SF('P_PDate', sField_SQLServer_Now, sfVal),
               SF('P_PMan', FIn.FBase.FFrom.FUser),
               SF('P_PStation', nBills[nInt].FMData.FStation)

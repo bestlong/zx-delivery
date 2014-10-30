@@ -128,17 +128,18 @@ end;
 
 procedure TfFrameCusAccount.N4Click(Sender: TObject);
 var nStr: string;
-    nVal: Double;
+    nVal,nCredit: Double;
 begin
   if cxView1.DataController.GetSelectedCount > 0 then
   begin
     nStr := SQLQuery.FieldByName('A_CID').AsString;
-    nVal := GetCustomerValidMoney(nStr, True);
+    nVal := GetCustomerValidMoney(nStr, False, @nCredit);
 
     nStr := '客户当前可用金额如下:' + #13#10#13#10 +
             '*.客户名称: %s ' + #13#10 +
-            '*.资金余额: %.2f 元' + #13#10;
-    nStr := Format(nStr, [SQLQuery.FieldByName('C_Name').AsString, nVal]);
+            '*.资金余额: %.2f 元' + #13#10 +
+            '*.信用金额: %.2f 元' + #13#10;
+    nStr := Format(nStr, [SQLQuery.FieldByName('C_Name').AsString, nVal, nCredit]);
     ShowDlg(nStr, sHint);
   end;
 end;
