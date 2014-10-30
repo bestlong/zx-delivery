@@ -164,7 +164,7 @@ procedure TfFrameSaleDetailQuery.mniN1Click(Sender: TObject);
 begin
   if ShowDateFilterForm(FTimeS, FTimeE, True) then
   try
-    FJBWhere := 'L_OutFact>=''$S'' and L_OutFact <''$End'')';
+    FJBWhere := '(L_OutFact>=''%s'' and L_OutFact <''%s'')';
     FJBWhere := Format(FJBWhere, [DateTime2Str(FTimeS), DateTime2Str(FTimeE),
                 sFlag_BillPick, sFlag_BillPost]);
     InitFormData('');

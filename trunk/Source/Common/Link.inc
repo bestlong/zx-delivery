@@ -59,6 +59,8 @@
   //使用新安
   {$DEFINE HYRFID201}
   //华益读头
+  {$DEFINE AppAtTaskBar}
+  //状态栏显示
 {$ENDIF}
 
 //新安中联

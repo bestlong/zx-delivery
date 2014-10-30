@@ -81,7 +81,8 @@ function LoadZhiKaInfo(const nZID: string; const nList: TcxMCListBox;
 //载入纸卡
 function GetZhikaValidMoney(nZhiKa: string; var nFixMoney: Boolean): Double;
 //纸卡可用金
-function GetCustomerValidMoney(nCID: string; const nLimit: Boolean = True): Double;
+function GetCustomerValidMoney(nCID: string; const nLimit: Boolean = True;
+ const nCredit: PDouble = nil): Double;
 //客户可用金额
 
 function SyncRemoteCustomer: Boolean;
@@ -1070,7 +1071,8 @@ begin
 end;
 
 //Desc: 获取nCID用户的可用金额,包含信用额或净额
-function GetCustomerValidMoney(nCID: string; const nLimit: Boolean): Double;
+function GetCustomerValidMoney(nCID: string; const nLimit: Boolean;
+ const nCredit: PDouble): Double;
 var nStr: string;
     nOut: TWorkerBusinessCommand;
 begin
@@ -1079,8 +1081,18 @@ begin
   else nStr := sFlag_No;
 
   if CallBusinessCommand(cBC_GetCustomerMoney, nCID, nStr, @nOut) then
-       Result := StrToFloat(nOut.FData)
-  else Result := 0;
+  begin
+    Result := StrToFloat(nOut.FData);
+    if Assigned(nCredit) then
+      nCredit^ := StrToFloat(nOut.FExtParam);
+    //xxxxx
+  end else
+  begin
+    Result := 0;
+    if Assigned(nCredit) then
+      nCredit^ := 0;
+    //xxxxx
+  end;
 end;
 
 //Date: 2014-10-16
