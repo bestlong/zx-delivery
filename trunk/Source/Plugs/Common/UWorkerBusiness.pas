@@ -1816,7 +1816,8 @@ begin
                 SF('L_MDate', sField_SQLServer_Now, sfVal),
                 SF('L_MMan', FIn.FBase.FFrom.FUser),
                 SF('L_OutFact', sField_SQLServer_Now, sfVal),
-                SF('L_OutMan', FIn.FBase.FFrom.FUser)
+                SF('L_OutMan', FIn.FBase.FFrom.FUser),
+                SF('L_Card', '')
                 ], sTable_Bill, SF('L_ID', nOut.FData), False);
         gDBConnManager.WorkerExec(FDBConn, nStr);
       end else

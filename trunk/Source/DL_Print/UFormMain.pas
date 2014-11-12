@@ -247,13 +247,13 @@ end;
 //Parm: 交货单号;提示;数据对象;打印机
 //Desc: 打印nBill交货单号
 function PrintBillReport(const nBill: string; var nHint: string;
- const nPrinter: string = ''): Boolean;
+ const nPrinter: string = ''; const nMoney: string = '0'): Boolean;
 var nStr: string;
     nDS: TDataSet;
 begin
   Result := False;
-  nStr := 'Select * From %s b Where L_ID=''%s''';
-  nStr := Format(nStr, [sTable_Bill, nBill]);
+  nStr := 'Select *,%s As L_ValidMoney From %s b Where L_ID=''%s''';
+  nStr := Format(nStr, [nMoney, sTable_Bill, nBill]);
 
   nDS := FDM.SQLQuery(nStr, FDM.SQLQuery1);
   if not Assigned(nDS) then Exit;
@@ -302,7 +302,7 @@ end;
 
 procedure TfFormMain.Timer2Timer(Sender: TObject);
 var nPos: Integer;
-    nBill,nHint,nPrinter: string;
+    nBill,nHint,nPrinter,nMoney: string;
 begin
   while True do
   begin
@@ -315,9 +315,20 @@ begin
       FSyncLock.Leave;
     end;
 
-    //bill #9 printer
-    nPos := Pos(#9, nBill);
+    //bill #9 printer #8 money
+    nPos := Pos(#8, nBill);
+    if nPos > 1 then
+    begin
+      nMoney := nBill;
+      nBill := Copy(nBill, 1, nPos - 1);
+      System.Delete(nMoney, 1, nPos);
 
+      if not IsNumber(nMoney, True) then
+        nMoney := '0';
+      //xxxxx
+    end else nMoney := '0';
+
+    nPos := Pos(#9, nBill);
     if nPos > 1 then
     begin
       nPrinter := nBill;
@@ -326,7 +337,7 @@ begin
     end else nPrinter := '';
 
     WriteLog('开始打印: ' + nBill);
-    PrintBillReport(nBill, nHint, nPrinter);
+    PrintBillReport(nBill, nHint, nPrinter, nMoney);
     WriteLog('打印结束.' + nHint);
   end;
 end;

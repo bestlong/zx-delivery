@@ -323,6 +323,9 @@ procedure MakeTruckOut(const nCard,nReader,nPrinter: string);
 var nStr: string;
     nIdx: Integer;
     nTrucks: TLadingBillItems;
+    {$IFDEF PrintBillMoney}
+    nOut: TWorkerBusinessCommand;
+    {$ENDIF}
 begin
   if not GetLadingBills(nCard, sFlag_TruckOut, nTrucks) then
   begin
@@ -362,15 +365,24 @@ begin
     Exit;
   end;
 
-  for nIdx:=Low(nTrucks) to High(nTrucks) do
-   if nPrinter = '' then
-        gRemotePrinter.PrintBill(nTrucks[nIdx].FID)
-   else gRemotePrinter.PrintBill(nTrucks[nIdx].FID + #9 + nPrinter);
-  //打印报表
-
   if nReader <> '' then
     gHardwareHelper.OpenDoor(nReader);
   //抬杆
+
+  for nIdx:=Low(nTrucks) to High(nTrucks) do
+  begin
+    {$IFDEF PrintBillMoney}
+    if CallBusinessCommand(cBC_GetZhiKaMoney,nTrucks[nIdx].FZhiKa,'',@nOut) then
+         nStr := #8 + nOut.FData
+    else nStr := #8 + '0';
+    {$ELSE}
+    nStr := '';
+    {$ENDIF}
+
+    if nPrinter = '' then
+         gRemotePrinter.PrintBill(nTrucks[nIdx].FID + nStr)
+    else gRemotePrinter.PrintBill(nTrucks[nIdx].FID + #9 + nPrinter + nStr);
+  end; //打印报表
 end;
 
 //Date: 2012-10-19
