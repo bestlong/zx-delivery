@@ -456,6 +456,7 @@ begin
     if not FOwner.FConnHelper then
     begin
       DoCardAction;
+      FOwner.ClearBuffer(FOwner.FBuffData);
       Continue;
     end;
 

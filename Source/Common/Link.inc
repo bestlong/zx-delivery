@@ -61,6 +61,8 @@
   //华益读头
   {$DEFINE AppAtTaskBar}
   //状态栏显示
+  {$DEFINE PrintBillMoney}
+  //打印时显金额
 {$ENDIF}
 
 //新安中联
