@@ -536,7 +536,8 @@ begin
     nStocks.Free;
   end;
 
-  SetBillCard(gInfo.FIDList, EditTruck.Text, True);
+  if FBuDanFlag <> sFlag_Yes then
+    SetBillCard(gInfo.FIDList, EditTruck.Text, True);
   //∞Ï¿Ì¥≈ø®
 
   if nPrint then

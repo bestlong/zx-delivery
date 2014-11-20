@@ -1,23 +1,23 @@
 {*******************************************************************************
-  作者: dmzn@163.com 2014-08-29
-  描述: 销售结算周期
+  作者: dmzn@163.com 2011-01-23
+  描述: 发票结算周期
 *******************************************************************************}
-unit UFrameJSWeek;
+unit UFrameInvoiceWeek;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  UFrameNormal, cxGraphics, cxControls, cxLookAndFeels,
+  Dialogs, UFrameNormal, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxStyles, cxCustomData, cxFilter, cxData,
-  cxDataStorage, cxEdit, DB, cxDBData, cxContainer, dxLayoutControl,
+  cxDataStorage, cxEdit, DB, cxDBData, cxContainer, Menus, dxLayoutControl,
   cxTextEdit, cxMaskEdit, cxButtonEdit, ADODB, cxLabel, UBitmapPanel,
   cxSplitter, cxGridLevel, cxClasses, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
   ComCtrls, ToolWin;
 
 type
-  TfFrameJSWeek = class(TfFrameNormal)
+  TfFrameInvoiceWeek = class(TfFrameNormal)
     EditName: TcxButtonEdit;
     dxLayout1Item1: TdxLayoutItem;
     EditDesc: TcxTextEdit;
@@ -63,12 +63,12 @@ uses
   UFormDateFilter;
 
 //------------------------------------------------------------------------------
-class function TfFrameJSWeek.FrameID: integer;
+class function TfFrameInvoiceWeek.FrameID: integer;
 begin
-  Result := cFI_FrameJSWeek;
+  Result := cFI_FrameInvoiceWeek;
 end;
 
-procedure TfFrameJSWeek.OnCreateFrame;
+procedure TfFrameInvoiceWeek.OnCreateFrame;
 var nY,nM,nD: Word;
 begin
   inherited;
@@ -82,7 +82,7 @@ begin
   end;
 end;
 
-procedure TfFrameJSWeek.OnDestroyFrame;
+procedure TfFrameInvoiceWeek.OnDestroyFrame;
 begin
   SaveDateRange(Name, FStart, FEnd);
   inherited;
@@ -90,7 +90,7 @@ end;
 
 //------------------------------------------------------------------------------
 //Desc: 数据查询SQL
-function TfFrameJSWeek.InitFormDataSQL(const nWhere: string): string;
+function TfFrameInvoiceWeek.InitFormDataSQL(const nWhere: string): string;
 begin
   EditDate.Text := Format('%s 至 %s', [Date2Str(FStart), Date2Str(FEnd)]);
   Result := 'Select * From $Week ';
@@ -99,13 +99,13 @@ begin
        Result := Result + 'Where (W_Date>=''$S'' and W_Date <''$E'')'
   else Result := Result + 'Where (' + nWhere + ')';
 
-  Result := MacroValue(Result, [MI('$Week', sTable_JSWeek),
+  Result := MacroValue(Result, [MI('$Week', sTable_InvoiceWeek),
             MI('$S', Date2Str(FStart)), MI('$E', Date2Str(FEnd + 1))]);
   //xxxxx
 end;
 
 //Desc: 添加
-procedure TfFrameJSWeek.BtnAddClick(Sender: TObject);
+procedure TfFrameInvoiceWeek.BtnAddClick(Sender: TObject);
 var nParam: TFormCommandParam;
 begin
   nParam.FCommand := cCmd_AddData;
@@ -118,7 +118,7 @@ begin
 end;
 
 //Desc: 修改
-procedure TfFrameJSWeek.BtnEditClick(Sender: TObject);
+procedure TfFrameInvoiceWeek.BtnEditClick(Sender: TObject);
 var nParam: TFormCommandParam;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
@@ -137,7 +137,7 @@ begin
 end;
 
 //Desc: 删除
-procedure TfFrameJSWeek.BtnDelClick(Sender: TObject);
+procedure TfFrameInvoiceWeek.BtnDelClick(Sender: TObject);
 var nStr,nID: string;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
@@ -150,7 +150,7 @@ begin
   if not QueryDlg(nStr, sAsk) then Exit;
 
   nID := SQLQuery.FieldByName('W_NO').AsString;
-{  nStr := 'Select Count(*) From %s Where I_Week=''%s'' And I_Status=''%s''';
+  nStr := 'Select Count(*) From %s Where I_Week=''%s'' And I_Status=''%s''';
   nStr := Format(nStr, [sTable_Invoice, nID, sFlag_InvHasUsed]);
 
   with FDM.QueryTemp(nStr) do
@@ -166,9 +166,9 @@ begin
   begin
     ShowMsg('读取周期状态失败', sHint); Exit;
   end;
-}
+
   nStr := 'Delete From %s Where W_NO=''%s''';
-  nStr := Format(nStr, [sTable_JSWeek, nID]);
+  nStr := Format(nStr, [sTable_InvoiceWeek, nID]);
   FDM.ExecuteSQL(nStr);
 
   InitFormData(FWhere);
@@ -176,7 +176,7 @@ begin
 end;
 
 //Desc: 执行查询
-procedure TfFrameJSWeek.EditIDPropertiesButtonClick(Sender: TObject;
+procedure TfFrameInvoiceWeek.EditIDPropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 begin
   if Sender = EditID then
@@ -199,13 +199,13 @@ begin
 end;
 
 //Desc: 日期筛选
-procedure TfFrameJSWeek.EditDatePropertiesButtonClick(Sender: TObject;
+procedure TfFrameInvoiceWeek.EditDatePropertiesButtonClick(Sender: TObject;
   AButtonIndex: Integer);
 begin
   if ShowDateFilterForm(FStart, FEnd) then InitFormData(FWhere);
 end;
 
-procedure TfFrameJSWeek.cxView1FocusedRecordChanged(
+procedure TfFrameInvoiceWeek.cxView1FocusedRecordChanged(
   Sender: TcxCustomGridTableView; APrevFocusedRecord,
   AFocusedRecord: TcxCustomGridRecord;
   ANewItemRecordFocusingChanged: Boolean);
@@ -221,5 +221,5 @@ begin
 end;
 
 initialization
-  gControlManager.RegCtrl(TfFrameJSWeek, TfFrameJSWeek.FrameID);
+  gControlManager.RegCtrl(TfFrameInvoiceWeek, TfFrameInvoiceWeek.FrameID);
 end.

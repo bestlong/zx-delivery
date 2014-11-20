@@ -36,8 +36,6 @@ const
   cFI_FrameZhiKaVerify  = $0021;                     //纸卡审核
   cFI_FramePayment      = $0022;                     //销售回款
   cFI_FrameCusCredit    = $0023;                     //信用管理
-  cFI_FrameJSWeek       = $0024;                     //结算周期
-  cFI_FrameSaleZZ       = $0025;                     //销售扎账
 
   cFI_FrameLadingDai    = $0030;                     //袋装提货
   cFI_FramePoundQuery   = $0031;                     //磅房查询
@@ -59,6 +57,12 @@ const
   cFI_FrameSaleDetailQuery = $0054;                  //发货明细
   cFI_FrameZhiKaDetail  = $0055;                     //纸卡明细
   cFI_FrameDispatchQuery = $0056;                    //调度查询
+
+  cFI_FrameSaleInvoice  = $0061;                     //发票管理
+  cFI_FrameMakeInvoice  = $0062;                     //开具发票
+  cFI_FrameInvoiceWeek  = $0063;                     //结算周期
+  cFI_FrameSaleZZ       = $0065;                     //销售扎账
+  cFI_FrameSaleJS       = $0069;                     //销售结算
 
   cFI_FrameProvider     = $0102;                     //供应
   cFI_FrameProvideLog   = $0105;                     //供应日志
@@ -140,6 +144,7 @@ const
   cCmd_AddData          = $1003;                     //添加数据
   cCmd_EditData         = $1005;                     //修改数据
   cCmd_ViewData         = $1006;                     //查看数据
+  cCmd_GetData          = $1007;                     //选择数据
 
 type
   TSysParam = record
@@ -278,8 +283,11 @@ begin
   AddMenuModuleItem('MAIN_C01', cFI_FrameZhiKaVerify);
   AddMenuModuleItem('MAIN_C02', cFI_FramePayment);
   AddMenuModuleItem('MAIN_C03', cFI_FrameCusCredit);
-  AddMenuModuleItem('MAIN_C06', cFI_FrameJSWeek);
+  AddMenuModuleItem('MAIN_C04', cFI_FrameSaleInvoice);
+  AddMenuModuleItem('MAIN_C05', cFI_FrameMakeInvoice);
+  AddMenuModuleItem('MAIN_C06', cFI_FrameInvoiceWeek);
   AddMenuModuleItem('MAIN_C07', cFI_FrameShouJu);
+  AddMenuModuleItem('MAIN_C08', cFI_FrameSaleZZ);
 
   AddMenuModuleItem('MAIN_D01', cFI_FormZhiKa, mtForm);
   AddMenuModuleItem('MAIN_D02', cFI_FrameMakeCard);
