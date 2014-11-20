@@ -779,15 +779,15 @@ begin
         if nVal > 0 then
              FPoundDaiZ := Float2Float(FInnerData.FValue * FPoundDaiZ_1 * 1000,
                                        cPrecision, False)
-        else FPoundDaiF := Float2Float(-FInnerData.FValue * FPoundDaiF_1 * 1000,
+        else FPoundDaiF := Float2Float(FInnerData.FValue * FPoundDaiF_1 * 1000,
                                        cPrecision, False);
       end;
 
       if ((FType = sFlag_Dai) and (
           ((nVal > 0) and (FPoundDaiZ > 0) and (nVal > FPoundDaiZ)) or
-          ((nVal < 0) and (FPoundDaiF > 0) and (nVal < -FPoundDaiF)))) or
-         ((FType = sFlag_Dai) and (
-          (nVal < 0) and (FPoundSanF > 0) and (nVal < -FPoundSanF))) then
+          ((nVal < 0) and (FPoundDaiF > 0) and (-nVal > FPoundDaiF)))) or
+         ((FType = sFlag_San) and (
+          (nVal < 0) and (FPoundSanF > 0) and (-nVal > FPoundSanF))) then
       begin
         nStr := '车辆[ %s ]实际装车量误差较大,详情如下:' + #13#10#13#10 +
                 '※.开单量: %.2f吨' + #13#10 +

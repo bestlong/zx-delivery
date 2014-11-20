@@ -1,8 +1,8 @@
 {*******************************************************************************
-  作者: dmzn@163.com 2014-08-29
-  描述: 结算周期
+  作者: dmzn@163.com 2011-01-23
+  描述: 发票结算周期
 *******************************************************************************}
-unit UFormJSWeek;
+unit UFormInvoiceWeek;
 
 interface
 
@@ -14,7 +14,7 @@ uses
   cxLookAndFeelPainters;
 
 type
-  TfFormJSWeek = class(TfFormNormal)
+  TfFormInvoiceWeek = class(TfFormNormal)
     dxLayout1Item4: TdxLayoutItem;
     EditName: TcxTextEdit;
     dxLayout1Item12: TdxLayoutItem;
@@ -49,7 +49,7 @@ uses
   ULibFun, UFormBase, UMgrControl, UDataModule, UFormCtrl, USysDB, USysConst,
   USysBusiness;
 
-class function TfFormJSWeek.CreateForm(const nPopedom: string;
+class function TfFormInvoiceWeek.CreateForm(const nPopedom: string;
   const nParam: Pointer): TWinControl;
 var nP: PFormCommandParam;
 begin
@@ -60,7 +60,7 @@ begin
 
   case nP.FCommand of
    cCmd_AddData:
-    with TfFormJSWeek.Create(Application) do
+    with TfFormInvoiceWeek.Create(Application) do
     begin
       Caption := '结算周期 - 添加';
       FRecordID := '';
@@ -71,7 +71,7 @@ begin
       Free;
     end;
    cCmd_EditData:
-    with TfFormJSWeek.Create(Application) do
+    with TfFormInvoiceWeek.Create(Application) do
     begin
       Caption := '结算周期 - 修改';
       FRecordID := nP.FParamA;
@@ -84,17 +84,17 @@ begin
   end;
 end;
 
-class function TfFormJSWeek.FormID: integer;
+class function TfFormInvoiceWeek.FormID: integer;
 begin
   Result := cFI_FormInvoiceWeek;
 end;
 
-procedure TfFormJSWeek.FormCreate(Sender: TObject);
+procedure TfFormInvoiceWeek.FormCreate(Sender: TObject);
 begin
   LoadFormConfig(Self);
 end;
 
-procedure TfFormJSWeek.FormClose(Sender: TObject;
+procedure TfFormInvoiceWeek.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   SaveFormConfig(Self);
@@ -102,7 +102,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TfFormJSWeek.SetData(Sender: TObject; const nData: string): Boolean;
+function TfFormInvoiceWeek.SetData(Sender: TObject; const nData: string): Boolean;
 begin
   Result := False;
 
@@ -119,7 +119,7 @@ begin
   end;
 end;
 
-procedure TfFormJSWeek.InitFormData(const nID: string);
+procedure TfFormInvoiceWeek.InitFormData(const nID: string);
 var nStr: string;
     nY,nM,nD: Word;
 begin
@@ -156,7 +156,7 @@ begin
   end;
 end;
 
-function TfFormJSWeek.OnVerifyCtrl(Sender: TObject;
+function TfFormInvoiceWeek.OnVerifyCtrl(Sender: TObject;
   var nHint: string): Boolean;
 var nStr,nTmp: string;
 begin
@@ -216,7 +216,7 @@ begin
 end;
 
 //Desc: 保存
-procedure TfFormJSWeek.BtnOKClick(Sender: TObject);
+procedure TfFormInvoiceWeek.BtnOKClick(Sender: TObject);
 var nStr: string;
     nInt: Integer;
 begin
@@ -287,5 +287,5 @@ begin
 end;
 
 initialization
-  gControlManager.RegCtrl(TfFormJSWeek, TfFormJSWeek.FormID);
+  gControlManager.RegCtrl(TfFormInvoiceWeek, TfFormInvoiceWeek.FormID);
 end.

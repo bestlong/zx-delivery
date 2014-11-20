@@ -1,4 +1,4 @@
-inherited fFormJSWeek: TfFormJSWeek
+inherited fFormInvoiceWeek: TfFormInvoiceWeek
   Left = 574
   Top = 431
   ClientHeight = 202
@@ -10,6 +10,7 @@ inherited fFormJSWeek: TfFormJSWeek
   inherited dxLayout1: TdxLayoutControl
     Width = 359
     Height = 202
+    AutoContentSizes = [acsWidth, acsHeight]
     inherited BtnOK: TButton
       Left = 213
       Top = 169
@@ -59,6 +60,8 @@ inherited fFormJSWeek: TfFormJSWeek
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
+        AutoAligns = [aaHorizontal]
+        AlignVert = avClient
         object dxLayout1Item4: TdxLayoutItem
           AutoAligns = [aaVertical]
           AlignHorz = ahClient

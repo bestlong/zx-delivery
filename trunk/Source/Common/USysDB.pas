@@ -142,6 +142,12 @@ ResourceString
   sFlag_MoneyZhiKa    = 'Z';                         //纸卡回款
   sFlag_MoneyFanHuan  = 'H';                         //返还用户
 
+  sFlag_InvNormal     = 'N';                         //正常发票
+  sFlag_InvHasUsed    = 'U';                         //已用发票
+  sFlag_InvInvalid    = 'V';                         //作废发票
+  sFlag_InvRequst     = 'R';                         //申请开出
+  sFlag_InvDaily      = 'D';                         //日常开出
+
   sFlag_SysParam      = 'SysParam';                  //系统参数
   sFlag_EnableBakdb   = 'Uses_BackDB';               //备用库
   sFlag_ValidDate     = 'SysValidDate';              //有效期
@@ -229,8 +235,14 @@ ResourceString
   sTable_CusAccount   = 'Sys_CustomerAccount';       //客户账户
   sTable_InOutMoney   = 'Sys_CustomerInOutMoney';    //资金明细
   sTable_CusCredit    = 'Sys_CustomerCredit';        //客户信用
-  sTable_JSWeek       = 'Sys_JieSuanWeek';           //结算周期
   sTable_SysShouJu    = 'Sys_ShouJu';                //收据记录
+
+  sTable_Invoice      = 'Sys_Invoice';               //发票列表
+  sTable_InvoiceDtl   = 'Sys_InvoiceDetail';         //发票明细
+  sTable_InvoiceWeek  = 'Sys_InvoiceWeek';           //结算周期
+  sTable_InvoiceReq   = 'Sys_InvoiceRequst';         //结算申请
+  sTable_InvReqtemp   = 'Sys_InvoiceReqtemp';        //临时申请
+  sTable_DataTemp     = 'Sys_DataTemp';              //临时数据
 
   sTable_ZhiKa        = 'S_ZhiKa';                   //纸卡数据
   sTable_ZhiKaDtl     = 'S_ZhiKaDtl';                //纸卡明细
@@ -497,21 +509,6 @@ ResourceString
    *.S_Memo:备注
   -----------------------------------------------------------------------------}
 
-  sSQL_NewJSWeek = 'Create Table $Table(W_ID $Inc, W_NO varChar(15),' +
-       'W_Name varChar(50), W_Begin DateTime, W_End DateTime,' +
-       'W_Man varChar(32), W_Date DateTime, W_Memo varChar(50))';
-  {-----------------------------------------------------------------------------
-   发票结算周期:JSWeek
-   *.W_ID:记录编号
-   *.W_NO:周期编号
-   *.W_Name:名称
-   *.W_Begin:开始
-   *.W_End:结束
-   *.W_Man:创建人
-   *.W_Date:创建时间
-   *.W_Memo:备注信息
-  -----------------------------------------------------------------------------}
-  
   sSQL_NewCusCredit = 'Create Table $Table(R_ID $Inc ,C_CusID varChar(15),' +
        'C_Money Decimal(15,5), C_Man varChar(32),' +
        'C_Date DateTime, C_End DateTime, C_Memo varChar(50))';
@@ -807,6 +804,94 @@ ResourceString
    *.T_HKBills: 合卡交货单列表
   -----------------------------------------------------------------------------}
 
+  sSQL_NewDataTemp = 'Create Table $Table(T_SysID varChar(15))';
+  {-----------------------------------------------------------------------------
+   临时数据表: DataTemp
+   *.T_SysID: 系统编号
+  -----------------------------------------------------------------------------}
+  
+  sSQL_NewInvoiceWeek = 'Create Table $Table(W_ID $Inc, W_NO varChar(15),' +
+       'W_Name varChar(50), W_Begin DateTime, W_End DateTime,' +
+       'W_Man varChar(32), W_Date DateTime, W_Memo varChar(50))';
+  {-----------------------------------------------------------------------------
+   发票结算周期:InvoiceWeek
+   *.W_ID:记录编号
+   *.W_NO:周期编号
+   *.W_Name:名称
+   *.W_Begin:开始
+   *.W_End:结束
+   *.W_Man:创建人
+   *.W_Date:创建时间
+   *.W_Memo:备注信息
+  -----------------------------------------------------------------------------}
+  
+  sSQL_NewInvoice = 'Create Table $Table(I_ID varChar(25) PRIMARY KEY,' +
+       'I_Week varChar(15), I_CusID varChar(15), I_Customer varChar(80),' +
+       'I_SaleID varChar(15), I_SaleMan varChar(50), I_Status Char(1),' +
+       'I_Flag Char(1), I_InMan varChar(32), I_InDate DateTime,' +
+       'I_OutMan varChar(32), I_OutDate DateTime, I_Memo varChar(50))';
+  {-----------------------------------------------------------------------------
+   发票票据:Invoice
+   *.I_ID:编号
+   *.I_Week:结算周期
+   *.I_CusID:客户编号
+   *.I_Customer:客户名
+   *.I_SaleID:业务员号
+   *.I_SaleMan:业务员
+   *.I_Status:状态
+   *.I_Flag:标记
+   *.I_InMan:录入人
+   *.I_InDate:录入日期
+   *.I_OutMan:领用人
+   *.I_OutDate:领用日期
+   *.I_Memo:备注
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewInvoiceDtl = 'Create Table $Table(D_ID $Inc, D_Invoice varChar(25),' +
+       'D_Type Char(1), D_Stock varChar(30), D_Price $Float Default 0,' +
+       'D_Value $Float Default 0, D_KPrice $Float Default 0,' +
+       'D_DisCount $Float Default 0, D_DisMoney $Float Default 0)';
+  {-----------------------------------------------------------------------------
+   发票明细:InvoiceDetail
+   *.D_ID:编号
+   *.D_Invoice:票号
+   *.D_Type:类型(带,散)
+   *.D_Stock:品种
+   *.D_Price:单价
+   *.D_Value:开票量
+   *.D_KPrice:开票价
+   *.D_DisCount:折扣比
+   *.D_DisMoney:折扣钱数
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewInvoiceReq = 'Create Table $Table(R_ID $Inc, R_Week varChar(15),' +
+       'R_CusID varChar(15), R_Customer varChar(80),' +
+       'R_SaleID varChar(15), R_SaleMan varChar(50), R_Type Char(1),' +
+       'R_Stock varChar(30), R_Price $Float, R_Value $Float, ' +
+       'R_PreHasK $Float Default 0, R_ReqValue $Float, R_KPrice $Float,' +
+       'R_KValue $Float Default 0, R_KOther $Float Default 0,' +
+       'R_Man varChar(32), R_Date DateTime)';
+  {-----------------------------------------------------------------------------
+   发票结算申请:InvoiceReq
+   *.R_ID:记录编号
+   *.R_Week:结算周期
+   *.R_CusID:客户号
+   *.R_Customer:客户名
+   *.R_SaleID:业务员号
+   *.R_SaleMan:业务员名
+   *.R_Type:水泥类型(D,S)
+   *.R_Stock:水泥名称
+   *.R_Price:单价
+   *.R_Value:提货量
+   *.R_PreHasK:之前已开量
+   *.R_ReqValue:申请量
+   *.R_KPrice:开票单价
+   *.R_KValue:申请已完成量
+   *.R_KOther:本周申请量之外已开
+   *.R_Man:申请人
+   *.R_Date:申请时间
+  -----------------------------------------------------------------------------}
+  
   sSQL_NewProvider = 'Create Table $Table(R_ID $Inc, P_ID varChar(32),' +
        'P_Name varChar(80),P_PY varChar(80), P_Phone varChar(20),' +
        'P_Saler varChar(32),P_Memo varChar(50))';
@@ -1062,8 +1147,14 @@ begin
   AddSysTableItem(sTable_CusAccount, sSQL_NewCusAccount);
   AddSysTableItem(sTable_InOutMoney, sSQL_NewInOutMoney);
   AddSysTableItem(sTable_CusCredit, sSQL_NewCusCredit);
-  AddSysTableItem(sTable_JSWeek, sSQL_NewJSWeek);
   AddSysTableItem(sTable_SysShouJu, sSQL_NewSysShouJu);
+
+  AddSysTableItem(sTable_InvoiceWeek, sSQL_NewInvoiceWeek);
+  AddSysTableItem(sTable_Invoice, sSQL_NewInvoice);
+  AddSysTableItem(sTable_InvoiceDtl, sSQL_NewInvoiceDtl);
+  AddSysTableItem(sTable_InvoiceReq, sSQL_NewInvoiceReq);
+  AddSysTableItem(sTable_InvReqtemp, sSQL_NewInvoiceReq);
+  AddSysTableItem(sTable_DataTemp, sSQL_NewDataTemp);
 
   AddSysTableItem(sTable_ZhiKa, sSQL_NewZhiKa);
   AddSysTableItem(sTable_ZhiKaDtl, sSQL_NewZhiKaDtl);
