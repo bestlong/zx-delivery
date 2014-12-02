@@ -207,6 +207,7 @@ ResourceString
   sFlag_Customer      = 'Bus_Customer';              //客户编号
   sFlag_SaleMan       = 'Bus_SaleMan';               //业务员编号
   sFlag_ZhiKa         = 'Bus_ZhiKa';                 //纸卡编号
+  sFlag_WeiXin        = 'Bus_WeiXin';                //微信映射编号
   sFlag_HYDan         = 'Bus_HYDan';                 //化验单号
   sFlag_ForceHint     = 'Bus_HintMsg';               //强制提示
   
@@ -243,6 +244,10 @@ ResourceString
   sTable_InvoiceReq   = 'Sys_InvoiceRequst';         //结算申请
   sTable_InvReqtemp   = 'Sys_InvoiceReqtemp';        //临时申请
   sTable_DataTemp     = 'Sys_DataTemp';              //临时数据
+
+  sTable_WeixinLog    = 'Sys_WeixinLog';             //微信日志
+  sTable_WeixinMatch  = 'Sys_WeixinMatch';           //账号匹配
+  sTable_WeixinTemp   = 'Sys_WeixinTemplate';        //信息模板
 
   sTable_ZhiKa        = 'S_ZhiKa';                   //纸卡数据
   sTable_ZhiKaDtl     = 'S_ZhiKaDtl';                //纸卡明细
@@ -414,7 +419,7 @@ ResourceString
 
   sSQL_NewCustomer = 'Create Table $Table(R_ID $Inc, C_ID varChar(15), ' +
        'C_Name varChar(80), C_PY varChar(80), C_Addr varChar(100), ' +
-       'C_FaRen varChar(50), C_LiXiRen varChar(50),' +
+       'C_FaRen varChar(50), C_LiXiRen varChar(50), C_WeiXin varChar(15),' +
        'C_Phone varChar(15), C_Fax varChar(15), C_Tax varChar(32),' +
        'C_Bank varChar(35), C_Account varChar(18), C_SaleMan varChar(15),' +
        'C_Param varChar(32), C_Memo varChar(50), C_XuNi Char(1))';
@@ -428,6 +433,7 @@ ResourceString
    *.C_FaRen: 法人
    *.C_LiXiRen: 联系人
    *.C_Phone: 电话
+   *.C_WeiXin: 微信
    *.C_Fax: 传真
    *.C_Tax: 税号
    *.C_Bank: 开户行
@@ -891,7 +897,50 @@ ResourceString
    *.R_Man:申请人
    *.R_Date:申请时间
   -----------------------------------------------------------------------------}
-  
+
+  sSQL_NewWXLog = 'Create Table $Table(R_ID $Inc, L_UserID varChar(50), ' +
+       'L_Data varChar(500), L_MsgID varChar(20), L_Result varChar(50),' +
+       'L_Count Integer Default 0, L_Status Char(1), ' +
+       'L_Comment varChar(100), L_Date DateTime)';
+  {-----------------------------------------------------------------------------
+   微信发送日志:WeixinLog
+   *.R_ID:记录编号
+   *.L_UserID: 接收者ID
+   *.L_Data:微信数据
+   *.L_Count:发送次数
+   *.L_MsgID: 微信返回标识
+   *.L_Result:发送返回信息
+   *.L_Status:发送状态(N待发送,I发送中,Y已发送)
+   *.L_Comment:备注
+   *.L_Date: 发送时间
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewWXMatch = 'Create Table $Table(R_ID $Inc, M_ID varChar(15), ' +
+       'M_WXID varChar(50), M_WXName varChar(64), ' +
+       'M_IsValid Char(1), M_Comment varChar(100))';
+  {-----------------------------------------------------------------------------
+   微信账户:WeixinMatch
+   *.R_ID:记录编号
+   *.M_ID: 微信编号
+   *.M_WXID:开发ID
+   *.M_WXName:微信名
+   *.M_IsValid: 是否有效
+   *.M_Comment: 备注
+  -----------------------------------------------------------------------------}
+
+  sSQL_NewWXTemplate = 'Create Table $Table(R_ID $Inc, W_Type varChar(15), ' +
+       'W_TID varChar(50), W_TFields varChar(64), ' +
+       'W_TComment Char(300), W_IsValid Char(1))';
+  {-----------------------------------------------------------------------------
+   微信账户:WeixinMatch
+   *.R_ID:记录编号
+   *.W_Type:类型
+   *.W_TID:标识
+   *.W_TFields:数据域段
+   *.W_IsValid: 是否有效
+   *.W_TComment: 备注
+  -----------------------------------------------------------------------------}
+
   sSQL_NewProvider = 'Create Table $Table(R_ID $Inc, P_ID varChar(32),' +
        'P_Name varChar(80),P_PY varChar(80), P_Phone varChar(20),' +
        'P_Saler varChar(32),P_Memo varChar(50))';
@@ -1155,6 +1204,10 @@ begin
   AddSysTableItem(sTable_InvoiceReq, sSQL_NewInvoiceReq);
   AddSysTableItem(sTable_InvReqtemp, sSQL_NewInvoiceReq);
   AddSysTableItem(sTable_DataTemp, sSQL_NewDataTemp);
+
+  AddSysTableItem(sTable_WeixinLog, sSQL_NewWXLog);
+  AddSysTableItem(sTable_WeixinMatch, sSQL_NewWXMatch);
+  AddSysTableItem(sTable_WeixinTemp, sSQL_NewWXTemplate);
 
   AddSysTableItem(sTable_ZhiKa, sSQL_NewZhiKa);
   AddSysTableItem(sTable_ZhiKaDtl, sSQL_NewZhiKaDtl);

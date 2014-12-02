@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFormCustomer;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -71,6 +72,9 @@ type
     dxLayoutControl1Item1: TdxLayoutItem;
     dxLayoutControl1Group13: TdxLayoutGroup;
     dxLayoutControl1Group3: TdxLayoutGroup;
+    EditWX: TcxComboBox;
+    dxLayoutControl1Item22: TdxLayoutItem;
+    dxLayoutControl1Group14: TdxLayoutGroup;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnAddClick(Sender: TObject);
@@ -177,6 +181,11 @@ end;
 procedure TfFormCustomer.FormCreate(Sender: TObject);
 var nIni: TIniFile;
 begin
+  {$IFNDEF MicroMsg}
+  EditWX.Hint := '';
+  EditWX.Visible := False; 
+  {$ENDIF}
+
   nIni := TIniFile.Create(gPath + sFormConfig);
   try
     LoadFormConfig(Self, nIni);
@@ -244,6 +253,12 @@ begin
   if EditSaleMan.Properties.Items.Count < 1 then
     LoadSaleMan(EditSaleMan.Properties.Items);
   //xxxxx
+
+  nStr := 'M_ID=Select M_ID,M_WXName From %s Order By M_ID DESC';
+  nStr := Format(nStr, [sTable_WeixinMatch]);
+  
+  FDM.FillStringsData(EditWX.Properties.Items, nStr, 6, '.');
+  AdjustStringsItem(EditWX.Properties.Items, False);
 
   if nID <> '' then
   begin

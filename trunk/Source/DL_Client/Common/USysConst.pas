@@ -68,6 +68,9 @@ const
   cFI_FrameProvideLog   = $0105;                     //供应日志
   cFI_FrameMaterails    = $0106;                     //原材料
 
+  cFI_FrameWXAccount    = $0110;                     //微信账户
+  cFI_FrameWXSendLog    = $0111;                     //发送日志
+
   cFI_FormMemo          = $1000;                     //备注窗口
   cFI_FormBackup        = $1001;                     //数据备份
   cFI_FormRestore       = $1002;                     //数据恢复
@@ -134,6 +137,8 @@ const
   cFI_FormInvAdjust     = $1082;                     //修改申请量
 
   cFI_FormAuthorize     = $1090;                     //安全验证
+  cFI_FormWXAccount     = $1091;                     //微信账户
+  cFI_FormWXSendlog     = $1092;                     //微信日志
 
   {*Command*}
   cCmd_RefreshData      = $0002;                     //刷新数据
@@ -329,6 +334,9 @@ begin
   AddMenuModuleItem('MAIN_M01', cFI_FrameProvider);
   AddMenuModuleItem('MAIN_M02', cFI_FrameMaterails);
   AddMenuModuleItem('MAIN_M04', cFI_FrameProvideLog);
+
+  AddMenuModuleItem('MAIN_W01', cFI_FrameWXAccount);
+  AddMenuModuleItem('MAIN_W02', cFI_FrameWXSendLog);
 end;
 
 //Desc: 清理模块列表

@@ -13,6 +13,7 @@ uses
   Windows, Forms, Classes, SysUtils, ULibFun, UBusinessWorker, UBusinessPacker,
   UTaskMonitor, USysShareMem, USysLoger, UMITConst, UMITPacker,
   {$IFDEF HardMon}UEventHardware, UWorkerHardware,{$ENDIF} UWorkerBusiness,
+  {$IFDEF MicroMsg}UMgrRemoteWXMsg,{$ENDIF}
   UMgrDBConn, UMgrParam, UMgrPlug, UMgrChannel, UChannelChooser, USAPConnection;
 
 procedure InitSystemObject(const nMainForm: THandle);
@@ -88,6 +89,10 @@ begin
   gChannelChoolser.StartRefresh;
   {$ENDIF} //channel auto select
 
+  {$IFDEF MicroMsg}
+  gWXPlatFormHelper.StartPlatConnector;
+  {$ENDIF} //micro message
+
   gTaskMonitor.StartMon;
   //mon task start
 end;
@@ -109,6 +114,10 @@ begin
   {$IFDEF DBPool}
   gDBConnManager.Disconnection();
   {$ENDIF} //db
+
+  {$IFDEF MicroMsg}
+  gWXPlatFormHelper.StopPlatConnector;
+  {$ENDIF} //micro message
 end;
 
 //------------------------------------------------------------------------------
@@ -169,6 +178,10 @@ begin
   gChannelChoolser.AutoUpdateLocal := False;
   gChannelChoolser.AddChanels(gParamManager.URLRemote.Text);
   {$ENDIF}
+
+  {$IFDEF MicroMsg}
+  gWXPlatFormHelper.LoadConfig(gPath + 'Hardware\MicroMsg.XML');
+  {$ENDIF} //micro message
 
   with nParam do
   begin
