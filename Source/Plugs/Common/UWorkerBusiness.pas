@@ -9,6 +9,7 @@ interface
 
 uses
   Windows, Classes, Controls, DB, SysUtils, UBusinessWorker, UBusinessPacker,
+  {$IFDEF MicroMsg}UMgrRemoteWXMsg,{$ENDIF}
   UBusinessConst, UMgrDBConn, UMgrParam, ZnMD5, ULibFun, UFormCtrl, USysLoger,
   USysDB, UMITConst;
 
@@ -1915,6 +1916,21 @@ begin
     raise;
   end;
   {$ENDIF}
+
+  {$IFDEF MicroMsg}
+  with FListC do
+  begin
+    Clear;
+    Values['bill'] := FOut.FData;
+    Values['company'] := gSysParam.FHintText;
+  end;
+
+  if FListA.Values['BuDan'] = sFlag_Yes then
+       nStr := cWXBus_OutFact
+  else nStr := cWXBus_MakeCard;
+
+  gWXPlatFormHelper.WXSendMsg(nStr, FListC.Text);
+  {$ENDIF}
 end;
 
 //------------------------------------------------------------------------------
@@ -3211,6 +3227,25 @@ begin
     FDBConn.FConn.RollbackTrans;
     raise;
   end;
+
+  {$IFDEF MicroMsg}
+  nStr := '';
+  for nIdx:=Low(nBills) to High(nBills) do
+    nStr := nStr + nBills[nIdx].FID + ',';
+  //xxxxx
+
+  if FIn.FExtParam = sFlag_TruckOut then
+  begin
+    with FListA do
+    begin
+      Clear;
+      Values['bill'] := nStr;
+      Values['company'] := gSysParam.FHintText;
+    end;
+
+    gWXPlatFormHelper.WXSendMsg(cWXBus_OutFact, FListA.Text);
+  end;
+  {$ENDIF}
 end;
 
 initialization

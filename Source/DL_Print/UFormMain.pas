@@ -219,6 +219,7 @@ begin
     on E:Exception do
     begin
       WriteLog(E.Message);
+      AContext.Connection.Socket.InputBuffer.Clear;
     end;
   end;
 end;

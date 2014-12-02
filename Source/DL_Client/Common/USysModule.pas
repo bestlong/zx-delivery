@@ -28,6 +28,8 @@ uses
   UFramePoundManual, UFramePoundAuto, UFramePMaterails, UFormPMaterails,
   UFramePProvider, UFormPProvider, UFramePoundQuery, UFrameQuerySaleDetail,
   UFrameZTDispatch,
+  {$IFDEF MicroMsg}UFrameWeiXinAccount, UFormWeiXinAccount, UFrameWeiXinSendlog,
+  UFormWeiXinSendlog,{$ENDIF}
   //----------------------------------------------------------------------------
   UFormHYStock, UFormHYData, UFormHYRecord, UFormGetStockNo,
   UFrameHYStock, UFrameHYData, UFrameHYRecord;

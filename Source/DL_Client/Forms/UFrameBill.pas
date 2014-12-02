@@ -44,6 +44,7 @@ type
     dxLayout1Item9: TdxLayoutItem;
     N7: TMenuItem;
     N8: TMenuItem;
+    N9: TMenuItem;
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure BtnDelClick(Sender: TObject);
@@ -172,8 +173,13 @@ end;
 //Desc: 未开始提货的提货单
 procedure TfFrameBill.N4Click(Sender: TObject);
 begin
+  case TComponent(Sender).Tag of
+   10: FWhere := Format('(L_Status=''%s'')', [sFlag_BillNew]);
+   20: FWhere := 'L_OutFact Is Null'
+   else Exit;
+  end;
+
   FUseDate := False;
-  FWhere := Format('(L_Status=''%s'')', [sFlag_BillNew]);
   InitFormData(FWhere);
 end;
 

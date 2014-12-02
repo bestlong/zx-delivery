@@ -69,5 +69,7 @@
 {$IFDEF XAZL}
   {$DEFINE SyncRemote}
   //远程同步
+  {$DEFINE MicroMsg}
+  //微信支持
 {$ENDIF}
 

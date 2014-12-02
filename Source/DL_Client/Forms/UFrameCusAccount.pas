@@ -36,11 +36,14 @@ type
     EditID: TcxButtonEdit;
     dxLayout1Item2: TdxLayoutItem;
     N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
     procedure N3Click(Sender: TObject);
     procedure EditIDPropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure PMenu1Popup(Sender: TObject);
     procedure N4Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -113,6 +116,7 @@ begin
   {$ELSE}
   N4.Visible := False;
   {$ENDIF}
+  N6.Enabled := gSysParam.FIsAdmin;
 end;
 
 //Desc: 快捷菜单
@@ -142,6 +146,44 @@ begin
     nStr := Format(nStr, [SQLQuery.FieldByName('C_Name').AsString, nVal, nCredit]);
     ShowDlg(nStr, sHint);
   end;
+end;
+
+//Desc: 校正客户资金
+procedure TfFrameCusAccount.N6Click(Sender: TObject);
+var nStr,nCID: string;
+    nVal: Double;
+begin
+  if cxView1.DataController.GetSelectedCount < 1 then Exit;
+  nCID := SQLQuery.FieldByName('A_CID').AsString;
+
+  nStr := 'Select Sum(L_Money) from (' +
+          '  select L_Value * L_Price as L_Money from %s' +
+          '  where L_OutFact Is not Null And L_CusID = ''%s'') t';
+  nStr := Format(nStr, [sTable_Bill, nCID]);
+
+  with FDM.QuerySQL(nStr) do
+  begin
+    nVal := Float2Float(Fields[0].AsFloat, cPrecision, True);
+    nStr := 'Update %s Set A_OutMoney=%.2f Where A_CID=''%s''';
+    nStr := Format(nStr, [sTable_CusAccount, nVal, nCID]);
+    FDM.ExecuteSQL(nStr);
+  end;
+
+  nStr := 'Select Sum(L_Money) from (' +
+          '  select L_Value * L_Price as L_Money from %s' +
+          '  where L_OutFact Is Null And L_CusID = ''%s'') t';
+  nStr := Format(nStr, [sTable_Bill, nCID]);
+
+  with FDM.QuerySQL(nStr) do
+  begin
+    nVal := Float2Float(Fields[0].AsFloat, cPrecision, True);
+    nStr := 'Update %s Set A_FreezeMoney=%.2f Where A_CID=''%s''';
+    nStr := Format(nStr, [sTable_CusAccount, nVal, nCID]);
+    FDM.ExecuteSQL(nStr);
+  end;
+
+  InitFormData(FWhere);
+  ShowMsg('校正完毕', sHint);
 end;
 
 initialization

@@ -29,7 +29,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     Height = 135
     object cxTextEdit3: TcxTextEdit [0]
       Left = 81
-      Top = 96
+      Top = 93
       Hint = 'T.A_CID'
       ParentFont = False
       TabOrder = 2
@@ -37,7 +37,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit4: TcxTextEdit [1]
       Left = 259
-      Top = 96
+      Top = 93
       Hint = 'T.C_Name'
       ParentFont = False
       TabOrder = 3
@@ -59,7 +59,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit5: TcxTextEdit [3]
       Left = 710
-      Top = 96
+      Top = 93
       Hint = 'T.C_Bank'
       ParentFont = False
       TabOrder = 5
@@ -67,7 +67,7 @@ inherited fFrameCusAccount: TfFrameCusAccount
     end
     object cxTextEdit1: TcxTextEdit [4]
       Left = 472
-      Top = 96
+      Top = 93
       Hint = 'T.C_Account'
       ParentFont = False
       TabOrder = 4
@@ -169,6 +169,13 @@ inherited fFrameCusAccount: TfFrameCusAccount
     object N4: TMenuItem
       Caption = #26597#35810#36134#25143#20313#39069
       OnClick = N4Click
+    end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object N6: TMenuItem
+      Caption = #26657#27491#23458#25143#36164#37329
+      OnClick = N6Click
     end
   end
 end

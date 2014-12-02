@@ -3,7 +3,7 @@ inherited fFormCustomer: TfFormCustomer
   Top = 165
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  ClientHeight = 515
+  ClientHeight = 530
   ClientWidth = 480
   OldCreateOrder = True
   OnClose = FormClose
@@ -15,7 +15,7 @@ inherited fFormCustomer: TfFormCustomer
     Left = 0
     Top = 0
     Width = 480
-    Height = 515
+    Height = 530
     Align = alClient
     TabOrder = 0
     TabStop = False
@@ -41,19 +41,19 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditMemo: TcxMemo
       Left = 81
-      Top = 211
+      Top = 236
       Hint = 'T.C_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
-      TabOrder = 12
+      TabOrder = 13
       Height = 45
       Width = 385
     end
     object InfoList1: TcxMCListBox
       Left = 23
-      Top = 343
+      Top = 368
       Width = 438
       Height = 131
       HeaderSections = <
@@ -69,62 +69,62 @@ inherited fFormCustomer: TfFormCustomer
       ParentFont = False
       Style.BorderStyle = cbsOffice11
       Style.Edges = [bLeft, bTop, bRight, bBottom]
-      TabOrder = 17
+      TabOrder = 18
     end
     object InfoItems: TcxComboBox
       Left = 81
-      Top = 293
+      Top = 318
       ParentFont = False
       Properties.DropDownRows = 15
       Properties.ImmediateDropDown = False
       Properties.IncrementalSearch = False
       Properties.ItemHeight = 20
       Properties.MaxLength = 30
-      TabOrder = 13
+      TabOrder = 14
       Width = 100
     end
     object EditInfo: TcxTextEdit
       Left = 81
-      Top = 318
+      Top = 343
       ParentFont = False
       Properties.MaxLength = 50
-      TabOrder = 15
+      TabOrder = 16
       Width = 120
     end
     object BtnAdd: TButton
       Left = 411
-      Top = 293
+      Top = 318
       Width = 46
       Height = 18
       Caption = #28155#21152
-      TabOrder = 14
+      TabOrder = 15
       OnClick = BtnAddClick
     end
     object BtnDel: TButton
       Left = 412
-      Top = 318
+      Top = 343
       Width = 45
       Height = 17
       Caption = #21024#38500
-      TabOrder = 16
+      TabOrder = 17
       OnClick = BtnDelClick
     end
     object BtnOK: TButton
       Left = 324
-      Top = 482
+      Top = 497
       Width = 70
       Height = 22
       Caption = #20445#23384
-      TabOrder = 19
+      TabOrder = 20
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
       Left = 399
-      Top = 482
+      Top = 497
       Width = 70
       Height = 22
       Caption = #21462#28040
-      TabOrder = 20
+      TabOrder = 21
       OnClick = BtnExitClick
     end
     object cxTextEdit1: TcxTextEdit
@@ -231,13 +231,24 @@ inherited fFormCustomer: TfFormCustomer
     end
     object Check1: TcxCheckBox
       Left = 11
-      Top = 482
+      Top = 497
       Hint = 'T.C_XuNi'
       Caption = #38750#27491#24335#23458#25143': '#27491#24120#26597#35810#26102#19981#20104#26174#31034'.'
       ParentFont = False
-      TabOrder = 18
+      TabOrder = 19
       Transparent = True
       Width = 218
+    end
+    object EditWX: TcxComboBox
+      Left = 81
+      Top = 211
+      Hint = 'T.C_WeiXin'
+      ParentFont = False
+      Properties.DropDownListStyle = lsEditFixedList
+      Properties.DropDownRows = 20
+      Properties.ItemHeight = 20
+      TabOrder = 12
+      Width = 121
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       ShowCaption = False
@@ -338,19 +349,29 @@ inherited fFormCustomer: TfFormCustomer
         object dxLayoutControl1Group10: TdxLayoutGroup
           ShowCaption = False
           Hidden = True
-          LayoutDirection = ldHorizontal
           ShowBorder = False
-          object dxLayoutControl1Item19: TdxLayoutItem
-            Caption = #20449#29992#37329#39069':'
-            Control = EditCredit
-            ControlOptions.ShowBorder = False
-          end
-          object dxLayoutControl1Item20: TdxLayoutItem
-            AutoAligns = [aaVertical]
-            AlignHorz = ahClient
-            Caption = 'cxLabel1'
+          object dxLayoutControl1Group14: TdxLayoutGroup
             ShowCaption = False
-            Control = cxLabel1
+            Hidden = True
+            LayoutDirection = ldHorizontal
+            ShowBorder = False
+            object dxLayoutControl1Item19: TdxLayoutItem
+              Caption = #20449#29992#37329#39069':'
+              Control = EditCredit
+              ControlOptions.ShowBorder = False
+            end
+            object dxLayoutControl1Item20: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              AlignHorz = ahClient
+              Caption = 'cxLabel1'
+              ShowCaption = False
+              Control = cxLabel1
+              ControlOptions.ShowBorder = False
+            end
+          end
+          object dxLayoutControl1Item22: TdxLayoutItem
+            Caption = #24494#20449#36134#21495':'
+            Control = EditWX
             ControlOptions.ShowBorder = False
           end
         end
