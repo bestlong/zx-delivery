@@ -53,23 +53,25 @@
 {.$DEFINE JYZL}
 //特定系统
 
-//济源中联
-{$IFDEF JYZL}
-  {$DEFINE XAZL}
-  //使用新安
-  {$DEFINE HYRFID201}
-  //华益读头
-  {$DEFINE AppAtTaskBar}
-  //状态栏显示
-  {$DEFINE PrintBillMoney}
-  //打印时显金额
-{$ENDIF}
-
 //新安中联
 {$IFDEF XAZL}
   {$DEFINE SyncRemote}
   //远程同步
   {$DEFINE MicroMsg}
   //微信支持
+{$ENDIF}
+
+//济源中联
+{$IFDEF JYZL}
+  {$DEFINE XAZL}
+  //使用新安
+  {$DEFINE SyncRemote}
+  //远程同步
+  {$DEFINE HYRFID201}
+  //华益读头
+  {$DEFINE AppAtTaskBar}
+  //状态栏显示
+  {$DEFINE PrintBillMoney}
+  //打印时显金额
 {$ENDIF}
 

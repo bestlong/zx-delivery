@@ -140,7 +140,9 @@ begin
       nIni.Free;
     end;
 
-    ComPort1.Open;
+    if gReaderItem.FPort <> '' then
+      ComPort1.Open;
+    //xxxxx
   end;
 end;
 

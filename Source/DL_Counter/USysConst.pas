@@ -394,16 +394,15 @@ var nList: TStrings;
     nOut: TWorkerBusinessCommand;
     nWorker: TBusinessWorkerBase;
 begin
-  nList := nil;
   nWorker := nil;
   try
-    nList := TStringList.Create;
-    nList.Values['Bill'] := nBill;
-    nList.Values['Tunnel'] := nTunnel;
-
-    nIn.FCommand := cBC_PrintCode;
-    nIn.FBase.FParam := sParam_NoHintOnError;
-    nIn.FData := PackerEncodeStr(nList.Text);
+    with nIn do
+    begin
+      FCommand := cBC_PrintCode;
+      FData := nBill;
+      FExtParam := nTunnel;
+      FBase.FParam := sParam_NoHintOnError;
+    end;
 
     nWorker := gBusinessWorkerManager.LockWorker(sCLI_HardwareCommand);
     Result := nWorker.WorkActive(@nIn, @nOut);
@@ -412,7 +411,6 @@ begin
       nHint := nOut.FBase.FErrDesc;
     //xxxxx
   finally
-    nList.Free;
     gBusinessWorkerManager.RelaseWorker(nWorker);
   end;
 end;
