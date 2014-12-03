@@ -412,44 +412,32 @@ begin
   WriteLog(nStr);
 
   if Pos('@', FIn.FData) = 1 then
-  begin 
+  begin
     nCode := Copy(FIn.FData, 2, Length(FIn.FData) - 1);
     //固定喷码
   end else
   begin
-    nStr := 'Select L_ID,L_OutNum From %s Where L_ID=''%s''';
+    nStr := 'Select L_ID,L_Seal From %s Where L_ID=''%s''';
     nStr := Format(nStr, [sTable_Bill, FIn.FData]);
 
     with gDBConnManager.WorkerQuery(FDBConn, nStr) do
     begin
       if RecordCount < 1 then
-      with FOut.FBase do
       begin
-        FResult := False;
-        FErrCode := 'E.00';
-        FErrDesc := Format('交货单[ %s ]已无效.', [FIn.FData]); Exit;
+        Result := False;
+        nData := Format('交货单[ %s ]已无效.', [FIn.FData]); Exit;
       end;
 
-      //protocol: yymmdd + 出厂编号(末四位) + 交货单号(末八位);
-      nCode := Copy(Date2Str(Now, False), 3, 6);
-
-      nStr := FieldByName('L_OutNum').AsString;
-      nCode := nCode + Copy(nStr, Length(nStr) - 3, 4);
-
-      nStr := FieldByName('L_ID').AsString;
-      nCode := nCode + Copy(nStr, Length(nStr) - 7, 8);
+      {$IFDEF XAZL}
+      nCode := Fields[1].AsString + ' ' + Fields[0].AsString;
+      {$ENDIF}
     end;
   end;
 
   if not gCodePrinterManager.PrintCode(FIn.FExtParam, nCode, nStr) then
   begin
-    with FOut.FBase do
-    begin
-      FResult := False;
-      FErrCode := 'E.00';
-      FErrDesc := nStr;
-    end;
-
+    Result := False;
+    nData := nStr;
     Exit;
   end;
 

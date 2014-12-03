@@ -599,11 +599,25 @@ end;
 //Parm: 通道号;交货单;
 //Desc: 在nTunnel上打印nBill防伪码
 function PrintBillCode(const nTunnel,nBill: string; var nHint: string): Boolean;
+var nStr: string;
+    nTask: Int64;
+    nOut: TWorkerBusinessCommand;
 begin
   Result := True;
   if not gMultiJSManager.CountEnable then Exit;
 
-  Exit;
+  nTask := gTaskMonitor.AddTask('UHardBusiness.PrintBillCode', cTaskTimeoutLong);
+  //to mon
+  
+  if not CallHardwareCommand(cBC_PrintCode, nBill, nTunnel, @nOut) then
+  begin
+    nStr := '向通道[ %s ]发送防违流码失败,描述: %s';
+    nStr := Format(nStr, [nTunnel, nOut.FData]);  
+    WriteNearReaderLog(nStr);
+  end;
+
+  gTaskMonitor.DelTask(nTask, True);
+  //task done
 end;
 
 //Date: 2012-4-24

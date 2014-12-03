@@ -865,6 +865,9 @@ begin
   nData := nData + nCode + Char($40) + Char($39)+ Char($0D);
   FClient.Socket.Write(nData, Indy8BitEncoding);
 
+  Sleep(800);
+  //for delay
+  
   nData := Char($1B) + Char($41) + Char($2C) +Char($22);
   nData := nData + Char(2 + 31) + Char($0D);
   FClient.Socket.Write(nData, Indy8BitEncoding);
