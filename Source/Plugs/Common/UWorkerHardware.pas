@@ -429,7 +429,8 @@ begin
       end;
 
       {$IFDEF XAZL}
-      nCode := Fields[1].AsString + ' ' + Fields[0].AsString;
+      nCode := StringReplace(Fields[0].AsString, 'TH', '', [rfIgnoreCase]);
+      nCode := Fields[1].AsString + ' ' + nCode;
       {$ENDIF}
     end;
   end;

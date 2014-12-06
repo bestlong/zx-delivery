@@ -872,8 +872,8 @@ begin
   nData := nData + Char(2 + 31) + Char($0D);
   FClient.Socket.Write(nData, Indy8BitEncoding);
 
-  SetLength(nBuf, 0);
-  FClient.Socket.ReadBytes(nBuf, Length(nData), False);
+  //SetLength(nBuf, 0);
+  //FClient.Socket.ReadBytes(nBuf, Length(nData), False);
 
   Result := True;
 end;
