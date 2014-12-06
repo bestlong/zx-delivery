@@ -899,7 +899,7 @@ ResourceString
   -----------------------------------------------------------------------------}
 
   sSQL_NewWXLog = 'Create Table $Table(R_ID $Inc, L_UserID varChar(50), ' +
-       'L_Data varChar(500), L_MsgID varChar(20), L_Result varChar(50),' +
+       'L_Data varChar(2000), L_MsgID varChar(20), L_Result varChar(150),' +
        'L_Count Integer Default 0, L_Status Char(1), ' +
        'L_Comment varChar(100), L_Date DateTime)';
   {-----------------------------------------------------------------------------
