@@ -114,6 +114,7 @@ inherited fFramePoundQuery: TfFramePoundQuery
     object EditPID: TcxButtonEdit [8]
       Left = 81
       Top = 36
+      ParentFont = False
       Properties.Buttons = <
         item
           Default = True
@@ -208,19 +209,31 @@ inherited fFramePoundQuery: TfFramePoundQuery
       Caption = #25171#21360#36807#30917#21333
       OnClick = N3Click
     end
-    object N5: TMenuItem
-      Caption = '-'
-    end
-    object N2: TMenuItem
-      Caption = #26102#38388#27573#26597#35810
-      OnClick = N2Click
-    end
-    object N1: TMenuItem
-      Caption = '-'
-    end
     object N4: TMenuItem
       Caption = #31216#37325#26102#25235#25293
       OnClick = N4Click
+    end
+    object N5: TMenuItem
+      Caption = '-'
+    end
+    object N8: TMenuItem
+      Caption = #8251#31216#37325#26597#35810#8251
+      Enabled = False
+    end
+    object N1: TMenuItem
+      Tag = 10
+      Caption = #25353#36807#31354#26102#38388
+      OnClick = N2Click
+    end
+    object N7: TMenuItem
+      Tag = 20
+      Caption = #25353#36807#37325#26102#38388
+      OnClick = N2Click
+    end
+    object N2: TMenuItem
+      Tag = 30
+      Caption = #26102#38388#27573#26597#35810
+      OnClick = N2Click
     end
   end
 end

@@ -42,6 +42,8 @@ type
     N5: TMenuItem;
     EditPID: TcxButtonEdit;
     dxLayout1Item9: TdxLayoutItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
     procedure EditDatePropertiesButtonClick(Sender: TObject;
       AButtonIndex: Integer);
     procedure EditTruckPropertiesButtonClick(Sender: TObject;
@@ -216,8 +218,16 @@ procedure TfFramePoundQuery.N2Click(Sender: TObject);
 begin
   if ShowDateFilterForm(FTimeS, FTimeE, True) then
   try
-    FJBWhere := 'P_PDate>=''%s'' And P_MDate<''%s''';
-    FJBWhere := Format(FJBWhere, [DateTime2Str(FTimeS), DateTime2Str(FTimeE)]);
+    case TComponent(Sender).Tag of
+     10: FJBWhere := 'P_PDate>=''$S'' And P_PDate<''$E''';
+     20: FJBWhere := 'P_MDate>=''$S'' And P_MDate<''$E''';
+     30: FJBWhere := '(P_PDate>=''$S'' And P_PDate<''$E'') Or ' +
+                     '(P_MDate>=''$S'' And P_MDate<''$E'')';
+     //xxxxx
+    end;
+
+    FJBWhere := MacroValue(FJBWhere, [MI('$S', DateTime2Str(FTimeS)),
+                MI('$E', DateTime2Str(FTimeE))]);
     InitFormData('');
   finally
     FJBWhere := '';
