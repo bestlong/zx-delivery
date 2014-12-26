@@ -73,5 +73,7 @@
   //状态栏显示
   {$DEFINE PrintBillMoney}
   //打印时显金额
+  {$DEFINE HR1847}
+  //北京科瑞车检
 {$ENDIF}
 
