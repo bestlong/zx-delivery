@@ -84,7 +84,7 @@ const
   cFI_FormZhiKa         = $1010;                     //纸卡办理
   cFI_FormZhiKaParam    = $1011;                     //纸卡参数
   cFI_FormGetZhika      = $1012;                     //选择纸卡
-  cFI_FormMakeCard      = $1011;                     //办理磁卡
+  cFI_FormMakeCard      = $1013;                     //办理磁卡
 
   cFI_FormBill          = $1016;                     //开提货单
   cFI_FormShouJu        = $1017;                     //开收据

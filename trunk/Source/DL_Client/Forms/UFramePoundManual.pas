@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFramePoundManual;
 
+{$I Link.inc}
 interface
 
 uses
@@ -52,7 +53,8 @@ implementation
 
 uses
   IniFiles, UlibFun, UMgrControl, UMgrPoundTunnels, UFramePoundManualItem,
-  UMgrTruckProbe, UMgrRemoteVoice, UDataModule, UFormWait, USysDataDict,
+  {$IFDEF HR1847}UKRTruckProber,{$ELSE}UMgrTruckProbe,{$ENDIF}
+  UMgrRemoteVoice, UDataModule, UFormWait, USysDataDict,
   USysGrid, USysLoger, USysConst, USysDB;
 
 class function TfFramePoundManual.FrameID: integer;
@@ -91,6 +93,15 @@ begin
     gPoundTunnelManager.LoadConfig(gPath + 'Tunnels.xml');
   end;
 
+  {$IFDEF HR1847}   //30330123
+  if not Assigned(gKRMgrProber) then
+  begin
+    gKRMgrProber := TKRMgrProber.Create;
+    gKRMgrProber.LoadConfig(gPath + 'TruckProber.xml');
+
+    Inc(gSysParam.FProberUser);
+  end;
+  {$ELSE}
   if not Assigned(gProberManager) then
   begin
     gProberManager := TProberManager.Create;
@@ -99,6 +110,7 @@ begin
     Inc(gSysParam.FProberUser);
     gProberManager.StartProber;
   end;
+  {$ENDIF}
 
   if gSysParam.FVoiceUser < 1 then
   begin
@@ -120,9 +132,11 @@ begin
   //xxxxx
 
   Dec(gSysParam.FProberUser);
+  {$IFNDEF HR1847}
   if gSysParam.FProberUser < 1 then
     gProberManager.StopProber;
   //xxxxx
+  {$ENDIF}
 
   nIni := TIniFile.Create(gPath + sFormConfig);
   try
@@ -179,7 +193,7 @@ begin
     begin
       nT := Tunnels[nIdx];
       //tunnel
-      
+
       with TfFrameManualPoundItem.Create(Self) do
       begin
         Name := 'fFrameManualPoundItem' + IntToStr(nIdx);

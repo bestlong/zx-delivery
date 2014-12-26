@@ -112,7 +112,8 @@ implementation
 {$R *.dfm}
 
 uses
-  ULibFun, UFormBase, UMgrTruckProbe, UMgrRemoteVoice, UDataModule, USysBusiness,
+  ULibFun, UFormBase, {$IFDEF HR1847}UKRTruckProber,{$ELSE}UMgrTruckProbe,{$ENDIF}
+  UMgrRemoteVoice, UDataModule, USysBusiness,
   USysLoger, USysConst, USysDB;
 
 const
@@ -200,7 +201,11 @@ begin
 
   Timer2.Tag := 0;
   Timer2.Enabled := False;
+  {$IFDEF HR1847}
+  gKRMgrProber.TunnelOC(FPoundTunnel.FID,False);
+  {$ELSE}
   gProberManager.TunnelOC(FPoundTunnel.FID,False);
+  {$ENDIF}
 end;
 
 //Desc: 设置通道
@@ -559,8 +564,11 @@ begin
   AddSample(nVal);
   if not IsValidSamaple then Exit;
   //样本验证不通过
-
+  {$IFDEF HR1847}
+  if not gKRMgrProber.IsTunnelOK(FPoundTunnel.FID) then
+  {$ELSE}
   if not gProberManager.IsTunnelOK(FPoundTunnel.FID) then
+  {$ENDIF}
   begin
     gVoiceHelper.PlayVoice('车辆未停到位,请移动车辆.');
     Exit;
@@ -584,7 +592,11 @@ begin
     //播放语音
       
     Timer2.Enabled := True;
+    {$IFDEF HR1847}
+    gKRMgrProber.TunnelOC(FPoundTunnel.FID, True);
+    {$ELSE}
     gProberManager.TunnelOC(FPoundTunnel.FID, True);
+    {$ENDIF}
     //开红绿灯
     gPoundTunnelManager.ClosePort(FPoundTunnel.FID);
     //关闭表头

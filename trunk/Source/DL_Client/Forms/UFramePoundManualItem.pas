@@ -116,7 +116,8 @@ implementation
 {$R *.dfm}
 
 uses
-  ULibFun, UAdjustForm, UFormBase, UMgrTruckProbe, UMgrRemoteVoice, UDataModule,
+  ULibFun, UAdjustForm, UFormBase, {$IFDEF HR1847}UKRTruckProber,
+  {$ELSE}UMgrTruckProbe,{$ENDIF} UMgrRemoteVoice, UDataModule,
   UFormWait, USysBusiness, USysConst, USysDB;
 
 const
@@ -435,7 +436,11 @@ begin
 
   Timer2.Tag := 0;
   Timer2.Enabled := False;
+  {$IFDEF HR1847}
+  gKRMgrProber.TunnelOC(FPoundTunnel.FID,False);
+  {$ELSE}
   gProberManager.TunnelOC(FPoundTunnel.FID,False);
+  {$ENDIF}
 end;
 
 //Desc: 表头数据
@@ -457,7 +462,11 @@ procedure TfFrameManualPoundItem.N1Click(Sender: TObject);
 begin
   N1.Checked := not N1.Checked;
   //status change
+  {$IFDEF HR1847}
+  gKRMgrProber.TunnelOC(FPoundTunnel.FID, N1.Checked);
+  {$ELSE}
   gProberManager.TunnelOC(FPoundTunnel.FID, N1.Checked);
+  {$ENDIF}
 end;
 
 //Desc: 关闭称重页面
@@ -841,7 +850,12 @@ end;
 procedure TfFrameManualPoundItem.BtnSaveClick(Sender: TObject);
 var nBool: Boolean;
 begin
+  
+  {$IFDEF HR1847}
+  if not gKRMgrProber.IsTunnelOK(FPoundTunnel.FID) then
+  {$ELSE}
   if not gProberManager.IsTunnelOK(FPoundTunnel.FID) then
+  {$ENDIF}
   begin
     ShowMsg('车辆未站稳,请稍后', sHint);
     Exit;
@@ -862,7 +876,13 @@ begin
       //播放语音
       
       Timer2.Enabled := True;
+
+      {$IFDEF HR1847}
+      gKRMgrProber.TunnelOC(FPoundTunnel.FID, True);
+      {$ELSE}
       gProberManager.TunnelOC(FPoundTunnel.FID, True);
+      {$ENDIF}
+
       //开红绿灯
       gPoundTunnelManager.ClosePort(FPoundTunnel.FID);
       //关闭表头
