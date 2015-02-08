@@ -432,6 +432,11 @@ begin
       nCode := StringReplace(Fields[0].AsString, 'TH', '', [rfIgnoreCase]);
       nCode := Fields[1].AsString + ' ' + nCode;
       {$ENDIF}
+
+      {$IFDEF RDHX}
+      nCode := Trim(Fields[1].AsString);
+      nCode := nCode + Date2Str(Now, False);;
+      {$ENDIF}
     end;
   end;
 

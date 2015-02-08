@@ -47,11 +47,16 @@
 {$ENDIF}
 
 //--------------------------------- 特定系统 -----------------------------------
-{$DEFINE COMMON}
+{.$DEFINE COMMON}
 //通用版本
 
-{.$DEFINE JYZL}
+{$DEFINE RDHX}
 //特定系统
+
+//如东海鑫
+{$IFDEF RDHX}
+  {$DEFINE COMMON}
+{$ENDIF}
 
 //新安中联
 {$IFDEF XAZL}

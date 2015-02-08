@@ -672,25 +672,18 @@ begin
       end;
 
       if not FDBConn.FConn.Connected then
-      begin
         FDBConn.FConn.Connected := True;
-        //conn db
-
-        FOwner.FSyncLock.Enter;
-        try
-          LoadStockMatck;
-          //match itme list
-        finally
-          FOwner.FSyncLock.Leave;
-        end;
-      end;
+      //conn db
 
       FOwner.FSyncLock.Enter;
       try
         ExecuteSQL(FOwner.FSQLList);
-        LoadQueueParam;
+        LoadStockMatck;
+        //match itme list
 
+        LoadQueueParam;
         FTruckChanged := False;
+
         LoadLines;
         LoadTrucks;
 
@@ -728,6 +721,11 @@ procedure TTruckQueueDBReader.LoadStockMatck;
 var nStr: string;
     nIdx: Integer;
 begin
+  if FOwner.FLineLoaded then Exit;
+  {$IFDEF DEBUG}
+  WriteLog('刷新品种映射关系.');
+  {$ENDIF}
+
   SetLength(FMatchItems, 0);
   nStr := 'Select * From %s Where M_Status=''%s''';
   nStr := Format(nStr, [sTable_StockMatch, sFlag_Enabled]);
@@ -1362,6 +1360,9 @@ begin
           nTruck.FIsVIP := FIsVIP;
           nTruck.FIndex := FIndex;
           nTruck.FValue := FValue;
+
+          nTruck.FBill  := FBill;
+          nTruck.FHKBills := FHKBills;
 
           if FIsVIP = sFlag_TypeShip then
             nTruck.FInFact := True;
